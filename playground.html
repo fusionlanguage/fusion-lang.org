@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ć Playground</title>
+<style type="text/css" media="screen">
+	#editor-ci { 
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+	.highlightError {
+		position: absolute;
+		background: red;
+		text-decoration: red underline wavy;
+	}
+</style>
+</head>
+<body>
+
+<div id="editor-ci">public class Foo { }</div>
+<script src="node_modules/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	const Range = ace.require("ace/range").Range;
+	const editor = ace.edit("editor-ci", {
+			theme: "ace/theme/monokai",
+			mode: "ace/mode/csharp",
+			showPrintMargin: false,
+			//readOnly: true
+		});
+	editor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
+</script>
+</body>
+</html>
