@@ -7,6 +7,10 @@ export const RegexOptions = {
 	SINGLELINE : 16
 }
 
+export class CiParserHost
+{
+}
+
 export const CiToken = {
 	END_OF_FILE : 0,
 	ID : 1,
@@ -123,6 +127,7 @@ export class CiLexer
 	#nextOffset;
 	charOffset;
 	#nextChar;
+	#host;
 	filename;
 	line;
 	column;
@@ -137,6 +142,11 @@ export class CiLexer
 	#enableDocComments = true;
 	parsingTypeArg = false;
 	#preElseStack = [];
+
+	setHost(host)
+	{
+		this.#host = host;
+	}
 
 	addPreSymbol(symbol)
 	{
@@ -155,6 +165,11 @@ export class CiLexer
 		if (this.#nextChar == 65279)
 			this.#fillNextChar();
 		this.nextToken();
+	}
+
+	reportError(message)
+	{
+		this.#host.reportError(this.filename, this.line, this.tokenColumn, this.line, this.column, message);
 	}
 
 	#readByte()
@@ -1426,18 +1441,11 @@ export class CiCodeDoc
 
 export class CiVisitor
 {
-	hasErrors = false;
 
 	visitOptionalStatement(statement)
 	{
 		if (statement != null)
 			statement.acceptStatement(this);
-	}
-
-	reportError(statement, message)
-	{
-		console.error(`${this.getCurrentContainer().filename}(${statement.line}): ERROR: ${message}`);
-		this.hasErrors = true;
 	}
 }
 
@@ -4384,26 +4392,39 @@ export class CiParser extends CiLexer
 	}
 }
 
-export class CiConsoleParser extends CiParser
+export class CiSemaHost extends CiParserHost
+{
+}
+
+export class GenHost extends CiSemaHost
+{
+}
+
+export class CiConsoleHost extends GenHost
 {
 	hasErrors = false;
 
-	reportError(message)
+	reportError(filename, startLine, startColumn, endLine, endColumn, message)
 	{
-		console.error(`${this.filename}(${this.line}): ERROR: ${message}`);
 		this.hasErrors = true;
+		console.error(`${filename}(${startLine}): ERROR: ${message}`);
 	}
 }
 
 export class CiSema
 {
 	program;
-	hasErrors = false;
+	#host;
 	#currentMethod = null;
 	#currentScope;
 	#currentPureMethods = new Set();
 	#currentPureArguments = {};
 	#poison = Object.assign(new CiType(), { name: "poison" });
+
+	setHost(host)
+	{
+		this.#host = host;
+	}
 
 	#getCurrentContainer()
 	{
@@ -4412,8 +4433,7 @@ export class CiSema
 
 	reportError(statement, message)
 	{
-		console.error(`${this.#getCurrentContainer().filename}(${statement.line}): ERROR: ${message}`);
-		this.hasErrors = true;
+		this.#host.reportError(this.#getCurrentContainer().filename, statement.line, 1, statement.line, 1, message);
 	}
 
 	#poisonError(statement, message)
@@ -6595,15 +6615,11 @@ export class CiSema
 	}
 }
 
-export class GenHost
-{
-}
-
 export class GenBase extends CiVisitor
 {
 	namespace;
 	outputFile;
-	host;
+	#host;
 	#writer;
 	#stringWriter = new StringWriter();
 	indent = 0;
@@ -6616,20 +6632,30 @@ export class GenBase extends CiVisitor
 	writtenClasses = new Set();
 	currentTemporaries = [];
 
+	setHost(host)
+	{
+		this.#host = host;
+	}
+
 	getCurrentContainer()
 	{
 		const klass = this.currentMethod.parent;
 		return klass;
 	}
 
+	#reportError(statement, message)
+	{
+		this.#host.reportError(this.getCurrentContainer().filename, statement.line, 1, statement.line, 1, message);
+	}
+
 	notSupported(statement, feature)
 	{
-		this.reportError(statement, `${feature} not supported when targeting ${this.getTargetName()}`);
+		this.#reportError(statement, `${feature} not supported when targeting ${this.getTargetName()}`);
 	}
 
 	notYet(statement, feature)
 	{
-		this.reportError(statement, `${feature} not supported yet when targeting ${this.getTargetName()}`);
+		this.#reportError(statement, `${feature} not supported yet when targeting ${this.getTargetName()}`);
 	}
 
 	startLine()
@@ -6836,7 +6862,7 @@ export class GenBase extends CiVisitor
 
 	createFile(directory, filename)
 	{
-		this.#writer = this.host.createFile(directory, filename);
+		this.#writer = this.#host.createFile(directory, filename);
 		this.writeBanner();
 	}
 
@@ -6847,8 +6873,7 @@ export class GenBase extends CiVisitor
 
 	closeFile()
 	{
-		if (!this.host.closeFile(this.hasErrors))
-			this.hasErrors = true;
+		this.#host.closeFile();
 	}
 
 	openStringWriter()
