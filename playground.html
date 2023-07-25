@@ -1,27 +1,34 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Ć Playground</title>
-<style type="text/css" media="screen">
-	#editor-ci {
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+<!-- <script type="module" src="node_modules/golden-layout/dist/esm/index.js"></script>- -->
+<script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
+<script type="text/javascript" src="node_modules/ace-builds/src-min-noconflict/ace.js"></script>
+<script type="module" src="playground.js"></script>
+<!--
+<link rel="stylesheet" href="node_modules/golden-layout/dist/css/goldenlayout-base.css" />
+<link rel="stylesheet" href="node_modules/golden-layout/dist/css/themes/goldenlayout-dark-theme.css" />
+-->
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-dark-theme.css" />
+<style>
+	html {
+		background: #000;
+		color: #fff;
+	}
+	.editor {
 		position: absolute;
 		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
 	}
-	.highlightError {
-		position: absolute;
-		background: red;
-		text-decoration: red underline wavy;
-	}
 </style>
 </head>
 <body>
-
-<div id="editor-ci">public class Foo { }</div>
-<script src="node_modules/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="playground.js" type="module"></script>
+<h1>Ć Playground</h1>
 </body>
 </html>

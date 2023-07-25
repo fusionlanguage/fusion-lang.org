@@ -1,29 +1,88 @@
-import { CiParser, CiProgram, CiSystem, CiSema, CiSemaHost } from "./cito.js";
+import { CiParser, CiProgram, CiSystem, CiSema, GenJs, GenHost } from "./cito.js";
 
-const editor = ace.edit("editor-ci", {
+const layoutConfig = {
+		content: [{
+			type: "row",
+			content: [{
+					type: "component",
+					componentName: "editor",
+					componentState: { lang: "ci" }
+				},
+				{
+					type: "component",
+					componentName: "editor",
+					componentState: { lang: "js" }
+				}]
+			}]
+	};
+const layout = new GoldenLayout(layoutConfig);
+layout.registerComponent("editor", function(container, componentState) {
+		container.getElement().html(`<div id="editor-${componentState.lang}" class="editor"></div>`);
+	});
+layout.init();
+
+const sourceEditor = ace.edit("editor-ci", {
 		theme: "ace/theme/monokai",
 		mode: "ace/mode/csharp",
+		showPrintMargin: false
+	});
+const outputEditor = ace.edit("editor-js", {
+		theme: "ace/theme/monokai",
+		mode: "ace/mode/javascript",
 		showPrintMargin: false,
-		//readOnly: true
+		readOnly: true
 	});
 
-class PlaygroundHost extends CiSemaHost
+class StringWriter
 {
-	reportError(filename, startLine, startColumn, endLine, endColumn, message)
+	#buf = "";
+
+	write(s)
 	{
-		this.annotations.push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
-		// editor.session.addMarker(new ace.Range(startLine - 1, startColumn - 1, endLine - 1, endColumn - 1), "ace_error-marker", "text", true);
+		this.#buf += s;
+	}
+
+	toString()
+	{
+		return this.#buf;
 	}
 }
 
-// editor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
-// editor.session.setAnnotations([{ row: 0, column: 1, text: "foobar", type: "error" }]);
+class PlaygroundHost extends GenHost
+{
+	#files = {};
+
+	reportError(filename, startLine, startColumn, endLine, endColumn, message)
+	{
+		this.annotations.push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
+		// sourceEditor.session.addMarker(new ace.Range(startLine - 1, startColumn - 1, endLine - 1, endColumn - 1), "ace_error-marker", "text", true);
+	}
+
+	createFile(directory, filename)
+	{
+		const w = new StringWriter();
+		this.#files[filename] = w;
+		return w;
+	}
+
+	closeFile()
+	{
+	}
+
+	getFile(filename)
+	{
+		return this.#files[filename].toString();
+	}
+}
+
+// sourceEditor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
+// sourceEditor.session.setAnnotations([{ row: 0, column: 1, text: "foobar", type: "error" }]);
 
 function transpile()
 {
-//	for (const markerId of Object.keys(editor.session.getMarkers()))
-//		editor.session.removeMarker(markerId);
-	const input = new TextEncoder().encode(editor.session.doc.getValue());
+//	for (const markerId of Object.keys(sourceEditor.session.getMarkers()))
+//		sourceEditor.session.removeMarker(markerId);
+	const input = new TextEncoder().encode(sourceEditor.session.doc.getValue());
 	const host = new PlaygroundHost();
 	host.annotations = [];
 	const system = CiSystem.new();
@@ -37,8 +96,16 @@ function transpile()
 		const sema = new CiSema();
 		sema.setHost(host);
 		sema.process(parser.program);
+		if (host.annotations.length == 0) {
+			const gen = new GenJs();
+			gen.outputFile = "foo.js";
+			gen.setHost(host);
+			gen.writeProgram(parser.program);
+			if (host.annotations.length == 0)
+				outputEditor.session.doc.setValue(host.getFile("foo.js"));
+		}
 	}
-	editor.session.setAnnotations(host.annotations);
+	sourceEditor.session.setAnnotations(host.annotations);
 }
 
-editor.session.on("change", transpile);
+sourceEditor.session.on("change", transpile);
