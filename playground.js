@@ -1,36 +1,52 @@
-import { CiParser, CiProgram, CiSystem, CiSema, GenJs, GenHost } from "./cito.js";
+import { CiParser, CiProgram, CiSystem, CiSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./cito.js";
 
 const layoutConfig = {
 		content: [{
 			type: "row",
 			content: [{
+					title: "hello.ci",
 					type: "component",
+					width: 1,
 					componentName: "editor",
-					componentState: { lang: "ci" }
+					componentState: { filename: "hello.ci" }
 				},
 				{
-					type: "component",
-					componentName: "editor",
-					componentState: { lang: "js" }
+					type: "column",
+					width: 3,
+					content: [{
+						type: "row",
+						content: [
+							{ type: "stack", isClosable: false, id: "stack-c" },
+							{ type: "stack", isClosable: false, id: "stack-cpp" },
+							{ type: "stack", isClosable: false, id: "stack-cs" }]
+					},
+					{
+						type: "row",
+						content: [
+							{ type: "stack", isClosable: false, id: "stack-d" },
+							{ type: "stack", isClosable: false, id: "stack-java" },
+							{ type: "stack", isClosable: false, id: "stack-js" }]
+					},
+					{
+						type: "row",
+						content: [
+							{ type: "stack", isClosable: false, id: "stack-py" },
+							{ type: "stack", isClosable: false, id: "stack-swift" },
+							{ type: "stack", isClosable: false, id: "stack-ts" }]
+					}]
 				}]
 			}]
 	};
 const layout = new GoldenLayout(layoutConfig);
 layout.registerComponent("editor", function(container, componentState) {
-		container.getElement().html(`<div id="editor-${componentState.lang}" class="editor"></div>`);
+		container.getElement().html(`<div id="editor-${componentState.filename}" class="editor"></div>`);
 	});
 layout.init();
 
-const sourceEditor = ace.edit("editor-ci", {
+const sourceEditor = ace.edit("editor-hello.ci", {
 		theme: "ace/theme/monokai",
 		mode: "ace/mode/csharp",
 		showPrintMargin: false
-	});
-const outputEditor = ace.edit("editor-js", {
-		theme: "ace/theme/monokai",
-		mode: "ace/mode/javascript",
-		showPrintMargin: false,
-		readOnly: true
 	});
 
 class StringWriter
@@ -50,7 +66,7 @@ class StringWriter
 
 class PlaygroundHost extends GenHost
 {
-	#files = {};
+	outputs = new Map();
 
 	reportError(filename, startLine, startColumn, endLine, endColumn, message)
 	{
@@ -61,22 +77,49 @@ class PlaygroundHost extends GenHost
 	createFile(directory, filename)
 	{
 		const w = new StringWriter();
-		this.#files[filename] = w;
+		this.outputs.set(filename, w);
 		return w;
 	}
 
 	closeFile()
 	{
 	}
-
-	getFile(filename)
-	{
-		return this.#files[filename].toString();
-	}
 }
 
 // sourceEditor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
 // sourceEditor.session.setAnnotations([{ row: 0, column: 1, text: "foobar", type: "error" }]);
+
+function emit(program, host, gen, lang, mode)
+{
+	host.outputs.clear();
+	gen.namespace = "";
+	gen.outputFile = "hello." + lang;
+	gen.setHost(host);
+	const errorCount = host.annotations.length;
+	gen.writeProgram(program);
+	if (host.annotations.length == errorCount) {
+		const stack = layout.root.getItemsById("stack-" + lang)[0];
+		for (const item of stack.getItemsByFilter(item => !host.outputs.has(item.config.id)))
+			item.remove();
+		for (const [filename, w] of host.outputs) {
+			if (stack.getItemsById(filename).length == 0) {
+				stack.addChild({
+						id: filename,
+						title: filename,
+						type: "component",
+						componentName: "editor",
+						componentState: { filename: filename }
+					});
+			}
+			ace.edit("editor-" + filename, {
+					theme: "ace/theme/monokai",
+					mode: "ace/mode/" + mode,
+					showPrintMargin: false,
+					readOnly: true
+				}).session.doc.setValue(w.toString());
+		}
+	}
+}
 
 function transpile()
 {
@@ -91,18 +134,21 @@ function transpile()
 	parser.program = new CiProgram();
 	parser.program.parent = system;
 	parser.program.system = system;
-	parser.parse("foo.ci", input, input.length);
+	parser.parse("hello.ci", input, input.length);
 	if (host.annotations.length == 0) {
 		const sema = new CiSema();
 		sema.setHost(host);
 		sema.process(parser.program);
 		if (host.annotations.length == 0) {
-			const gen = new GenJs();
-			gen.outputFile = "foo.js";
-			gen.setHost(host);
-			gen.writeProgram(parser.program);
-			if (host.annotations.length == 0)
-				outputEditor.session.doc.setValue(host.getFile("foo.js"));
+			emit(parser.program, host, new GenC(), "c", "c_cpp");
+			emit(parser.program, host, new GenCpp(), "cpp", "c_cpp");
+			emit(parser.program, host, new GenCs(), "cs", "csharp");
+			emit(parser.program, host, new GenD(), "d", "d");
+			emit(parser.program, host, new GenJava(), "java", "java");
+			emit(parser.program, host, new GenJs(), "js", "javascript");
+			emit(parser.program, host, new GenPy(), "py", "python");
+			emit(parser.program, host, new GenSwift(), "swift", "swift");
+			emit(parser.program, host, new GenTs(), "ts", "typescript");
 		}
 	}
 	sourceEditor.session.setAnnotations(host.annotations);
