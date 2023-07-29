@@ -148,7 +148,7 @@ function transpile()
 			emit(parser.program, host, new GenJs(), "js", "javascript");
 			emit(parser.program, host, new GenPy(), "py", "python");
 			emit(parser.program, host, new GenSwift(), "swift", "swift");
-			emit(parser.program, host, new GenTs(), "ts", "typescript");
+			emit(parser.program, host, new GenTs().withGenFullCode(), "ts", "typescript");
 		}
 	}
 	sourceEditor.session.setAnnotations(host.annotations);
