@@ -1,12 +1,16 @@
 import { CiParser, CiProgram, CiSystem, CiSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./cito.js";
 
 const layoutConfig = {
+		settings: {
+			showPopoutIcon: false
+		},
 		content: [{
 			type: "row",
 			content: [{
 					title: "hello.ci",
 					type: "component",
 					width: 1,
+					isClosable: false,
 					componentName: "editor",
 					componentState: { filename: "hello.ci" }
 				},
@@ -107,6 +111,7 @@ function emit(program, host, gen, lang, mode)
 						id: filename,
 						title: filename,
 						type: "component",
+						isClosable: false,
 						componentName: "editor",
 						componentState: { filename: filename }
 					});
