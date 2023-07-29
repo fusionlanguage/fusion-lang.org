@@ -1,5 +1,16 @@
 import { CiParser, CiProgram, CiSystem, CiSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./cito.js";
 
+function getOutputRow(lang1, lang2, lang3)
+{
+	return {
+			type: "row",
+			content: [
+				{ type: "stack", isClosable: false, id: "stack-" + lang1 },
+				{ type: "stack", isClosable: false, id: "stack-" + lang2 },
+				{ type: "stack", isClosable: false, id: "stack-" + lang3 }]
+		};
+}
+
 const layoutConfig = {
 		settings: {
 			showPopoutIcon: false
@@ -17,27 +28,11 @@ const layoutConfig = {
 				{
 					type: "column",
 					width: 3,
-					content: [{
-						type: "row",
-						content: [
-							{ type: "stack", isClosable: false, id: "stack-c" },
-							{ type: "stack", isClosable: false, id: "stack-cpp" },
-							{ type: "stack", isClosable: false, id: "stack-cs" }]
-					},
-					{
-						type: "row",
-						content: [
-							{ type: "stack", isClosable: false, id: "stack-d" },
-							{ type: "stack", isClosable: false, id: "stack-java" },
-							{ type: "stack", isClosable: false, id: "stack-js" }]
-					},
-					{
-						type: "row",
-						content: [
-							{ type: "stack", isClosable: false, id: "stack-py" },
-							{ type: "stack", isClosable: false, id: "stack-swift" },
-							{ type: "stack", isClosable: false, id: "stack-ts" }]
-					}]
+					content: [
+						getOutputRow("c", "cpp", "cs"),
+						getOutputRow("d", "java", "js"),
+						getOutputRow("py", "swift", "ts")
+					]
 				}]
 			}]
 	};
