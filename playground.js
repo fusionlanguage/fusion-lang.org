@@ -116,6 +116,7 @@ function emit(program, host, gen, lang, mode)
 					theme: "ace/theme/monokai",
 					mode: "ace/mode/" + mode,
 					showPrintMargin: false,
+					useWorker: false,
 					readOnly: true
 				}).session.doc.setValue(w.toString());
 		}
