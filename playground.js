@@ -13,6 +13,7 @@ function getOutputRow(lang1, lang2, lang3)
 
 const layoutConfig = {
 		settings: {
+			reorderEnabled: false,
 			showPopoutIcon: false
 		},
 		content: [{
