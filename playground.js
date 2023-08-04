@@ -1,5 +1,17 @@
 import { FuParser, FuProgram, FuSystem, FuSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./fut.js";
 
+function getEditorComponent(filename)
+{
+	return {
+			type: "component",
+			isClosable: false,
+			id: filename,
+			title: filename,
+			componentName: "editor",
+			componentState: { filename: filename }
+		};
+}
+
 function getOutputRow(lang1, lang2, lang3)
 {
 	return {
@@ -23,14 +35,7 @@ const layoutConfig = {
 					type: "stack",
 					width: 1,
 					id: "stack-fu",
-					content: [{
-							id: "hello.fu",
-							title: "hello.fu",
-							type: "component",
-							isClosable: false,
-							componentName: "editor",
-							componentState: { filename: "hello.fu" }
-						}]
+					content: [ getEditorComponent("hello.fu") ]
 				},
 				{
 					type: "column",
@@ -107,16 +112,8 @@ function emit(program, host, gen, lang, mode)
 		for (const item of stack.getItemsByFilter(item => !host.outputs.has(item.config.id)))
 			item.remove();
 		for (const [filename, w] of host.outputs) {
-			if (stack.getItemsById(filename).length == 0) {
-				stack.addChild({
-						id: filename,
-						title: filename,
-						type: "component",
-						isClosable: false,
-						componentName: "editor",
-						componentState: { filename: filename }
-					});
-			}
+			if (stack.getItemsById(filename).length == 0)
+				stack.addChild(getEditorComponent(filename));
 			ace.edit("editor-" + filename, {
 					theme: "ace/theme/monokai",
 					mode: "ace/mode/" + mode,
