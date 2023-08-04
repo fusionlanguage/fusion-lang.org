@@ -99,11 +99,11 @@ class PlaygroundHost extends GenHost
 // sourceEditor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
 // sourceEditor.session.setAnnotations([{ row: 0, column: 1, text: "foobar", type: "error" }]);
 
-function emit(program, host, gen, lang, mode)
+function emit(program, host, gen, filename, lang, mode)
 {
 	host.outputs.clear();
 	gen.namespace = "";
-	gen.outputFile = "hello." + lang;
+	gen.outputFile = filename + lang;
 	gen.setHost(host);
 	host.hasErrors = false;
 	gen.writeProgram(program);
@@ -147,15 +147,16 @@ function transpile()
 		sema.setHost(host);
 		sema.process(parser.program);
 		if (!host.hasErrors) {
-			emit(parser.program, host, new GenC(), "c", "c_cpp");
-			emit(parser.program, host, new GenCpp(), "cpp", "c_cpp");
-			emit(parser.program, host, new GenCs(), "cs", "csharp");
-			emit(parser.program, host, new GenD(), "d", "d");
-			emit(parser.program, host, new GenJava(), "java", "java");
-			emit(parser.program, host, new GenJs(), "js", "javascript");
-			emit(parser.program, host, new GenPy(), "py", "python");
-			emit(parser.program, host, new GenSwift(), "swift", "swift");
-			emit(parser.program, host, new GenTs().withGenFullCode(), "ts", "typescript");
+			const filename = sources.length == 1 ? sources[0].config.id.replace(/fu$/, "") : "output.";
+			emit(parser.program, host, new GenC(), filename, "c", "c_cpp");
+			emit(parser.program, host, new GenCpp(), filename, "cpp", "c_cpp");
+			emit(parser.program, host, new GenCs(), filename, "cs", "csharp");
+			emit(parser.program, host, new GenD(), filename, "d", "d");
+			emit(parser.program, host, new GenJava(), filename, "java", "java");
+			emit(parser.program, host, new GenJs(), filename, "js", "javascript");
+			emit(parser.program, host, new GenPy(), filename, "py", "python");
+			emit(parser.program, host, new GenSwift(), filename, "swift", "swift");
+			emit(parser.program, host, new GenTs().withGenFullCode(), filename, "ts", "typescript");
 		}
 	}
 	for (const item of sources) {
