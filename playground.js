@@ -1,4 +1,4 @@
-import { CiParser, CiProgram, CiSystem, CiSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./cito.js";
+import { FuParser, FuProgram, FuSystem, FuSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./fut.js";
 
 function getOutputRow(lang1, lang2, lang3)
 {
@@ -19,12 +19,12 @@ const layoutConfig = {
 		content: [{
 			type: "row",
 			content: [{
-					title: "hello.ci",
+					title: "hello.fu",
 					type: "component",
 					width: 1,
 					isClosable: false,
 					componentName: "editor",
-					componentState: { filename: "hello.ci" }
+					componentState: { filename: "hello.fu" }
 				},
 				{
 					type: "column",
@@ -43,7 +43,7 @@ layout.registerComponent("editor", function(container, componentState) {
 	});
 layout.init();
 
-const sourceEditor = ace.edit("editor-hello.ci", {
+const sourceEditor = ace.edit("editor-hello.fu", {
 		theme: "ace/theme/monokai",
 		mode: "ace/mode/csharp",
 		showPrintMargin: false
@@ -130,15 +130,15 @@ function transpile()
 	const input = new TextEncoder().encode(sourceEditor.session.doc.getValue());
 	const host = new PlaygroundHost();
 	host.annotations = [];
-	const system = CiSystem.new();
-	const parser = new CiParser();
+	const system = FuSystem.new();
+	const parser = new FuParser();
 	parser.setHost(host);
-	parser.program = new CiProgram();
+	parser.program = new FuProgram();
 	parser.program.parent = system;
 	parser.program.system = system;
-	parser.parse("hello.ci", input, input.length);
+	parser.parse("hello.fu", input, input.length);
 	if (host.annotations.length == 0) {
-		const sema = new CiSema();
+		const sema = new FuSema();
 		sema.setHost(host);
 		sema.process(parser.program);
 		if (host.annotations.length == 0) {
