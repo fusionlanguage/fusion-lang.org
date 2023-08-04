@@ -18,13 +18,19 @@ const layoutConfig = {
 		},
 		content: [{
 			type: "row",
-			content: [{
-					title: "hello.fu",
-					type: "component",
+			content: [
+				{
+					type: "stack",
 					width: 1,
-					isClosable: false,
-					componentName: "editor",
-					componentState: { filename: "hello.fu" }
+					id: "stack-fu",
+					content: [{
+							id: "hello.fu",
+							title: "hello.fu",
+							type: "component",
+							isClosable: false,
+							componentName: "editor",
+							componentState: { filename: "hello.fu" }
+						}]
 				},
 				{
 					type: "column",
@@ -43,12 +49,6 @@ layout.registerComponent("editor", function(container, componentState) {
 	});
 layout.init();
 
-const sourceEditor = ace.edit("editor-hello.fu", {
-		theme: "ace/theme/monokai",
-		mode: "ace/mode/csharp",
-		showPrintMargin: false
-	});
-
 class StringWriter
 {
 	#buf = "";
@@ -66,11 +66,16 @@ class StringWriter
 
 class PlaygroundHost extends GenHost
 {
+	hasErrors = false;
+	annotations = new Map();
 	outputs = new Map();
 
 	reportError(filename, startLine, startColumn, endLine, endColumn, message)
 	{
-		this.annotations.push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
+		this.hasErrors = true;
+		if (!this.annotations.has(filename))
+			this.annotations.set(filename, []);
+		this.annotations.get(filename).push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
 		// sourceEditor.session.addMarker(new ace.Range(startLine - 1, startColumn - 1, endLine - 1, endColumn - 1), "ace_error-marker", "text", true);
 	}
 
@@ -95,9 +100,9 @@ function emit(program, host, gen, lang, mode)
 	gen.namespace = "";
 	gen.outputFile = "hello." + lang;
 	gen.setHost(host);
-	const errorCount = host.annotations.length;
+	host.hasErrors = false;
 	gen.writeProgram(program);
-	if (host.annotations.length == errorCount) {
+	if (!host.hasErrors) {
 		const stack = layout.root.getItemsById("stack-" + lang)[0];
 		for (const item of stack.getItemsByFilter(item => !host.outputs.has(item.config.id)))
 			item.remove();
@@ -127,21 +132,24 @@ function transpile()
 {
 //	for (const markerId of Object.keys(sourceEditor.session.getMarkers()))
 //		sourceEditor.session.removeMarker(markerId);
-	const input = new TextEncoder().encode(sourceEditor.session.doc.getValue());
 	const host = new PlaygroundHost();
-	host.annotations = [];
 	const system = FuSystem.new();
 	const parser = new FuParser();
 	parser.setHost(host);
 	parser.program = new FuProgram();
 	parser.program.parent = system;
 	parser.program.system = system;
-	parser.parse("hello.fu", input, input.length);
-	if (host.annotations.length == 0) {
+	const sources = layout.root.getItemsById("stack-fu")[0].contentItems;
+	for (const item of sources) {
+		const filename = item.config.id;
+		const input = new TextEncoder().encode(ace.edit("editor-" + filename).session.doc.getValue());
+		parser.parse(filename, input, input.length);
+	}
+	if (!host.hasErrors) {
 		const sema = new FuSema();
 		sema.setHost(host);
 		sema.process(parser.program);
-		if (host.annotations.length == 0) {
+		if (!host.hasErrors) {
 			emit(parser.program, host, new GenC(), "c", "c_cpp");
 			emit(parser.program, host, new GenCpp(), "cpp", "c_cpp");
 			emit(parser.program, host, new GenCs(), "cs", "csharp");
@@ -153,7 +161,15 @@ function transpile()
 			emit(parser.program, host, new GenTs().withGenFullCode(), "ts", "typescript");
 		}
 	}
-	sourceEditor.session.setAnnotations(host.annotations);
+	for (const item of sources) {
+		const filename = item.config.id;
+		ace.edit("editor-" + filename).session.setAnnotations(host.annotations.get(filename) || []);
+	}
 }
 
+const sourceEditor = ace.edit("editor-hello.fu", {
+		theme: "ace/theme/monokai",
+		mode: "ace/mode/csharp",
+		showPrintMargin: false
+	});
 sourceEditor.session.on("change", transpile);
