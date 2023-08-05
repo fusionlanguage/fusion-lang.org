@@ -1,4 +1,4 @@
-import { FuParser, FuProgram, FuSystem, FuSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./fut.js";
+import { FuParser, FuProgram, FuSystem, FuSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./libfut.js";
 
 function getEditorComponent(filename)
 {
