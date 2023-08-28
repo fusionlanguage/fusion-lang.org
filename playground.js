@@ -53,6 +53,7 @@ layout.registerComponent("editor", function(container, componentState) {
 		container.getElement().html(`<div id="editor-${componentState.filename}" class="editor"></div>`);
 	});
 layout.init();
+addEventListener("resize", e => layout.updateSize());
 
 class StringWriter
 {
