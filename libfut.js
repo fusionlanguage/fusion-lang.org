@@ -7639,7 +7639,7 @@ export class GenBase extends FuVisitor
 		this.writeEqualExpr(left, right, parent, GenBase.getEqOp(not));
 	}
 
-	#writeRel(expr, parent, op)
+	writeRel(expr, parent, op)
 	{
 		this.writeBinaryExpr(expr, parent > FuPriority.COND_AND, FuPriority.REL, op, FuPriority.REL);
 	}
@@ -7714,16 +7714,16 @@ export class GenBase extends FuVisitor
 			this.writeEqual(expr.left, expr.right, parent, true);
 			break;
 		case FuToken.LESS:
-			this.#writeRel(expr, parent, " < ");
+			this.writeRel(expr, parent, " < ");
 			break;
 		case FuToken.LESS_OR_EQUAL:
-			this.#writeRel(expr, parent, " <= ");
+			this.writeRel(expr, parent, " <= ");
 			break;
 		case FuToken.GREATER:
-			this.#writeRel(expr, parent, " > ");
+			this.writeRel(expr, parent, " > ");
 			break;
 		case FuToken.GREATER_OR_EQUAL:
-			this.#writeRel(expr, parent, " >= ");
+			this.writeRel(expr, parent, " >= ");
 			break;
 		case FuToken.AND:
 			this.writeAnd(expr, parent);
@@ -8321,6 +8321,11 @@ export class GenBase extends FuVisitor
 		expr.accept(this, FuPriority.ARGUMENT);
 	}
 
+	writeSwitchCaseValue(statement, value)
+	{
+		this.writeCoercedLiteral(statement.value.type, value);
+	}
+
 	writeSwitchCaseBody(statements)
 	{
 		this.writeStatements(statements);
@@ -8330,7 +8335,7 @@ export class GenBase extends FuVisitor
 	{
 		for (const value of kase.values) {
 			this.write("case ");
-			this.writeCoercedLiteral(statement.value.type, value);
+			this.writeSwitchCaseValue(statement, value);
 			this.writeCharLine(58);
 		}
 		this.indent++;
@@ -9858,8 +9863,9 @@ export class GenC extends GenCCpp
 
 	static #isNewString(expr)
 	{
+		let binary;
 		let call;
-		return expr instanceof FuInterpolatedString || ((call = expr) instanceof FuCallExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && (call.method.symbol.id != FuId.STRING_SUBSTRING || call.arguments.length == 2));
+		return expr instanceof FuInterpolatedString || ((binary = expr) instanceof FuBinaryExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && binary.op == FuToken.PLUS) || ((call = expr) instanceof FuCallExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && (call.method.symbol.id != FuId.STRING_SUBSTRING || call.arguments.length == 2));
 	}
 
 	#writeStringStorageValue(expr)
@@ -11591,8 +11597,17 @@ export class GenC extends GenCCpp
 	{
 		switch (expr.op) {
 		case FuToken.PLUS:
-			if (expr.type.id == FuId.STRING_STORAGE_TYPE)
-				this.notSupported(expr, "String concatenation");
+			if (expr.type.id == FuId.STRING_STORAGE_TYPE) {
+				this.#stringFormat = true;
+				this.include("stdarg.h");
+				this.include("stdio.h");
+				this.write("FuString_Format(\"%s%s\", ");
+				expr.left.accept(this, FuPriority.ARGUMENT);
+				this.write(", ");
+				expr.right.accept(this, FuPriority.ARGUMENT);
+				this.writeChar(41);
+				return;
+			}
 			break;
 		case FuToken.EQUAL:
 		case FuToken.NOT_EQUAL:
@@ -14400,8 +14415,9 @@ export class GenCpp extends GenCCpp
 
 	writeStringLength(expr)
 	{
-		this.#writeNotRawStringLiteral(expr, FuPriority.PRIMARY);
-		this.write(".length()");
+		this.write("std::ssize(");
+		this.#writeNotRawStringLiteral(expr, FuPriority.ARGUMENT);
+		this.writeChar(41);
 	}
 
 	#writeMatchProperty(expr, name)
@@ -14425,9 +14441,9 @@ export class GenCpp extends GenCCpp
 		case FuId.DICTIONARY_COUNT:
 		case FuId.SORTED_DICTIONARY_COUNT:
 		case FuId.ORDERED_DICTIONARY_COUNT:
-			expr.left.accept(this, FuPriority.PRIMARY);
-			this.writeMemberOp(expr.left, expr);
-			this.write("size()");
+			this.write("std::ssize(");
+			this.#writeCollectionObject(expr.left, FuPriority.ARGUMENT);
+			this.writeChar(41);
 			break;
 		case FuId.MATCH_START:
 			this.#writeMatchProperty(expr, "position");
@@ -16340,6 +16356,19 @@ export class GenD extends GenCCppD
 		return false;
 	}
 
+	static #isTransitiveConst(array)
+	{
+		while (!(array instanceof FuReadWriteClassType)) {
+			let element;
+			if (!((element = array.getElementType()) instanceof FuClassType))
+				return true;
+			if (element.class.id != FuId.ARRAY_PTR_CLASS)
+				return false;
+			array = element;
+		}
+		return false;
+	}
+
 	static #isStructPtr(type)
 	{
 		let ptr;
@@ -16387,7 +16416,13 @@ export class GenD extends GenCCppD
 				break;
 			case FuId.ARRAY_STORAGE_CLASS:
 			case FuId.ARRAY_PTR_CLASS:
-				this.#writeElementType(klass.getElementType());
+				if (promote && GenD.#isTransitiveConst(klass)) {
+					this.write("const(");
+					this.#writeElementType(klass.getElementType());
+					this.writeChar(41);
+				}
+				else
+					this.#writeElementType(klass.getElementType());
 				this.writeChar(91);
 				let arrayStorage;
 				if ((arrayStorage = klass) instanceof FuArrayStorageType)
@@ -17330,7 +17365,7 @@ export class GenD extends GenCCppD
 	writeConst(konst)
 	{
 		this.writeDoc(konst.documentation);
-		this.write("static ");
+		this.write("static immutable ");
 		this.writeTypeAndName(konst);
 		this.write(" = ");
 		this.writeCoercedExpr(konst.type, konst.value);
@@ -17447,7 +17482,7 @@ export class GenD extends GenCCppD
 		this.writeLine("private static struct FuResource");
 		this.openBlock();
 		for (const [name, content] of Object.entries(resources).sort((a, b) => a[0].localeCompare(b[0]))) {
-			this.write("private static ubyte[] ");
+			this.write("private static immutable ubyte[] ");
 			this.writeResourceName(name);
 			this.writeLine(" = [");
 			this.writeChar(9);
@@ -17752,6 +17787,16 @@ export class GenJava extends GenTyped
 		}
 	}
 
+	static #isJavaEnum(enu)
+	{
+		for (let symbol = enu.first; symbol != null; symbol = symbol.next) {
+			let konst;
+			if ((konst = symbol) instanceof FuConst && !(konst.value instanceof FuImplicitEnumValue))
+				return false;
+		}
+		return true;
+	}
+
 	#writeCollectionType(name, elementType)
 	{
 		this.include("java.util." + name);
@@ -17799,7 +17844,7 @@ export class GenJava extends GenTyped
 		}
 		else if (type instanceof FuEnum) {
 			const enu = type;
-			this.write(enu.id == FuId.BOOL_TYPE ? needClass ? "Boolean" : "boolean" : needClass ? "Integer" : "int");
+			this.write(enu.id == FuId.BOOL_TYPE ? needClass ? "Boolean" : "boolean" : GenJava.#isJavaEnum(enu) ? enu.name : needClass ? "Integer" : "int");
 		}
 		else if (type instanceof FuClassType) {
 			const klass = type;
@@ -17975,6 +18020,22 @@ export class GenJava extends GenTyped
 		}
 		else
 			super.writeCoercedLiteral(type, expr);
+	}
+
+	writeRel(expr, parent, op)
+	{
+		let enu;
+		if ((enu = expr.left.type) instanceof FuEnum && GenJava.#isJavaEnum(enu)) {
+			if (parent > FuPriority.COND_AND)
+				this.writeChar(40);
+			this.writeMethodCall(expr.left, "compareTo", expr.right);
+			this.write(op);
+			this.writeChar(48);
+			if (parent > FuPriority.COND_AND)
+				this.writeChar(41);
+		}
+		else
+			super.writeRel(expr, parent, op);
 	}
 
 	writeAnd(expr, parent)
@@ -18585,6 +18646,16 @@ export class GenJava extends GenTyped
 			super.writeSwitchValue(expr);
 	}
 
+	writeSwitchCaseValue(statement, value)
+	{
+		let symbol;
+		let enu;
+		if ((symbol = value) instanceof FuSymbolReference && (enu = symbol.symbol.parent) instanceof FuEnum && GenJava.#isJavaEnum(enu))
+			this.writeUppercaseWithUnderscores(symbol.name);
+		else
+			super.writeSwitchCaseValue(statement, value);
+	}
+
 	#writeSwitchCaseVar(expr)
 	{
 		expr.accept(this, FuPriority.ARGUMENT);
@@ -18659,10 +18730,23 @@ export class GenJava extends GenTyped
 		this.writeNewLine();
 		this.writeDoc(enu.documentation);
 		this.writePublic(enu);
-		this.write("interface ");
+		let javaEnum = GenJava.#isJavaEnum(enu);
+		this.write(javaEnum ? "enum " : "interface ");
 		this.writeLine(enu.name);
 		this.openBlock();
-		enu.acceptValues(this);
+		if (javaEnum) {
+			for (let symbol = enu.getFirstValue();;) {
+				this.writeDoc(symbol.documentation);
+				this.writeUppercaseWithUnderscores(symbol.name);
+				symbol = symbol.next;
+				if (symbol == null)
+					break;
+				this.writeCharLine(44);
+			}
+			this.writeNewLine();
+		}
+		else
+			enu.acceptValues(this);
 		this.closeBlock();
 		this.closeFile();
 	}
