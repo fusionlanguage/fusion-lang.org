@@ -48,7 +48,7 @@ const layoutConfig = {
 				}]
 			}]
 	};
-const layout = new GoldenLayout(layoutConfig);
+const layout = new GoldenLayout(layoutConfig, document.getElementById("goldenLayout"));
 layout.registerComponent("editor", function(container, componentState) {
 		container.getElement().html(`<div id="editor-${componentState.filename}" class="editor"></div>`);
 	});

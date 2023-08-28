@@ -15,9 +15,15 @@
 <link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
 <link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-dark-theme.css" />
 <style>
-	html {
+	html, body {
 		background: #000;
 		color: #fff;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	#goldenLayout {
+		flex-grow: 1;
 	}
 	.editor {
 		position: absolute;
@@ -30,5 +36,6 @@
 </head>
 <body>
 <h1>Fusion Playground</h1>
+<div id="goldenLayout"></div>
 </body>
 </html>
