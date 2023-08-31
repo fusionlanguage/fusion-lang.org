@@ -1,4 +1,7 @@
 public class HelloFu
 {
-    public static string GetMessage() => "Hello, world!";
+	public static string GetMessage()
+	{
+		return "Hello, world!";
+	}
 }
