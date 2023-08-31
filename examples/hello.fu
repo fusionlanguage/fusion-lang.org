@@ -1,0 +1,4 @@
+public class HelloFu
+{
+    public static string GetMessage() => "Hello, world!";
+}

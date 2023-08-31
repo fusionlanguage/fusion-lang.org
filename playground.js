@@ -1,5 +1,13 @@
 import { FuParser, FuProgram, FuSystem, FuSema, GenC, GenCpp, GenCs, GenD, GenJava, GenJs, GenPy, GenSwift, GenTs, GenHost } from "./libfut.js";
 
+const example2file = {
+	hello: "hello.fu",
+	qoi: "QOI.fu",
+	qoa: "QOA.fu",
+	datamatrix: "DataMatrixEncoder.fu",
+	ray: "RayTracer.fu"
+};
+
 function getEditorComponent(filename)
 {
 	return {
@@ -172,3 +180,25 @@ const sourceEditor = ace.edit("editor-hello.fu", {
 		showPrintMargin: false
 	});
 sourceEditor.session.on("change", transpile);
+
+function setSource(filename, content)
+{
+	sourceEditor.session.doc.setValue(content);
+}
+
+function loadSample()
+{
+	const example = decodeURIComponent(location.hash).substr(1);
+	const filename = example2file[example] || "hello.fu";
+	const request = new XMLHttpRequest();
+	request.open("GET", "examples/" + filename, true);
+	request.onload = e => {
+			if (request.status == 200 || request.status == 0)
+				setSource(filename, request.response);
+		};
+	request.send();
+}
+
+addEventListener("load", loadSample);
+addEventListener("hashchange", loadSample);
+document.getElementById("sampleSelect").addEventListener("change", e => location.assign("#" + e.target.value));
