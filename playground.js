@@ -8,18 +8,6 @@ const example2file = {
 	ray: "RayTracer.fu"
 };
 
-function getEditorComponent(filename)
-{
-	return {
-			type: "component",
-			isClosable: false,
-			id: filename,
-			title: filename,
-			componentName: "editor",
-			componentState: { filename: filename }
-		};
-}
-
 function getOutputRow(lang1, lang2, lang3)
 {
 	return {
@@ -43,7 +31,7 @@ const layoutConfig = {
 					type: "stack",
 					width: 1,
 					id: "stack-fu",
-					content: [ getEditorComponent("hello.fu") ]
+					isClosable: false
 				},
 				{
 					type: "column",
@@ -90,7 +78,6 @@ class PlaygroundHost extends GenHost
 		if (!this.annotations.has(filename))
 			this.annotations.set(filename, []);
 		this.annotations.get(filename).push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
-		// sourceEditor.session.addMarker(new ace.Range(startLine - 1, startColumn - 1, endLine - 1, endColumn - 1), "ace_error-marker", "text", true);
 	}
 
 	createFile(directory, filename)
@@ -105,8 +92,30 @@ class PlaygroundHost extends GenHost
 	}
 }
 
-// sourceEditor.session.addMarker(new Range(0, 14, 0, 16), "ace_error-marker", "text", true);
-// sourceEditor.session.setAnnotations([{ row: 0, column: 1, text: "foobar", type: "error" }]);
+function ensureEditor(stack, filename, mode, content)
+{
+	if (stack.getItemsById(filename).length == 0) {
+		stack.addChild({
+				type: "component",
+				isClosable: false,
+				id: filename,
+				title: filename,
+				componentName: "editor",
+				componentState: { filename: filename }
+			});
+	}
+	const isSource = filename.endsWith(".fu");
+	const session = ace.edit("editor-" + filename, {
+			theme: "ace/theme/monokai",
+			mode: "ace/mode/" + mode,
+			showPrintMargin: false,
+			useWorker: false,
+			readOnly: !isSource
+		}).session;
+	if (isSource)
+		session.on("change", transpile);
+	session.doc.setValue(content);
+}
 
 function emit(program, host, gen, filename, lang, mode)
 {
@@ -120,24 +129,13 @@ function emit(program, host, gen, filename, lang, mode)
 		const stack = layout.root.getItemsById("stack-" + lang)[0];
 		for (const item of stack.getItemsByFilter(item => !host.outputs.has(item.config.id)))
 			item.remove();
-		for (const [filename, w] of host.outputs) {
-			if (stack.getItemsById(filename).length == 0)
-				stack.addChild(getEditorComponent(filename));
-			ace.edit("editor-" + filename, {
-					theme: "ace/theme/monokai",
-					mode: "ace/mode/" + mode,
-					showPrintMargin: false,
-					useWorker: false,
-					readOnly: true
-				}).session.doc.setValue(w.toString());
-		}
+		for (const [filename, w] of host.outputs)
+			ensureEditor(stack, filename, mode, w.toString());
 	}
 }
 
 function transpile()
 {
-//	for (const markerId of Object.keys(sourceEditor.session.getMarkers()))
-//		sourceEditor.session.removeMarker(markerId);
 	const host = new PlaygroundHost();
 	const system = FuSystem.new();
 	const parser = new FuParser();
@@ -174,21 +172,18 @@ function transpile()
 	}
 }
 
-const sourceEditor = ace.edit("editor-hello.fu", {
-		theme: "ace/theme/monokai",
-		mode: "ace/mode/csharp",
-		showPrintMargin: false
-	});
-sourceEditor.session.on("change", transpile);
-
 function setSource(filename, content)
 {
-	sourceEditor.session.doc.setValue(content);
+	const stack = layout.root.getItemsById("stack-fu")[0];
+	for (const item of stack.contentItems)
+		item.remove();
+	ensureEditor(stack, filename, "csharp", content);
 }
 
 function loadSample()
 {
 	const example = decodeURIComponent(location.hash).substr(1);
+	document.getElementById("sampleSelect").value = example;
 	const filename = example2file[example] || "hello.fu";
 	const request = new XMLHttpRequest();
 	request.open("GET", "examples/" + filename, true);
