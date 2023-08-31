@@ -24,6 +24,10 @@
 		display: flex;
 		flex-direction: column;
 	}
+	h1 {
+		display: inline;
+		margin-right: 1em;
+	}
 	#goldenLayout {
 		flex-grow: 1;
 	}
@@ -37,8 +41,10 @@
 </style>
 </head>
 <body>
+<div>
 <h1>Fusion Playground</h1>
 <a class="github-fork-ribbon" href="https://github.com/fusionlanguage/fut" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+Sample:
 <select id="sampleSelect">
 	<option value="">Hello, world!</option>
 	<option value="qoi">Quite OK Image</option>
@@ -46,6 +52,7 @@
 	<option value="datamatrix">Data Matrix Encoder</option>
 	<option value="ray">Toy Ray Tracer</option>
 </select>
+</div>
 <div id="goldenLayout"></div>
 </body>
 </html>
