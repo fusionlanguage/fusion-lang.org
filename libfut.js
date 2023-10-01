@@ -108,10 +108,11 @@ export const FuToken = {
 	WHEN : 93,
 	WHILE : 94,
 	END_OF_LINE : 95,
-	PRE_IF : 96,
-	PRE_EL_IF : 97,
-	PRE_ELSE : 98,
-	PRE_END_IF : 99
+	PRE_UNKNOWN : 96,
+	PRE_IF : 97,
+	PRE_EL_IF : 98,
+	PRE_ELSE : 99,
+	PRE_END_IF : 100
 }
 
 const FuPreState = {
@@ -468,22 +469,14 @@ export class FuLexer
 		}
 	}
 
+	#endWord(c)
+	{
+		return this.#eatChar(c) && !FuLexer.isLetterOrDigit(this.peekChar());
+	}
+
 	getLexeme()
 	{
 		return new TextDecoder().decode(this.input.subarray(this.lexemeOffset, this.lexemeOffset + this.charOffset - this.lexemeOffset));
-	}
-
-	#readId(c)
-	{
-		if (FuLexer.isLetterOrDigit(c)) {
-			while (FuLexer.isLetterOrDigit(this.peekChar()))
-				this.readChar();
-			this.stringValue = this.getLexeme();
-		}
-		else {
-			this.reportError("Invalid character");
-			this.stringValue = "";
-		}
 	}
 
 	#readPreToken()
@@ -507,20 +500,33 @@ export class FuLexer
 			case 35:
 				if (!atLineStart)
 					return FuToken.HASH;
-				this.lexemeOffset = this.charOffset;
-				this.#readId(this.readChar());
-				switch (this.stringValue) {
-				case "if":
-					return FuToken.PRE_IF;
-				case "elif":
-					return FuToken.PRE_EL_IF;
-				case "else":
-					return FuToken.PRE_ELSE;
-				case "endif":
-					return FuToken.PRE_END_IF;
+				switch (this.peekChar()) {
+				case 105:
+					this.readChar();
+					return this.#endWord(102) ? FuToken.PRE_IF : FuToken.PRE_UNKNOWN;
+				case 101:
+					this.readChar();
+					switch (this.peekChar()) {
+					case 108:
+						this.readChar();
+						switch (this.peekChar()) {
+						case 105:
+							this.readChar();
+							return this.#endWord(102) ? FuToken.PRE_EL_IF : FuToken.PRE_UNKNOWN;
+						case 115:
+							this.readChar();
+							return this.#endWord(101) ? FuToken.PRE_ELSE : FuToken.PRE_UNKNOWN;
+						default:
+							return FuToken.PRE_UNKNOWN;
+						}
+					case 110:
+						this.readChar();
+						return this.#eatChar(100) && this.#eatChar(105) && this.#endWord(102) ? FuToken.PRE_END_IF : FuToken.PRE_UNKNOWN;
+					default:
+						return FuToken.PRE_UNKNOWN;
+					}
 				default:
-					this.reportError("Unknown preprocessor directive");
-					continue;
+					return FuToken.PRE_UNKNOWN;
 				}
 			case 59:
 				return FuToken.SEMICOLON;
@@ -697,10 +703,14 @@ export class FuLexer
 			case 57:
 				return this.#readNumberLiteral(BigInt(c - 48));
 			default:
-				this.#readId(c);
-				switch (this.stringValue) {
-				case "":
+				if (!FuLexer.isLetterOrDigit(c)) {
+					this.reportError("Invalid character");
 					continue;
+				}
+				while (FuLexer.isLetterOrDigit(this.peekChar()))
+					this.readChar();
+				this.stringValue = this.getLexeme();
+				switch (this.stringValue) {
 				case "abstract":
 					return FuToken.ABSTRACT;
 				case "assert":
@@ -985,6 +995,8 @@ export class FuLexer
 			return "'while'";
 		case FuToken.END_OF_LINE:
 			return "end-of-line";
+		case FuToken.PRE_UNKNOWN:
+			return "unknown preprocessor directive";
 		case FuToken.PRE_IF:
 			return "'#if'";
 		case FuToken.PRE_EL_IF:
@@ -3202,9 +3214,9 @@ export class FuSystem extends FuScope
 		matchClass.add(FuMethodGroup.new(FuMethod.newMutator(FuVisibility.PUBLIC, this.boolType, FuId.MATCH_FIND_STR, "Find", FuVar.new(this.stringPtrType, "input"), FuVar.new(this.stringPtrType, "pattern"), FuVar.new(this.regexOptionsEnum, "options", regexOptionsNone)), FuMethod.newMutator(FuVisibility.PUBLIC, this.boolType, FuId.MATCH_FIND_REGEX, "Find", FuVar.new(this.stringPtrType, "input"), FuVar.new(Object.assign(new FuClassType(), { class: regexClass }), "pattern"))));
 		matchClass.add(FuProperty.new(this.intType, FuId.MATCH_START, "Start"));
 		matchClass.add(FuProperty.new(this.intType, FuId.MATCH_END, "End"));
-		matchClass.add(FuMethod.new(FuVisibility.PUBLIC, this.stringPtrType, FuId.MATCH_GET_CAPTURE, "GetCapture", FuVar.new(this.#uIntType, "group")));
+		matchClass.add(FuMethod.new(FuVisibility.PUBLIC, this.stringStorageType, FuId.MATCH_GET_CAPTURE, "GetCapture", FuVar.new(this.#uIntType, "group")));
 		matchClass.add(FuProperty.new(this.#uIntType, FuId.MATCH_LENGTH, "Length"));
-		matchClass.add(FuProperty.new(this.stringPtrType, FuId.MATCH_VALUE, "Value"));
+		matchClass.add(FuProperty.new(this.stringStorageType, FuId.MATCH_VALUE, "Value"));
 		this.add(matchClass);
 		let floatIntType = Object.assign(new FuFloatingType(), { id: FuId.FLOAT_INT_TYPE, name: "float" });
 		let mathClass = FuClass.new(FuCallType.STATIC, FuId.NONE, "Math");
@@ -8004,11 +8016,7 @@ export class GenBase extends FuVisitor
 		}
 		else if (expr instanceof FuBinaryExpr) {
 			const binary = expr;
-			if (GenBase.hasTemporaries(binary.left))
-				return true;
-			if (binary.op == FuToken.IS)
-				return binary.right instanceof FuVar;
-			return GenBase.hasTemporaries(binary.right);
+			return GenBase.hasTemporaries(binary.left) || (binary.op == FuToken.IS ? binary.right instanceof FuVar : GenBase.hasTemporaries(binary.right));
 		}
 		else if (expr instanceof FuSelectExpr) {
 			const select = expr;
@@ -8513,16 +8521,29 @@ export class GenBase extends FuVisitor
 		this.writeRemainingParameters(method, true, defaultArguments);
 	}
 
+	isShortMethod(method)
+	{
+		return false;
+	}
+
 	writeBody(method)
 	{
 		if (method.callType == FuCallType.ABSTRACT)
 			this.writeCharLine(59);
 		else {
-			this.writeNewLine();
 			this.currentMethod = method;
-			this.openBlock();
-			this.flattenBlock(method.body);
-			this.closeBlock();
+			if (this.isShortMethod(method)) {
+				this.write(" => ");
+				const ret = method.body;
+				this.writeCoerced(method.type, ret.value, FuPriority.ARGUMENT);
+				this.writeCharLine(59);
+			}
+			else {
+				this.writeNewLine();
+				this.openBlock();
+				this.flattenBlock(method.body);
+				this.closeBlock();
+			}
 			this.currentMethod = null;
 		}
 	}
@@ -9286,7 +9307,7 @@ export class GenC extends GenCCpp
 			expr.accept(this, FuPriority.PRIMARY);
 		}
 		else
-			expr.accept(this, FuPriority.ARGUMENT);
+			this.#writeTemporaryOrExpr(expr, FuPriority.ARGUMENT);
 	}
 
 	#writeStringPtrAddCast(call)
@@ -9865,7 +9886,8 @@ export class GenC extends GenCCpp
 	{
 		let binary;
 		let call;
-		return expr instanceof FuInterpolatedString || ((binary = expr) instanceof FuBinaryExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && binary.op == FuToken.PLUS) || ((call = expr) instanceof FuCallExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && (call.method.symbol.id != FuId.STRING_SUBSTRING || call.arguments.length == 2));
+		let symbol;
+		return expr instanceof FuInterpolatedString || ((binary = expr) instanceof FuBinaryExpr && binary.op == FuToken.PLUS && binary.type.id == FuId.STRING_STORAGE_TYPE) || ((call = expr) instanceof FuCallExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && (call.method.symbol.id != FuId.STRING_SUBSTRING || call.arguments.length == 2)) || ((symbol = expr) instanceof FuSymbolReference && symbol.symbol.id == FuId.MATCH_VALUE);
 	}
 
 	#writeStringStorageValue(expr)
@@ -10094,8 +10116,11 @@ export class GenC extends GenCCpp
 		}
 		else if (expr instanceof FuInterpolatedString) {
 			const interp = expr;
-			for (const part of interp.parts)
+			for (const part of interp.parts) {
 				this.#writeCTemporaries(part.argument);
+				if (GenC.isStringSubstring(part.argument) == null)
+					this.#writeStorageTemporary(part.argument);
+			}
 		}
 		else if (expr instanceof FuSymbolReference) {
 			const symbol = expr;
@@ -10141,6 +10166,11 @@ export class GenC extends GenCCpp
 
 	static #hasTemporariesToDestruct(expr)
 	{
+		return GenC.#containsTemporariesToDestruct(expr) || GenC.#isNewString(expr);
+	}
+
+	static #containsTemporariesToDestruct(expr)
+	{
 		if (expr instanceof FuAggregateInitializer) {
 			const init = expr;
 			return init.items.some(field => GenC.#hasTemporariesToDestruct(field));
@@ -10157,7 +10187,7 @@ export class GenC extends GenCCpp
 		}
 		else if (expr instanceof FuUnaryExpr) {
 			const unary = expr;
-			return unary.inner != null && GenC.#hasTemporariesToDestruct(unary.inner);
+			return unary.inner != null && GenC.#containsTemporariesToDestruct(unary.inner);
 		}
 		else if (expr instanceof FuBinaryExpr) {
 			const binary = expr;
@@ -10165,11 +10195,11 @@ export class GenC extends GenCCpp
 		}
 		else if (expr instanceof FuSelectExpr) {
 			const select = expr;
-			return GenC.#hasTemporariesToDestruct(select.cond);
+			return GenC.#containsTemporariesToDestruct(select.cond);
 		}
 		else if (expr instanceof FuCallExpr) {
 			const call = expr;
-			return (call.method.left != null && (GenC.#hasTemporariesToDestruct(call.method.left) || GenC.#isNewString(call.method.left))) || call.arguments.some(arg => GenC.#hasTemporariesToDestruct(arg) || GenC.#isNewString(arg));
+			return (call.method.left != null && GenC.#hasTemporariesToDestruct(call.method.left)) || call.arguments.some(arg => GenC.#hasTemporariesToDestruct(arg));
 		}
 		else
 			throw new Error();
@@ -11881,7 +11911,7 @@ export class GenC extends GenCCpp
 			this.#writeDestructAll();
 			this.writeLine(this.currentMethod.throws ? "return true;" : "return;");
 		}
-		else if (statement.value instanceof FuLiteral || (this.#varsToDestruct.length == 0 && !GenC.#hasTemporariesToDestruct(statement.value))) {
+		else if (statement.value instanceof FuLiteral || (this.#varsToDestruct.length == 0 && !GenC.#containsTemporariesToDestruct(statement.value))) {
 			this.#writeDestructAll();
 			this.#writeCTemporaries(statement.value);
 			super.visitReturn(statement);
@@ -14543,7 +14573,7 @@ export class GenCpp extends GenCCpp
 		case FuToken.IS:
 			if (expr.right instanceof FuSymbolReference) {
 				const symbol = expr.right;
-				if (parent >= FuPriority.OR && parent <= FuPriority.MUL)
+				if (parent == FuPriority.SELECT || (parent >= FuPriority.OR && parent <= FuPriority.MUL))
 					this.write("!!");
 				this.write("dynamic_cast<const ");
 				this.write(symbol.symbol.name);
@@ -15935,6 +15965,11 @@ export class GenCs extends GenTyped
 		this.writeLine("</param>");
 	}
 
+	isShortMethod(method)
+	{
+		return method.body instanceof FuReturn;
+	}
+
 	writeMethod(method)
 	{
 		if (method.id == FuId.CLASS_TO_STRING && method.callType == FuCallType.ABSTRACT)
@@ -15949,14 +15984,7 @@ export class GenCs extends GenTyped
 			this.#writeCallType(method.callType, "sealed override ");
 		this.writeTypeAndName(method);
 		this.writeParameters(method, true);
-		let ret;
-		if ((ret = method.body) instanceof FuReturn) {
-			this.write(" => ");
-			this.writeCoerced(method.type, ret.value, FuPriority.ARGUMENT);
-			this.writeCharLine(59);
-		}
-		else
-			this.writeBody(method);
+		this.writeBody(method);
 	}
 
 	writeClass(klass, program)
@@ -17386,6 +17414,12 @@ export class GenD extends GenCCppD
 			this.writeCoercedExpr(field.type, field.value);
 		}
 		this.writeCharLine(59);
+	}
+
+	isShortMethod(method)
+	{
+		let ret;
+		return (ret = method.body) instanceof FuReturn && !GenD.hasTemporaries(ret.value);
 	}
 
 	writeMethod(method)
