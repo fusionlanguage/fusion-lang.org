@@ -1514,6 +1514,11 @@ export class FuExpr extends FuStatement
 	{
 		return false;
 	}
+
+	isNewString(substringOffset)
+	{
+		return false;
+	}
 }
 
 export class FuSymbol extends FuExpr
@@ -1846,6 +1851,11 @@ export class FuInterpolatedString extends FuExpr
 	{
 		visitor.visitInterpolatedString(this, parent);
 	}
+
+	isNewString(substringOffset)
+	{
+		return true;
+	}
 }
 
 class FuImplicitEnumValue extends FuExpr
@@ -1883,6 +1893,11 @@ export class FuSymbolReference extends FuExpr
 	isReferenceTo(symbol)
 	{
 		return this.symbol == symbol;
+	}
+
+	isNewString(substringOffset)
+	{
+		return this.symbol.id == FuId.MATCH_VALUE;
 	}
 
 	toString()
@@ -1966,6 +1981,11 @@ export class FuBinaryExpr extends FuExpr
 	accept(visitor, parent)
 	{
 		visitor.visitBinaryExpr(this, parent);
+	}
+
+	isNewString(substringOffset)
+	{
+		return this.op == FuToken.PLUS && this.type.id == FuId.STRING_STORAGE_TYPE;
 	}
 
 	isRel()
@@ -2100,6 +2120,11 @@ export class FuCallExpr extends FuExpr
 	accept(visitor, parent)
 	{
 		visitor.visitCallExpr(this, parent);
+	}
+
+	isNewString(substringOffset)
+	{
+		return this.type.id == FuId.STRING_STORAGE_TYPE && (substringOffset || this.method.symbol.id != FuId.STRING_SUBSTRING || this.arguments.length != 1);
 	}
 }
 
@@ -4515,6 +4540,16 @@ export class FuSema
 		return true;
 	}
 
+	#coercePermanent(expr, type)
+	{
+		let ok = this.#coerce(expr, type);
+		if (ok && type.id == FuId.STRING_PTR_TYPE && expr.isNewString(true)) {
+			this.reportError(expr, "New string must be assigned to string()");
+			return false;
+		}
+		return ok;
+	}
+
 	#visitInterpolatedString(expr)
 	{
 		let partsCount = 0;
@@ -5463,7 +5498,7 @@ export class FuSema
 			break;
 		case FuToken.ASSIGN:
 			this.#checkLValue(left);
-			this.#coerce(right, left.type);
+			this.#coercePermanent(right, left.type);
 			expr.left = left;
 			expr.right = right;
 			expr.type = left.type;
@@ -5785,7 +5820,7 @@ export class FuSema
 						if (!((literal = expr.value) instanceof FuLiteral) || !literal.isDefaultValue())
 							this.reportError(expr.value, "Only null, zero and false supported as an array initializer");
 					}
-					this.#coerce(expr.value, type);
+					this.#coercePermanent(expr.value, type);
 				}
 			}
 		}
@@ -6228,7 +6263,7 @@ export class FuSema
 			this.reportError(statement, "Missing return value");
 		else {
 			statement.value = this.#visitExpr(statement.value);
-			this.#coerce(statement.value, this.#currentMethod.type);
+			this.#coercePermanent(statement.value, this.#currentMethod.type);
 			let symbol;
 			let local;
 			if ((symbol = statement.value) instanceof FuSymbolReference && (local = symbol.symbol) instanceof FuVar && ((local.type.isFinal() && !(this.#currentMethod.type instanceof FuStorageType)) || (local.type.id == FuId.STRING_STORAGE_TYPE && this.#currentMethod.type.id != FuId.STRING_STORAGE_TYPE)))
@@ -9885,14 +9920,6 @@ export class GenC extends GenCCpp
 			this.writeChar(41);
 	}
 
-	static #isNewString(expr)
-	{
-		let binary;
-		let call;
-		let symbol;
-		return expr instanceof FuInterpolatedString || ((binary = expr) instanceof FuBinaryExpr && binary.op == FuToken.PLUS && binary.type.id == FuId.STRING_STORAGE_TYPE) || ((call = expr) instanceof FuCallExpr && expr.type.id == FuId.STRING_STORAGE_TYPE && (call.method.symbol.id != FuId.STRING_SUBSTRING || call.arguments.length == 2)) || ((symbol = expr) instanceof FuSymbolReference && symbol.symbol.id == FuId.MATCH_VALUE);
-	}
-
 	#writeStringStorageValue(expr)
 	{
 		let call = GenC.isStringSubstring(expr);
@@ -9905,7 +9932,7 @@ export class GenC extends GenCCpp
 			GenC.getStringSubstringLength(call).accept(this, FuPriority.ARGUMENT);
 			this.writeChar(41);
 		}
-		else if (GenC.#isNewString(expr))
+		else if (expr.isNewString(false))
 			expr.accept(this, FuPriority.ARGUMENT);
 		else {
 			this.include("string.h");
@@ -10097,7 +10124,7 @@ export class GenC extends GenCCpp
 
 	#writeStorageTemporary(expr)
 	{
-		if (GenC.#isNewString(expr) || (expr instanceof FuCallExpr && expr.type instanceof FuStorageType))
+		if (expr.isNewString(false) || (expr instanceof FuCallExpr && expr.type instanceof FuStorageType))
 			this.#writeCTemporary(expr.type, expr);
 	}
 
@@ -10169,7 +10196,7 @@ export class GenC extends GenCCpp
 
 	static #hasTemporariesToDestruct(expr)
 	{
-		return GenC.#containsTemporariesToDestruct(expr) || GenC.#isNewString(expr);
+		return GenC.#containsTemporariesToDestruct(expr) || expr.isNewString(false);
 	}
 
 	static #containsTemporariesToDestruct(expr)
