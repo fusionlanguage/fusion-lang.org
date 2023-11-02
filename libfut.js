@@ -1282,135 +1282,137 @@ export const FuId = {
 	STRING_CLASS : 17,
 	STRING_PTR_TYPE : 18,
 	STRING_STORAGE_TYPE : 19,
-	ARRAY_PTR_CLASS : 20,
-	ARRAY_STORAGE_CLASS : 21,
-	LIST_CLASS : 22,
-	QUEUE_CLASS : 23,
-	STACK_CLASS : 24,
-	HASH_SET_CLASS : 25,
-	SORTED_SET_CLASS : 26,
-	DICTIONARY_CLASS : 27,
-	SORTED_DICTIONARY_CLASS : 28,
-	ORDERED_DICTIONARY_CLASS : 29,
-	TEXT_WRITER_CLASS : 30,
-	STRING_WRITER_CLASS : 31,
-	REGEX_OPTIONS_ENUM : 32,
-	REGEX_CLASS : 33,
-	MATCH_CLASS : 34,
-	LOCK_CLASS : 35,
-	STRING_LENGTH : 36,
-	ARRAY_LENGTH : 37,
-	CONSOLE_ERROR : 38,
-	CLASS_TO_STRING : 39,
-	MATCH_START : 40,
-	MATCH_END : 41,
-	MATCH_LENGTH : 42,
-	MATCH_VALUE : 43,
-	MATH_NA_N : 44,
-	MATH_NEGATIVE_INFINITY : 45,
-	MATH_POSITIVE_INFINITY : 46,
-	ENUM_FROM_INT : 47,
-	ENUM_HAS_FLAG : 48,
-	INT_TRY_PARSE : 49,
-	LONG_TRY_PARSE : 50,
-	DOUBLE_TRY_PARSE : 51,
-	STRING_CONTAINS : 52,
-	STRING_ENDS_WITH : 53,
-	STRING_INDEX_OF : 54,
-	STRING_LAST_INDEX_OF : 55,
-	STRING_REPLACE : 56,
-	STRING_STARTS_WITH : 57,
-	STRING_SUBSTRING : 58,
-	ARRAY_BINARY_SEARCH_ALL : 59,
-	ARRAY_BINARY_SEARCH_PART : 60,
-	ARRAY_CONTAINS : 61,
-	ARRAY_COPY_TO : 62,
-	ARRAY_FILL_ALL : 63,
-	ARRAY_FILL_PART : 64,
-	ARRAY_SORT_ALL : 65,
-	ARRAY_SORT_PART : 66,
-	LIST_ADD : 67,
-	LIST_ADD_RANGE : 68,
-	LIST_ALL : 69,
-	LIST_ANY : 70,
-	LIST_CLEAR : 71,
-	LIST_CONTAINS : 72,
-	LIST_COPY_TO : 73,
-	LIST_COUNT : 74,
-	LIST_INDEX_OF : 75,
-	LIST_INSERT : 76,
-	LIST_LAST : 77,
-	LIST_REMOVE_AT : 78,
-	LIST_REMOVE_RANGE : 79,
-	LIST_SORT_ALL : 80,
-	LIST_SORT_PART : 81,
-	QUEUE_CLEAR : 82,
-	QUEUE_COUNT : 83,
-	QUEUE_DEQUEUE : 84,
-	QUEUE_ENQUEUE : 85,
-	QUEUE_PEEK : 86,
-	STACK_CLEAR : 87,
-	STACK_COUNT : 88,
-	STACK_PEEK : 89,
-	STACK_PUSH : 90,
-	STACK_POP : 91,
-	HASH_SET_ADD : 92,
-	HASH_SET_CLEAR : 93,
-	HASH_SET_CONTAINS : 94,
-	HASH_SET_COUNT : 95,
-	HASH_SET_REMOVE : 96,
-	SORTED_SET_ADD : 97,
-	SORTED_SET_CLEAR : 98,
-	SORTED_SET_CONTAINS : 99,
-	SORTED_SET_COUNT : 100,
-	SORTED_SET_REMOVE : 101,
-	DICTIONARY_ADD : 102,
-	DICTIONARY_CLEAR : 103,
-	DICTIONARY_CONTAINS_KEY : 104,
-	DICTIONARY_COUNT : 105,
-	DICTIONARY_REMOVE : 106,
-	SORTED_DICTIONARY_CLEAR : 107,
-	SORTED_DICTIONARY_CONTAINS_KEY : 108,
-	SORTED_DICTIONARY_COUNT : 109,
-	SORTED_DICTIONARY_REMOVE : 110,
-	ORDERED_DICTIONARY_CLEAR : 111,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 112,
-	ORDERED_DICTIONARY_COUNT : 113,
-	ORDERED_DICTIONARY_REMOVE : 114,
-	TEXT_WRITER_WRITE : 115,
-	TEXT_WRITER_WRITE_CHAR : 116,
-	TEXT_WRITER_WRITE_CODE_POINT : 117,
-	TEXT_WRITER_WRITE_LINE : 118,
-	CONSOLE_WRITE : 119,
-	CONSOLE_WRITE_LINE : 120,
-	STRING_WRITER_CLEAR : 121,
-	STRING_WRITER_TO_STRING : 122,
-	U_T_F8_GET_BYTE_COUNT : 123,
-	U_T_F8_GET_BYTES : 124,
-	U_T_F8_GET_STRING : 125,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 126,
-	REGEX_COMPILE : 127,
-	REGEX_ESCAPE : 128,
-	REGEX_IS_MATCH_STR : 129,
-	REGEX_IS_MATCH_REGEX : 130,
-	MATCH_FIND_STR : 131,
-	MATCH_FIND_REGEX : 132,
-	MATCH_GET_CAPTURE : 133,
-	MATH_METHOD : 134,
-	MATH_ABS : 135,
-	MATH_CEILING : 136,
-	MATH_CLAMP : 137,
-	MATH_FUSED_MULTIPLY_ADD : 138,
-	MATH_IS_FINITE : 139,
-	MATH_IS_INFINITY : 140,
-	MATH_IS_NA_N : 141,
-	MATH_LOG2 : 142,
-	MATH_MAX_INT : 143,
-	MATH_MAX_DOUBLE : 144,
-	MATH_MIN_INT : 145,
-	MATH_MIN_DOUBLE : 146,
-	MATH_ROUND : 147,
-	MATH_TRUNCATE : 148
+	MAIN_ARGS_TYPE : 20,
+	ARRAY_PTR_CLASS : 21,
+	ARRAY_STORAGE_CLASS : 22,
+	LIST_CLASS : 23,
+	QUEUE_CLASS : 24,
+	STACK_CLASS : 25,
+	HASH_SET_CLASS : 26,
+	SORTED_SET_CLASS : 27,
+	DICTIONARY_CLASS : 28,
+	SORTED_DICTIONARY_CLASS : 29,
+	ORDERED_DICTIONARY_CLASS : 30,
+	TEXT_WRITER_CLASS : 31,
+	STRING_WRITER_CLASS : 32,
+	REGEX_OPTIONS_ENUM : 33,
+	REGEX_CLASS : 34,
+	MATCH_CLASS : 35,
+	LOCK_CLASS : 36,
+	STRING_LENGTH : 37,
+	ARRAY_LENGTH : 38,
+	CONSOLE_ERROR : 39,
+	MAIN : 40,
+	CLASS_TO_STRING : 41,
+	MATCH_START : 42,
+	MATCH_END : 43,
+	MATCH_LENGTH : 44,
+	MATCH_VALUE : 45,
+	MATH_NA_N : 46,
+	MATH_NEGATIVE_INFINITY : 47,
+	MATH_POSITIVE_INFINITY : 48,
+	ENUM_FROM_INT : 49,
+	ENUM_HAS_FLAG : 50,
+	INT_TRY_PARSE : 51,
+	LONG_TRY_PARSE : 52,
+	DOUBLE_TRY_PARSE : 53,
+	STRING_CONTAINS : 54,
+	STRING_ENDS_WITH : 55,
+	STRING_INDEX_OF : 56,
+	STRING_LAST_INDEX_OF : 57,
+	STRING_REPLACE : 58,
+	STRING_STARTS_WITH : 59,
+	STRING_SUBSTRING : 60,
+	ARRAY_BINARY_SEARCH_ALL : 61,
+	ARRAY_BINARY_SEARCH_PART : 62,
+	ARRAY_CONTAINS : 63,
+	ARRAY_COPY_TO : 64,
+	ARRAY_FILL_ALL : 65,
+	ARRAY_FILL_PART : 66,
+	ARRAY_SORT_ALL : 67,
+	ARRAY_SORT_PART : 68,
+	LIST_ADD : 69,
+	LIST_ADD_RANGE : 70,
+	LIST_ALL : 71,
+	LIST_ANY : 72,
+	LIST_CLEAR : 73,
+	LIST_CONTAINS : 74,
+	LIST_COPY_TO : 75,
+	LIST_COUNT : 76,
+	LIST_INDEX_OF : 77,
+	LIST_INSERT : 78,
+	LIST_LAST : 79,
+	LIST_REMOVE_AT : 80,
+	LIST_REMOVE_RANGE : 81,
+	LIST_SORT_ALL : 82,
+	LIST_SORT_PART : 83,
+	QUEUE_CLEAR : 84,
+	QUEUE_COUNT : 85,
+	QUEUE_DEQUEUE : 86,
+	QUEUE_ENQUEUE : 87,
+	QUEUE_PEEK : 88,
+	STACK_CLEAR : 89,
+	STACK_COUNT : 90,
+	STACK_PEEK : 91,
+	STACK_PUSH : 92,
+	STACK_POP : 93,
+	HASH_SET_ADD : 94,
+	HASH_SET_CLEAR : 95,
+	HASH_SET_CONTAINS : 96,
+	HASH_SET_COUNT : 97,
+	HASH_SET_REMOVE : 98,
+	SORTED_SET_ADD : 99,
+	SORTED_SET_CLEAR : 100,
+	SORTED_SET_CONTAINS : 101,
+	SORTED_SET_COUNT : 102,
+	SORTED_SET_REMOVE : 103,
+	DICTIONARY_ADD : 104,
+	DICTIONARY_CLEAR : 105,
+	DICTIONARY_CONTAINS_KEY : 106,
+	DICTIONARY_COUNT : 107,
+	DICTIONARY_REMOVE : 108,
+	SORTED_DICTIONARY_CLEAR : 109,
+	SORTED_DICTIONARY_CONTAINS_KEY : 110,
+	SORTED_DICTIONARY_COUNT : 111,
+	SORTED_DICTIONARY_REMOVE : 112,
+	ORDERED_DICTIONARY_CLEAR : 113,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 114,
+	ORDERED_DICTIONARY_COUNT : 115,
+	ORDERED_DICTIONARY_REMOVE : 116,
+	TEXT_WRITER_WRITE : 117,
+	TEXT_WRITER_WRITE_CHAR : 118,
+	TEXT_WRITER_WRITE_CODE_POINT : 119,
+	TEXT_WRITER_WRITE_LINE : 120,
+	CONSOLE_WRITE : 121,
+	CONSOLE_WRITE_LINE : 122,
+	STRING_WRITER_CLEAR : 123,
+	STRING_WRITER_TO_STRING : 124,
+	U_T_F8_GET_BYTE_COUNT : 125,
+	U_T_F8_GET_BYTES : 126,
+	U_T_F8_GET_STRING : 127,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 128,
+	REGEX_COMPILE : 129,
+	REGEX_ESCAPE : 130,
+	REGEX_IS_MATCH_STR : 131,
+	REGEX_IS_MATCH_REGEX : 132,
+	MATCH_FIND_STR : 133,
+	MATCH_FIND_REGEX : 134,
+	MATCH_GET_CAPTURE : 135,
+	MATH_METHOD : 136,
+	MATH_ABS : 137,
+	MATH_CEILING : 138,
+	MATH_CLAMP : 139,
+	MATH_FUSED_MULTIPLY_ADD : 140,
+	MATH_IS_FINITE : 141,
+	MATH_IS_INFINITY : 142,
+	MATH_IS_NA_N : 143,
+	MATH_LOG2 : 144,
+	MATH_MAX_INT : 145,
+	MATH_MAX_DOUBLE : 146,
+	MATH_MIN_INT : 147,
+	MATH_MIN_DOUBLE : 148,
+	MATH_ROUND : 149,
+	MATH_TRUNCATE : 150
 }
 
 class FuDocInline
@@ -2890,7 +2892,7 @@ export class FuClassType extends FuType
 
 	isArray()
 	{
-		return this.class.id == FuId.ARRAY_PTR_CLASS;
+		return this.class.id == FuId.ARRAY_PTR_CLASS || this.class.id == FuId.ARRAY_STORAGE_CLASS;
 	}
 
 	getBaseType()
@@ -3405,6 +3407,7 @@ export class FuProgram extends FuScope
 	system;
 	topLevelNatives = [];
 	classes = [];
+	main = null;
 	resources = {};
 	regexOptionsEnum = false;
 }
@@ -4725,8 +4728,10 @@ export class FuSema
 			default:
 				switch (expr.symbol.id) {
 				case FuId.ARRAY_LENGTH:
-					const arrayStorage = left.type;
-					return this.#toLiteralLong(expr, BigInt(arrayStorage.length));
+					let arrayStorage;
+					if ((arrayStorage = left.type) instanceof FuArrayStorageType)
+						return this.#toLiteralLong(expr, BigInt(arrayStorage.length));
+					break;
 				case FuId.STRING_LENGTH:
 					let leftLiteral;
 					if ((leftLiteral = left) instanceof FuLiteralString) {
@@ -5306,14 +5311,19 @@ export class FuSema
 			switch (klass.class.id) {
 			case FuId.STRING_CLASS:
 				this.#coerce(right, this.program.system.intType);
-				let stringLiteral;
-				let indexLiteral;
-				if ((stringLiteral = left) instanceof FuLiteralString && (indexLiteral = right) instanceof FuLiteralLong) {
-					let i = indexLiteral.value;
-					if (i >= 0 && i <= 2147483647) {
-						let c = stringLiteral.getAsciiAt(Number(i));
-						if (c >= 0)
-							return FuLiteralChar.new(c, expr.line);
+				let stringIndexRange;
+				if ((stringIndexRange = right.type) instanceof FuRangeType && stringIndexRange.max < 0)
+					this.reportError(expr, "Negative index");
+				else {
+					let stringLiteral;
+					let indexLiteral;
+					if ((stringLiteral = left) instanceof FuLiteralString && (indexLiteral = right) instanceof FuLiteralLong) {
+						let i = indexLiteral.value;
+						if (i >= 0 && i <= 2147483647) {
+							let c = stringLiteral.getAsciiAt(Number(i));
+							if (c >= 0)
+								return FuLiteralChar.new(c, expr.line);
+						}
 					}
 				}
 				type = this.program.system.charType;
@@ -5322,6 +5332,16 @@ export class FuSema
 			case FuId.ARRAY_STORAGE_CLASS:
 			case FuId.LIST_CLASS:
 				this.#coerce(right, this.program.system.intType);
+				let indexRange;
+				if ((indexRange = right.type) instanceof FuRangeType) {
+					if (indexRange.max < 0)
+						this.reportError(expr, "Negative index");
+					else {
+						let array;
+						if ((array = klass) instanceof FuArrayStorageType && indexRange.min >= array.length)
+							this.reportError(expr, "Array index out of bounds");
+					}
+				}
 				type = klass.getElementType();
 				break;
 			case FuId.DICTIONARY_CLASS:
@@ -6549,6 +6569,38 @@ export class FuSema
 					if (param.value != null) {
 						param.value = this.#foldConst(param.value);
 						this.#coerce(param.value, param.type);
+					}
+				}
+				if (method.name == "Main") {
+					if (method.visibility != FuVisibility.PUBLIC || method.callType != FuCallType.STATIC)
+						this.reportError(method, "Main method must be 'public static'");
+					if (method.type.id != FuId.VOID_TYPE && method.type.id != FuId.INT_TYPE)
+						this.reportError(method.type, "Main method must return 'void' or 'int'");
+					switch (method.parameters.count()) {
+					case 0:
+						break;
+					case 1:
+						let args = method.parameters.firstParameter();
+						let argsType;
+						if ((argsType = args.type) instanceof FuClassType && argsType.isArray() && !(argsType instanceof FuReadWriteClassType) && !argsType.nullable) {
+							let argsElement = argsType.getElementType();
+							if (argsElement.id == FuId.STRING_PTR_TYPE && !argsElement.nullable && args.value == null) {
+								argsType.id = FuId.MAIN_ARGS_TYPE;
+								argsType.class = this.program.system.arrayStorageClass;
+								break;
+							}
+						}
+						this.reportError(args, "Main method parameter must be 'string[]'");
+						break;
+					default:
+						this.reportError(method, "Main method must have no parameters or one 'string[]' parameter");
+						break;
+					}
+					if (this.program.main != null)
+						this.reportError(method, "Duplicate Main method");
+					else {
+						method.id = FuId.MAIN;
+						this.program.main = method;
 					}
 				}
 			}
@@ -7849,6 +7901,11 @@ export class GenBase extends FuVisitor
 		}
 	}
 
+	writeArrayLength(expr, parent)
+	{
+		this.writePostfix(expr, ".length");
+	}
+
 	static isReferenceTo(expr, id)
 	{
 		let symbol;
@@ -7886,6 +7943,8 @@ export class GenBase extends FuVisitor
 			this.writeLocalName(expr.symbol, parent);
 		else if (expr.symbol.id == FuId.STRING_LENGTH)
 			this.writeStringLength(expr.left);
+		else if (expr.symbol.id == FuId.ARRAY_LENGTH)
+			this.writeArrayLength(expr.left, parent);
 		else {
 			expr.left.accept(this, FuPriority.PRIMARY);
 			this.writeMemberOp(expr.left, expr);
@@ -9056,6 +9115,28 @@ export class GenCCpp extends GenCCppD
 		}
 	}
 
+	writeArrayLength(expr, parent)
+	{
+		if (parent > FuPriority.ADD)
+			this.writeChar(40);
+		this.write("argc - 1");
+		if (parent > FuPriority.ADD)
+			this.writeChar(41);
+	}
+
+	writeArgsIndexing(index)
+	{
+		this.write("argv[");
+		let literal;
+		if ((literal = index) instanceof FuLiteralLong)
+			this.visitLiteralLong(1n + literal.value);
+		else {
+			this.write("1 + ");
+			index.accept(this, FuPriority.ADD);
+		}
+		this.writeChar(93);
+	}
+
 	visitSymbolReference(expr, parent)
 	{
 		switch (expr.symbol.id) {
@@ -9175,6 +9256,14 @@ export class GenCCpp extends GenCCppD
 		}
 		else
 			this.writeUnreachable(statement);
+	}
+
+	visitReturn(statement)
+	{
+		if (statement.value == null && this.currentMethod.id == FuId.MAIN)
+			this.writeLine("return 0;");
+		else
+			super.visitReturn(statement);
 	}
 
 	visitSwitch(statement)
@@ -9531,7 +9620,10 @@ export class GenC extends GenCCpp
 
 	#writeForeachArrayIndexing(forEach, symbol)
 	{
-		forEach.collection.accept(this, FuPriority.PRIMARY);
+		if (forEach.collection.type.id == FuId.MAIN_ARGS_TYPE)
+			this.write("argv");
+		else
+			forEach.collection.accept(this, FuPriority.PRIMARY);
 		this.writeChar(91);
 		this.writeCamelCaseNotKeyword(symbol.name);
 		this.writeChar(93);
@@ -11652,6 +11744,12 @@ export class GenC extends GenCCpp
 		let klass;
 		if ((klass = expr.left.type) instanceof FuClassType) {
 			switch (klass.class.id) {
+			case FuId.ARRAY_STORAGE_CLASS:
+				if (klass.id == FuId.MAIN_ARGS_TYPE) {
+					this.writeArgsIndexing(expr.right);
+					return;
+				}
+				break;
 			case FuId.LIST_CLASS:
 				if (klass.getElementType() instanceof FuArrayStorageType) {
 					this.writeChar(40);
@@ -11847,22 +11945,9 @@ export class GenC extends GenCCpp
 
 	visitForeach(statement)
 	{
-		let element = statement.getVar().name;
-		if (statement.collection.type instanceof FuArrayStorageType) {
-			const array = statement.collection.type;
-			this.write("for (int ");
-			this.writeCamelCaseNotKeyword(element);
-			this.write(" = 0; ");
-			this.writeCamelCaseNotKeyword(element);
-			this.write(" < ");
-			this.visitLiteralLong(BigInt(array.length));
-			this.write("; ");
-			this.writeCamelCaseNotKeyword(element);
-			this.write("++)");
-			this.writeChild(statement.body);
-		}
-		else if (statement.collection.type instanceof FuClassType) {
-			const klass = statement.collection.type;
+		let klass;
+		if ((klass = statement.collection.type) instanceof FuClassType) {
+			let element = statement.getVar().name;
 			switch (klass.class.id) {
 			case FuId.STRING_CLASS:
 				this.write("for (");
@@ -11873,6 +11958,26 @@ export class GenC extends GenCCpp
 				this.write("; *");
 				this.writeCamelCaseNotKeyword(element);
 				this.write(" != '\\0'; ");
+				this.writeCamelCaseNotKeyword(element);
+				this.write("++)");
+				this.writeChild(statement.body);
+				break;
+			case FuId.ARRAY_STORAGE_CLASS:
+				this.write("for (int ");
+				this.writeCamelCaseNotKeyword(element);
+				let array;
+				if ((array = klass) instanceof FuArrayStorageType) {
+					this.write(" = 0; ");
+					this.writeCamelCaseNotKeyword(element);
+					this.write(" < ");
+					this.visitLiteralLong(BigInt(array.length));
+				}
+				else {
+					this.write(" = 1; ");
+					this.writeCamelCaseNotKeyword(element);
+					this.write(" < argc");
+				}
+				this.write("; ");
 				this.writeCamelCaseNotKeyword(element);
 				this.write("++)");
 				this.writeChild(statement.body);
@@ -11965,7 +12070,10 @@ export class GenC extends GenCCpp
 	{
 		if (statement.value == null) {
 			this.#writeDestructAll();
-			this.writeLine(this.currentMethod.throws ? "return true;" : "return;");
+			if (this.currentMethod.throws)
+				this.writeLine("return true;");
+			else
+				super.visitReturn(statement);
 		}
 		else if (statement.value instanceof FuLiteral || (this.#varsToDestruct.length == 0 && !GenC.#containsTemporariesToDestruct(statement.value))) {
 			this.#writeDestructAll();
@@ -12260,7 +12368,7 @@ export class GenC extends GenCCpp
 				}
 				this.writeConst(konst);
 			}
-			else if ((method = symbol) instanceof FuMethod && method.isLive && (method.visibility == FuVisibility.PUBLIC) == pub && method.callType != FuCallType.ABSTRACT) {
+			else if ((method = symbol) instanceof FuMethod && method.isLive && (method.visibility == FuVisibility.PUBLIC) == pub && method.callType != FuCallType.ABSTRACT && method.id != FuId.MAIN) {
 				this.writeNewLine();
 				this.writeMethodDoc(method);
 				this.#writeSignature(method);
@@ -12456,10 +12564,16 @@ export class GenC extends GenCCpp
 		if (!method.isLive || method.callType == FuCallType.ABSTRACT)
 			return;
 		this.writeNewLine();
-		this.#writeSignature(method);
-		for (let param = method.parameters.firstParameter(); param != null; param = param.nextParameter()) {
-			if (GenC.#needToDestruct(param))
-				this.#varsToDestruct.push(param);
+		if (method.id == FuId.MAIN) {
+			this.write("int main(");
+			this.write(method.parameters.count() == 1 ? "int argc, char **argv)" : "void)");
+		}
+		else {
+			this.#writeSignature(method);
+			for (let param = method.parameters.firstParameter(); param != null; param = param.nextParameter()) {
+				if (GenC.#needToDestruct(param))
+					this.#varsToDestruct.push(param);
+			}
 		}
 		this.writeNewLine();
 		this.currentMethod = method;
@@ -13674,6 +13788,12 @@ export class GenCpp extends GenCCpp
 		const klass = expr.left.type;
 		if (parent != FuPriority.ASSIGN) {
 			switch (klass.class.id) {
+			case FuId.ARRAY_STORAGE_CLASS:
+				if (klass.id == FuId.MAIN_ARGS_TYPE) {
+					this.writeArgsIndexing(expr.right);
+					return;
+				}
+				break;
 			case FuId.DICTIONARY_CLASS:
 			case FuId.SORTED_DICTIONARY_CLASS:
 			case FuId.ORDERED_DICTIONARY_CLASS:
@@ -14715,7 +14835,12 @@ export class GenCpp extends GenCCpp
 					this.writeTypeAndName(element);
 			}
 			this.write(" : ");
-			this.#writeCollectionObject(statement.collection, FuPriority.ARGUMENT);
+			if (collectionType.id == FuId.MAIN_ARGS_TYPE) {
+				this.include("span");
+				this.write("std::span(argv + 1, argc - 1)");
+			}
+			else
+				this.#writeCollectionObject(statement.collection, FuPriority.ARGUMENT);
 		}
 		this.writeChar(41);
 		this.writeChild(statement.body);
@@ -14948,7 +15073,7 @@ export class GenCpp extends GenCCpp
 		}
 		for (let symbol = klass.first; symbol != null; symbol = symbol.next) {
 			let member;
-			if (!((member = symbol) instanceof FuMember) || member.visibility != visibility)
+			if (!((member = symbol) instanceof FuMember) || member.visibility != visibility || member.id == FuId.MAIN)
 				continue;
 			if (member instanceof FuConst) {
 				const konst = member;
@@ -15027,12 +15152,20 @@ export class GenCpp extends GenCCpp
 		if (method.callType == FuCallType.ABSTRACT)
 			return;
 		this.writeNewLine();
-		this.writeType(method.type, true);
-		this.writeChar(32);
-		this.write(method.parent.name);
-		this.write("::");
-		this.#writeCamelCaseNotKeyword(method.name);
-		this.#writeParametersAndConst(method, false);
+		if (method.id == FuId.MAIN) {
+			this.write("int main(");
+			if (method.parameters.count() == 1)
+				this.write("int argc, char **argv");
+			this.writeChar(41);
+		}
+		else {
+			this.writeType(method.type, true);
+			this.writeChar(32);
+			this.write(method.parent.name);
+			this.write("::");
+			this.#writeCamelCaseNotKeyword(method.name);
+			this.#writeParametersAndConst(method, false);
+		}
 		this.writeBody(method);
 	}
 
@@ -15516,6 +15649,11 @@ export class GenCs extends GenTyped
 	}
 
 	writeStringLength(expr)
+	{
+		this.writePostfix(expr, ".Length");
+	}
+
+	writeArrayLength(expr, parent)
 	{
 		this.writePostfix(expr, ".Length");
 	}
@@ -17586,6 +17724,22 @@ export class GenD extends GenCCppD
 		this.closeBlock();
 	}
 
+	#writeMain(main)
+	{
+		this.writeNewLine();
+		this.writeType(main.type, true);
+		if (main.parameters.count() == 1) {
+			this.write(" main(string[] args) => ");
+			this.writeName(main.parent);
+			this.writeLine(".main(args[1 .. $]);");
+		}
+		else {
+			this.write(" main() => ");
+			this.writeName(main.parent);
+			this.writeLine(".main();");
+		}
+	}
+
 	writeProgram(program)
 	{
 		this.#hasListInsert = false;
@@ -17659,6 +17813,8 @@ export class GenD extends GenCCppD
 			this.closeBlock();
 		}
 		this.closeStringWriter();
+		if (program.main != null)
+			this.#writeMain(program.main);
 		this.closeFile();
 	}
 }
@@ -18746,6 +18902,21 @@ export class GenJava extends GenTyped
 		this.writeChild(statement.body);
 	}
 
+	visitReturn(statement)
+	{
+		if (statement.value != null && this.currentMethod.id == FuId.MAIN) {
+			if (!statement.value.isLiteralZero()) {
+				this.ensureChildBlock();
+				this.write("System.exit(");
+				statement.value.accept(this, FuPriority.ARGUMENT);
+				this.writeLine(");");
+			}
+			this.writeLine("return;");
+		}
+		else
+			super.visitReturn(statement);
+	}
+
 	writeSwitchValue(expr)
 	{
 		if (GenJava.#isUnsignedByteIndexing(expr)) {
@@ -18905,14 +19076,21 @@ export class GenJava extends GenTyped
 		default:
 			throw new Error();
 		}
-		this.writeTypeAndName(method);
+		if (method.id == FuId.MAIN)
+			this.write("void main");
+		else
+			this.writeTypeAndName(method);
 		this.writeChar(40);
-		let param = method.parameters.firstParameter();
-		for (let i = 0; i < paramCount; i++) {
-			if (i > 0)
-				this.write(", ");
-			this.writeTypeAndName(param);
-			param = param.nextParameter();
+		if (method.id == FuId.MAIN && paramCount == 0)
+			this.write("String[] args");
+		else {
+			let param = method.parameters.firstParameter();
+			for (let i = 0; i < paramCount; i++) {
+				if (i > 0)
+					this.write(", ");
+				this.writeTypeAndName(param);
+				param = param.nextParameter();
+			}
 		}
 		this.writeChar(41);
 		if (method.throws)
@@ -20334,7 +20512,21 @@ export class GenJsNoModule extends GenBase
 		this.closeBlock();
 	}
 
-	writeLib(resources)
+	#writeMain(main)
+	{
+		this.writeNewLine();
+		if (main.type.id == FuId.INT_TYPE)
+			this.write("process.exit(");
+		this.write(main.parent.name);
+		this.write(".main(");
+		if (main.parameters.count() == 1)
+			this.write("process.argv.slice(2)");
+		if (main.type.id == FuId.INT_TYPE)
+			this.writeChar(41);
+		this.writeCharLine(41);
+	}
+
+	writeLib(program)
 	{
 		if (this.#stringWriter) {
 			this.writeNewLine();
@@ -20358,21 +20550,23 @@ export class GenJsNoModule extends GenBase
 			this.closeBlock();
 			this.closeBlock();
 		}
-		if (Object.keys(resources).length == 0)
-			return;
-		this.writeNewLine();
-		this.writeLine("class Fu");
-		this.openBlock();
-		for (const [name, content] of Object.entries(resources).sort((a, b) => a[0].localeCompare(b[0]))) {
-			this.write("static ");
-			this.writeResourceName(name);
-			this.writeLine(" = new Uint8Array([");
-			this.writeChar(9);
-			this.writeBytes(content);
-			this.writeLine(" ]);");
+		if (Object.keys(program.resources).length > 0) {
+			this.writeNewLine();
+			this.writeLine("class Fu");
+			this.openBlock();
+			for (const [name, content] of Object.entries(program.resources).sort((a, b) => a[0].localeCompare(b[0]))) {
+				this.write("static ");
+				this.writeResourceName(name);
+				this.writeLine(" = new Uint8Array([");
+				this.writeChar(9);
+				this.writeBytes(content);
+				this.writeLine(" ]);");
+			}
+			this.writeNewLine();
+			this.closeBlock();
 		}
-		this.writeNewLine();
-		this.closeBlock();
+		if (program.main != null)
+			this.#writeMain(program.main);
 	}
 
 	writeUseStrict()
@@ -20386,7 +20580,7 @@ export class GenJsNoModule extends GenBase
 		this.createOutputFile();
 		this.writeTopLevelNatives(program);
 		this.writeTypes(program);
-		this.writeLib(program.resources);
+		this.writeLib(program);
 		this.closeFile();
 	}
 }
@@ -20704,7 +20898,7 @@ export class GenTs extends GenJs
 			this.writeTopLevelNatives(program);
 		this.writeTypes(program);
 		if (this.#genFullCode)
-			this.writeLib(program.resources);
+			this.writeLib(program);
 		this.closeFile();
 	}
 }
@@ -21290,6 +21484,9 @@ export class GenSwift extends GenPySwift
 			this.#writeType(klass.getElementType());
 			this.writeChar(62);
 			break;
+		case FuId.ARRAY_STORAGE_CLASS:
+			this.write("ArraySlice<String>");
+			break;
 		case FuId.LIST_CLASS:
 		case FuId.QUEUE_CLASS:
 		case FuId.STACK_CLASS:
@@ -21454,6 +21651,11 @@ export class GenSwift extends GenPySwift
 	{
 		this.#writeUnwrapped(expr, FuPriority.PRIMARY, true);
 		this.write(".count");
+	}
+
+	writeArrayLength(expr, parent)
+	{
+		this.writePostfix(expr, ".count");
 	}
 
 	writeCharAt(expr)
@@ -22852,6 +23054,20 @@ export class GenSwift extends GenPySwift
 		this.closeBlock();
 	}
 
+	#writeMain(main)
+	{
+		this.writeNewLine();
+		if (main.type.id == FuId.INT_TYPE)
+			this.write("exit(Int32(");
+		this.write(main.parent.name);
+		this.write(".main(");
+		if (main.parameters.count() == 1)
+			this.write("CommandLine.arguments[1...]");
+		if (main.type.id == FuId.INT_TYPE)
+			this.write("))");
+		this.writeCharLine(41);
+	}
+
 	writeProgram(program)
 	{
 		this.#system = program.system;
@@ -22864,10 +23080,14 @@ export class GenSwift extends GenPySwift
 		this.writeTypes(program);
 		this.createOutputFile();
 		this.writeTopLevelNatives(program);
+		if (program.main != null && program.main.type.id == FuId.INT_TYPE)
+			this.include("Foundation");
 		this.writeIncludes("import ", "");
 		this.closeStringWriter();
 		this.#writeLibrary();
 		this.#writeResources(program.resources);
+		if (program.main != null)
+			this.#writeMain(program.main);
 		this.closeFile();
 	}
 }
@@ -23135,6 +23355,11 @@ export class GenPy extends GenPySwift
 	}
 
 	writeStringLength(expr)
+	{
+		this.writeCall("len", expr);
+	}
+
+	writeArrayLength(expr, parent)
 	{
 		this.writeCall("len", expr);
 	}
@@ -24188,6 +24413,22 @@ export class GenPy extends GenPySwift
 		this.closeChild();
 	}
 
+	#writeMain(main)
+	{
+		this.writeNewLine();
+		this.writeLine("if __name__ == '__main__':");
+		this.writeChar(9);
+		if (main.type.id == FuId.INT_TYPE)
+			this.write("sys.exit(");
+		this.writeName(main.parent);
+		this.write(".main(");
+		if (main.parameters.count() == 1)
+			this.write("sys.argv[1:]");
+		if (main.type.id == FuId.INT_TYPE)
+			this.writeChar(41);
+		this.writeCharLine(41);
+	}
+
 	writeProgram(program)
 	{
 		this.#switchBreak = false;
@@ -24195,6 +24436,8 @@ export class GenPy extends GenPySwift
 		this.writeTypes(program);
 		this.createOutputFile();
 		this.writeTopLevelNatives(program);
+		if (program.main != null && (program.main.type.id == FuId.INT_TYPE || program.main.parameters.count() == 1))
+			this.include("sys");
 		this.writeIncludes("import ", "");
 		if (this.#switchBreak) {
 			this.writeNewLine();
@@ -24202,6 +24445,8 @@ export class GenPy extends GenPySwift
 		}
 		this.closeStringWriter();
 		this.#writeResources(program.resources);
+		if (program.main != null)
+			this.#writeMain(program.main);
 		this.closeFile();
 	}
 }
