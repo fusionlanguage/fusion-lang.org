@@ -1299,122 +1299,137 @@ export const FuId = {
 	REGEX_OPTIONS_ENUM : 34,
 	REGEX_CLASS : 35,
 	MATCH_CLASS : 36,
-	LOCK_CLASS : 37,
-	STRING_LENGTH : 38,
-	ARRAY_LENGTH : 39,
-	CONSOLE_ERROR : 40,
-	MAIN : 41,
-	CLASS_TO_STRING : 42,
-	MATCH_START : 43,
-	MATCH_END : 44,
-	MATCH_LENGTH : 45,
-	MATCH_VALUE : 46,
-	MATH_NA_N : 47,
-	MATH_NEGATIVE_INFINITY : 48,
-	MATH_POSITIVE_INFINITY : 49,
-	ENUM_FROM_INT : 50,
-	ENUM_HAS_FLAG : 51,
-	INT_TRY_PARSE : 52,
-	LONG_TRY_PARSE : 53,
-	DOUBLE_TRY_PARSE : 54,
-	STRING_CONTAINS : 55,
-	STRING_ENDS_WITH : 56,
-	STRING_INDEX_OF : 57,
-	STRING_LAST_INDEX_OF : 58,
-	STRING_REPLACE : 59,
-	STRING_STARTS_WITH : 60,
-	STRING_SUBSTRING : 61,
-	ARRAY_BINARY_SEARCH_ALL : 62,
-	ARRAY_BINARY_SEARCH_PART : 63,
-	ARRAY_CONTAINS : 64,
-	ARRAY_COPY_TO : 65,
-	ARRAY_FILL_ALL : 66,
-	ARRAY_FILL_PART : 67,
-	ARRAY_SORT_ALL : 68,
-	ARRAY_SORT_PART : 69,
-	LIST_ADD : 70,
-	LIST_ADD_RANGE : 71,
-	LIST_ALL : 72,
-	LIST_ANY : 73,
-	LIST_CLEAR : 74,
-	LIST_CONTAINS : 75,
-	LIST_COPY_TO : 76,
-	LIST_COUNT : 77,
-	LIST_INDEX_OF : 78,
-	LIST_INSERT : 79,
-	LIST_LAST : 80,
-	LIST_REMOVE_AT : 81,
-	LIST_REMOVE_RANGE : 82,
-	LIST_SORT_ALL : 83,
-	LIST_SORT_PART : 84,
-	QUEUE_CLEAR : 85,
-	QUEUE_COUNT : 86,
-	QUEUE_DEQUEUE : 87,
-	QUEUE_ENQUEUE : 88,
-	QUEUE_PEEK : 89,
-	STACK_CLEAR : 90,
-	STACK_COUNT : 91,
-	STACK_PEEK : 92,
-	STACK_PUSH : 93,
-	STACK_POP : 94,
-	HASH_SET_ADD : 95,
-	HASH_SET_CLEAR : 96,
-	HASH_SET_CONTAINS : 97,
-	HASH_SET_COUNT : 98,
-	HASH_SET_REMOVE : 99,
-	SORTED_SET_ADD : 100,
-	SORTED_SET_CLEAR : 101,
-	SORTED_SET_CONTAINS : 102,
-	SORTED_SET_COUNT : 103,
-	SORTED_SET_REMOVE : 104,
-	DICTIONARY_ADD : 105,
-	DICTIONARY_CLEAR : 106,
-	DICTIONARY_CONTAINS_KEY : 107,
-	DICTIONARY_COUNT : 108,
-	DICTIONARY_REMOVE : 109,
-	SORTED_DICTIONARY_CLEAR : 110,
-	SORTED_DICTIONARY_CONTAINS_KEY : 111,
-	SORTED_DICTIONARY_COUNT : 112,
-	SORTED_DICTIONARY_REMOVE : 113,
-	ORDERED_DICTIONARY_CLEAR : 114,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 115,
-	ORDERED_DICTIONARY_COUNT : 116,
-	ORDERED_DICTIONARY_REMOVE : 117,
-	TEXT_WRITER_WRITE : 118,
-	TEXT_WRITER_WRITE_CHAR : 119,
-	TEXT_WRITER_WRITE_CODE_POINT : 120,
-	TEXT_WRITER_WRITE_LINE : 121,
-	CONSOLE_WRITE : 122,
-	CONSOLE_WRITE_LINE : 123,
-	STRING_WRITER_CLEAR : 124,
-	STRING_WRITER_TO_STRING : 125,
-	CONVERT_TO_BASE64_STRING : 126,
-	U_T_F8_GET_BYTE_COUNT : 127,
-	U_T_F8_GET_BYTES : 128,
-	U_T_F8_GET_STRING : 129,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 130,
-	REGEX_COMPILE : 131,
-	REGEX_ESCAPE : 132,
-	REGEX_IS_MATCH_STR : 133,
-	REGEX_IS_MATCH_REGEX : 134,
-	MATCH_FIND_STR : 135,
-	MATCH_FIND_REGEX : 136,
-	MATCH_GET_CAPTURE : 137,
-	MATH_METHOD : 138,
-	MATH_ABS : 139,
-	MATH_CEILING : 140,
-	MATH_CLAMP : 141,
-	MATH_FUSED_MULTIPLY_ADD : 142,
-	MATH_IS_FINITE : 143,
-	MATH_IS_INFINITY : 144,
-	MATH_IS_NA_N : 145,
-	MATH_LOG2 : 146,
-	MATH_MAX_INT : 147,
-	MATH_MAX_DOUBLE : 148,
-	MATH_MIN_INT : 149,
-	MATH_MIN_DOUBLE : 150,
-	MATH_ROUND : 151,
-	MATH_TRUNCATE : 152
+	JSON_ELEMENT_CLASS : 37,
+	LOCK_CLASS : 38,
+	STRING_LENGTH : 39,
+	ARRAY_LENGTH : 40,
+	CONSOLE_ERROR : 41,
+	MAIN : 42,
+	CLASS_TO_STRING : 43,
+	MATCH_START : 44,
+	MATCH_END : 45,
+	MATCH_LENGTH : 46,
+	MATCH_VALUE : 47,
+	MATH_NA_N : 48,
+	MATH_NEGATIVE_INFINITY : 49,
+	MATH_POSITIVE_INFINITY : 50,
+	ENUM_FROM_INT : 51,
+	ENUM_HAS_FLAG : 52,
+	INT_TRY_PARSE : 53,
+	LONG_TRY_PARSE : 54,
+	DOUBLE_TRY_PARSE : 55,
+	STRING_CONTAINS : 56,
+	STRING_ENDS_WITH : 57,
+	STRING_INDEX_OF : 58,
+	STRING_LAST_INDEX_OF : 59,
+	STRING_REPLACE : 60,
+	STRING_STARTS_WITH : 61,
+	STRING_SUBSTRING : 62,
+	STRING_TO_LOWER : 63,
+	STRING_TO_UPPER : 64,
+	ARRAY_BINARY_SEARCH_ALL : 65,
+	ARRAY_BINARY_SEARCH_PART : 66,
+	ARRAY_CONTAINS : 67,
+	ARRAY_COPY_TO : 68,
+	ARRAY_FILL_ALL : 69,
+	ARRAY_FILL_PART : 70,
+	ARRAY_SORT_ALL : 71,
+	ARRAY_SORT_PART : 72,
+	LIST_ADD : 73,
+	LIST_ADD_RANGE : 74,
+	LIST_ALL : 75,
+	LIST_ANY : 76,
+	LIST_CLEAR : 77,
+	LIST_CONTAINS : 78,
+	LIST_COPY_TO : 79,
+	LIST_COUNT : 80,
+	LIST_INDEX_OF : 81,
+	LIST_INSERT : 82,
+	LIST_LAST : 83,
+	LIST_REMOVE_AT : 84,
+	LIST_REMOVE_RANGE : 85,
+	LIST_SORT_ALL : 86,
+	LIST_SORT_PART : 87,
+	QUEUE_CLEAR : 88,
+	QUEUE_COUNT : 89,
+	QUEUE_DEQUEUE : 90,
+	QUEUE_ENQUEUE : 91,
+	QUEUE_PEEK : 92,
+	STACK_CLEAR : 93,
+	STACK_COUNT : 94,
+	STACK_PEEK : 95,
+	STACK_PUSH : 96,
+	STACK_POP : 97,
+	HASH_SET_ADD : 98,
+	HASH_SET_CLEAR : 99,
+	HASH_SET_CONTAINS : 100,
+	HASH_SET_COUNT : 101,
+	HASH_SET_REMOVE : 102,
+	SORTED_SET_ADD : 103,
+	SORTED_SET_CLEAR : 104,
+	SORTED_SET_CONTAINS : 105,
+	SORTED_SET_COUNT : 106,
+	SORTED_SET_REMOVE : 107,
+	DICTIONARY_ADD : 108,
+	DICTIONARY_CLEAR : 109,
+	DICTIONARY_CONTAINS_KEY : 110,
+	DICTIONARY_COUNT : 111,
+	DICTIONARY_REMOVE : 112,
+	SORTED_DICTIONARY_CLEAR : 113,
+	SORTED_DICTIONARY_CONTAINS_KEY : 114,
+	SORTED_DICTIONARY_COUNT : 115,
+	SORTED_DICTIONARY_REMOVE : 116,
+	ORDERED_DICTIONARY_CLEAR : 117,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 118,
+	ORDERED_DICTIONARY_COUNT : 119,
+	ORDERED_DICTIONARY_REMOVE : 120,
+	TEXT_WRITER_WRITE : 121,
+	TEXT_WRITER_WRITE_CHAR : 122,
+	TEXT_WRITER_WRITE_CODE_POINT : 123,
+	TEXT_WRITER_WRITE_LINE : 124,
+	CONSOLE_WRITE : 125,
+	CONSOLE_WRITE_LINE : 126,
+	STRING_WRITER_CLEAR : 127,
+	STRING_WRITER_TO_STRING : 128,
+	CONVERT_TO_BASE64_STRING : 129,
+	U_T_F8_GET_BYTE_COUNT : 130,
+	U_T_F8_GET_BYTES : 131,
+	U_T_F8_GET_STRING : 132,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 133,
+	REGEX_COMPILE : 134,
+	REGEX_ESCAPE : 135,
+	REGEX_IS_MATCH_STR : 136,
+	REGEX_IS_MATCH_REGEX : 137,
+	MATCH_FIND_STR : 138,
+	MATCH_FIND_REGEX : 139,
+	MATCH_GET_CAPTURE : 140,
+	JSON_ELEMENT_PARSE : 141,
+	JSON_ELEMENT_IS_OBJECT : 142,
+	JSON_ELEMENT_IS_ARRAY : 143,
+	JSON_ELEMENT_IS_STRING : 144,
+	JSON_ELEMENT_IS_NUMBER : 145,
+	JSON_ELEMENT_IS_BOOLEAN : 146,
+	JSON_ELEMENT_IS_NULL : 147,
+	JSON_ELEMENT_GET_OBJECT : 148,
+	JSON_ELEMENT_GET_ARRAY : 149,
+	JSON_ELEMENT_GET_STRING : 150,
+	JSON_ELEMENT_GET_DOUBLE : 151,
+	JSON_ELEMENT_GET_BOOLEAN : 152,
+	MATH_METHOD : 153,
+	MATH_ABS : 154,
+	MATH_CEILING : 155,
+	MATH_CLAMP : 156,
+	MATH_FUSED_MULTIPLY_ADD : 157,
+	MATH_IS_FINITE : 158,
+	MATH_IS_INFINITY : 159,
+	MATH_IS_NA_N : 160,
+	MATH_LOG2 : 161,
+	MATH_MAX_INT : 162,
+	MATH_MAX_DOUBLE : 163,
+	MATH_MIN_INT : 164,
+	MATH_MIN_DOUBLE : 165,
+	MATH_ROUND : 166,
+	MATH_TRUNCATE : 167
 }
 
 class FuDocInline
@@ -3164,6 +3179,8 @@ export class FuSystem extends FuScope
 		this.#stringClass.addMethod(this.stringStorageType, FuId.STRING_REPLACE, "Replace", false, FuVar.new(this.stringPtrType, "oldValue"), FuVar.new(this.stringPtrType, "newValue"));
 		this.#stringClass.addMethod(this.boolType, FuId.STRING_STARTS_WITH, "StartsWith", false, FuVar.new(this.stringPtrType, "value"));
 		this.#stringClass.addMethod(this.stringStorageType, FuId.STRING_SUBSTRING, "Substring", false, FuVar.new(this.intType, "offset"), FuVar.new(this.intType, "length", this.newLiteralLong(-1n)));
+		this.#stringClass.addMethod(this.stringStorageType, FuId.STRING_TO_LOWER, "ToLower", false);
+		this.#stringClass.addMethod(this.stringStorageType, FuId.STRING_TO_UPPER, "ToUpper", false);
 		this.stringPtrType.class = this.#stringClass;
 		this.add(this.stringPtrType);
 		this.stringNullablePtrType.class = this.#stringClass;
@@ -3209,7 +3226,7 @@ export class FuSystem extends FuScope
 		stackClass.addMethod(this.#typeParam0, FuId.STACK_POP, "Pop", true);
 		this.#addSet(FuId.HASH_SET_CLASS, "HashSet", FuId.HASH_SET_ADD, FuId.HASH_SET_CLEAR, FuId.HASH_SET_CONTAINS, FuId.HASH_SET_COUNT, FuId.HASH_SET_REMOVE);
 		this.#addSet(FuId.SORTED_SET_CLASS, "SortedSet", FuId.SORTED_SET_ADD, FuId.SORTED_SET_CLEAR, FuId.SORTED_SET_CONTAINS, FuId.SORTED_SET_COUNT, FuId.SORTED_SET_REMOVE);
-		this.#addDictionary(FuId.DICTIONARY_CLASS, "Dictionary", FuId.DICTIONARY_CLEAR, FuId.DICTIONARY_CONTAINS_KEY, FuId.DICTIONARY_COUNT, FuId.DICTIONARY_REMOVE);
+		let dictionaryClass = this.#addDictionary(FuId.DICTIONARY_CLASS, "Dictionary", FuId.DICTIONARY_CLEAR, FuId.DICTIONARY_CONTAINS_KEY, FuId.DICTIONARY_COUNT, FuId.DICTIONARY_REMOVE);
 		this.#addDictionary(FuId.SORTED_DICTIONARY_CLASS, "SortedDictionary", FuId.SORTED_DICTIONARY_CLEAR, FuId.SORTED_DICTIONARY_CONTAINS_KEY, FuId.SORTED_DICTIONARY_COUNT, FuId.SORTED_DICTIONARY_REMOVE);
 		this.#addDictionary(FuId.ORDERED_DICTIONARY_CLASS, "OrderedDictionary", FuId.ORDERED_DICTIONARY_CLEAR, FuId.ORDERED_DICTIONARY_CONTAINS_KEY, FuId.ORDERED_DICTIONARY_COUNT, FuId.ORDERED_DICTIONARY_REMOVE);
 		let textWriterClass = FuClass.new(FuCallType.NORMAL, FuId.TEXT_WRITER_CLASS, "TextWriter");
@@ -3264,6 +3281,21 @@ export class FuSystem extends FuScope
 		matchClass.add(FuProperty.new(this.#uIntType, FuId.MATCH_LENGTH, "Length"));
 		matchClass.add(FuProperty.new(this.stringStorageType, FuId.MATCH_VALUE, "Value"));
 		this.add(matchClass);
+		let jsonElementClass = FuClass.new(FuCallType.SEALED, FuId.JSON_ELEMENT_CLASS, "JsonElement");
+		let jsonElementPtr = Object.assign(new FuDynamicPtrType(), { class: jsonElementClass });
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.STATIC, jsonElementPtr, FuId.JSON_ELEMENT_PARSE, "Parse", false, FuVar.new(this.stringPtrType, "value")));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_OBJECT, "IsObject", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_ARRAY, "IsArray", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_STRING, "IsString", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_NUMBER, "IsNumber", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_BOOLEAN, "IsBoolean", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_IS_NULL, "IsNull", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, Object.assign(new FuClassType(), { class: dictionaryClass, typeArg0: this.stringStorageType, typeArg1: jsonElementPtr }), FuId.JSON_ELEMENT_GET_OBJECT, "GetObject", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, Object.assign(new FuClassType(), { class: listClass, typeArg0: jsonElementPtr }), FuId.JSON_ELEMENT_GET_ARRAY, "GetArray", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.stringPtrType, FuId.JSON_ELEMENT_GET_STRING, "GetString", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.doubleType, FuId.JSON_ELEMENT_GET_DOUBLE, "GetDouble", false));
+		jsonElementClass.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.JSON_ELEMENT_GET_BOOLEAN, "GetBoolean", false));
+		this.add(jsonElementClass);
 		let floatIntType = Object.assign(new FuFloatingType(), { id: FuId.FLOAT_INT_TYPE, name: "float" });
 		let mathClass = FuClass.new(FuCallType.STATIC, FuId.NONE, "Math");
 		mathClass.add(FuMethodGroup.new(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.STATIC, this.intType, FuId.MATH_ABS, "Abs", false, FuVar.new(this.longType, "a")), FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.STATIC, this.#floatType, FuId.MATH_ABS, "Abs", false, FuVar.new(this.doubleType, "a"))));
@@ -3389,6 +3421,7 @@ export class FuSystem extends FuScope
 		dict.add(FuMethod.new(dict, FuVisibility.FINAL_VALUE_TYPE, FuCallType.NORMAL, this.voidType, FuId.DICTIONARY_ADD, "Add", true, FuVar.new(this.#typeParam0, "key")));
 		dict.addMethod(this.boolType, containsKeyId, "ContainsKey", false, FuVar.new(this.#typeParam0, "key"));
 		dict.addMethod(this.voidType, removeId, "Remove", true, FuVar.new(this.#typeParam0, "key"));
+		return dict;
 	}
 
 	static #addEnumValue(enu, value)
@@ -9385,32 +9418,12 @@ export class GenCCpp extends GenCCppD
 		return call.method.symbol.id == FuId.U_T_F8_GET_STRING;
 	}
 
-	static getStringSubstringPtr(call)
-	{
-		return GenCCpp.isUTF8GetString(call) ? call.arguments_[0] : call.method.left;
-	}
-
-	static getStringSubstringOffset(call)
-	{
-		return call.arguments_[GenCCpp.isUTF8GetString(call) ? 1 : 0];
-	}
-
-	static getStringSubstringLength(call)
-	{
-		return call.arguments_[GenCCpp.isUTF8GetString(call) ? 2 : 1];
-	}
-
-	writeStringPtrAdd(call)
-	{
-		this.writeArrayPtrAdd(GenCCpp.getStringSubstringPtr(call), GenCCpp.getStringSubstringOffset(call));
-	}
-
 	static isTrimSubstring(expr)
 	{
 		let call = GenCCpp.isStringSubstring(expr.right);
 		let leftSymbol;
-		if (call != null && !GenCCpp.isUTF8GetString(call) && (leftSymbol = expr.left) instanceof FuSymbolReference && GenCCpp.getStringSubstringPtr(call).isReferenceTo(leftSymbol.symbol) && GenCCpp.getStringSubstringOffset(call).isLiteralZero())
-			return GenCCpp.getStringSubstringLength(call);
+		if (call != null && !GenCCpp.isUTF8GetString(call) && (leftSymbol = expr.left) instanceof FuSymbolReference && call.method.left.isReferenceTo(leftSymbol.symbol) && call.arguments_[0].isLiteralZero())
+			return call.arguments_[1];
 		return null;
 	}
 
@@ -9641,11 +9654,15 @@ export class GenC extends GenCCpp
 			this.#writeTemporaryOrExpr(expr, FuPriority.ARGUMENT);
 	}
 
-	#writeStringPtrAddCast(call)
+	#writeStringPtrAdd(call, cast)
 	{
-		if (GenC.isUTF8GetString(call))
-			this.write("(const char *) ");
-		this.writeStringPtrAdd(call);
+		if (GenC.isUTF8GetString(call)) {
+			if (cast)
+				this.write("(const char *) ");
+			this.writeArrayPtrAdd(call.arguments_[0], call.arguments_[1]);
+		}
+		else
+			this.writeArrayPtrAdd(call.method.left, call.arguments_[0]);
 	}
 
 	static #isDictionaryClassStgIndexing(expr)
@@ -9697,9 +9714,9 @@ export class GenC extends GenCCpp
 	{
 		let call = GenC.isStringSubstring(expr);
 		if (call != null) {
-			GenC.getStringSubstringLength(call).accept(this, FuPriority.ARGUMENT);
+			GenC.#getStringSubstringLength(call).accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.#writeStringPtrAddCast(call);
+			this.#writeStringPtrAdd(call, true);
 		}
 		else {
 			let klass;
@@ -10005,6 +10022,9 @@ export class GenC extends GenCCpp
 			this.include("stdio.h");
 			this.write("FILE *");
 			break;
+		case FuId.STRING_WRITER_CLASS:
+			this.#writeGlib("GString *");
+			break;
 		case FuId.REGEX_CLASS:
 			if (!(klass instanceof FuReadWriteClassType))
 				this.write("const ");
@@ -10134,7 +10154,8 @@ export class GenC extends GenCCpp
 
 	static #isHeapAllocated(type)
 	{
-		return type.id == FuId.STRING_STORAGE_TYPE || type instanceof FuDynamicPtrType;
+		let storage;
+		return type.id == FuId.STRING_STORAGE_TYPE || type instanceof FuDynamicPtrType || ((storage = type) instanceof FuStorageType && storage.class.id == FuId.MATCH_CLASS);
 	}
 
 	static #needToDestructType(type)
@@ -10151,6 +10172,7 @@ export class GenC extends GenCCpp
 			case FuId.SORTED_SET_CLASS:
 			case FuId.DICTIONARY_CLASS:
 			case FuId.SORTED_DICTIONARY_CLASS:
+			case FuId.STRING_WRITER_CLASS:
 			case FuId.MATCH_CLASS:
 			case FuId.LOCK_CLASS:
 				return true;
@@ -10260,6 +10282,9 @@ export class GenC extends GenCCpp
 		case FuId.SORTED_DICTIONARY_CLASS:
 			this.#addListFree(FuId.SORTED_DICTIONARY_CLASS);
 			break;
+		case FuId.STRING_WRITER_CLASS:
+			this.#addListFree(FuId.STRING_WRITER_CLASS);
+			break;
 		case FuId.REGEX_CLASS:
 			this.#addListFree(FuId.REGEX_CLASS);
 			break;
@@ -10304,19 +10329,14 @@ export class GenC extends GenCCpp
 			this.writeChar(41);
 	}
 
+	static #getStringSubstringLength(call)
+	{
+		return call.arguments_[GenC.isUTF8GetString(call) ? 2 : 1];
+	}
+
 	#writeStringStorageValue(expr)
 	{
-		let call = GenC.isStringSubstring(expr);
-		if (call != null) {
-			this.include("string.h");
-			this.#stringSubstring = true;
-			this.write("FuString_Substring(");
-			this.#writeStringPtrAddCast(call);
-			this.write(", ");
-			GenC.getStringSubstringLength(call).accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
-		}
-		else if (expr.isNewString(false))
+		if (expr.isNewString(false))
 			expr.accept(this, FuPriority.ARGUMENT);
 		else {
 			this.include("string.h");
@@ -10345,6 +10365,7 @@ export class GenC extends GenCCpp
 		switch (klass.class.id) {
 		case FuId.NONE:
 		case FuId.ARRAY_PTR_CLASS:
+		case FuId.JSON_ELEMENT_CLASS:
 			if (klass instanceof FuDynamicPtrType) {
 				this.#sharedRelease = true;
 				this.write("FuShared_Release");
@@ -10370,6 +10391,9 @@ export class GenC extends GenCCpp
 		case FuId.SORTED_SET_CLASS:
 		case FuId.SORTED_DICTIONARY_CLASS:
 			this.write("g_tree_unref");
+			return false;
+		case FuId.STRING_WRITER_CLASS:
+			this.write("g_string_free");
 			return false;
 		case FuId.REGEX_CLASS:
 			this.write("g_regex_unref");
@@ -10491,6 +10515,9 @@ export class GenC extends GenCCpp
 		case FuId.SORTED_DICTIONARY_CLASS:
 			this.#writeNewTree(klass.getKeyType(), klass.getValueType());
 			break;
+		case FuId.STRING_WRITER_CLASS:
+			this.write("g_string_new(NULL)");
+			break;
 		default:
 			this.#sharedMake = true;
 			if (parent > FuPriority.MUL)
@@ -10517,6 +10544,7 @@ export class GenC extends GenCCpp
 		case FuId.SORTED_SET_CLASS:
 		case FuId.DICTIONARY_CLASS:
 		case FuId.SORTED_DICTIONARY_CLASS:
+		case FuId.STRING_WRITER_CLASS:
 			return true;
 		default:
 			return false;
@@ -10911,6 +10939,8 @@ export class GenC extends GenCCpp
 			this.write(", ");
 			this.#writeDictionaryDestroy(klass.getElementType());
 		}
+		else if (klass.class.id == FuId.STRING_WRITER_CLASS)
+			this.write(", TRUE");
 		this.writeLine(");");
 		this.indent -= nesting;
 	}
@@ -11118,7 +11148,7 @@ export class GenC extends GenCCpp
 			this.writeChar(40);
 		this.include("string.h");
 		this.write("memcmp(");
-		this.writeStringPtrAdd(call);
+		this.#writeStringPtrAdd(call, false);
 		this.write(", ");
 		this.visitLiteralString(literal);
 		this.write(", ");
@@ -11152,7 +11182,7 @@ export class GenC extends GenCCpp
 			let call = GenC.isStringSubstring(left);
 			let literal;
 			if (call != null && (literal = right) instanceof FuLiteralString) {
-				let lengthExpr = GenC.getStringSubstringLength(call);
+				let lengthExpr = GenC.#getStringSubstringLength(call);
 				let rightLength = literal.getAsciiLength();
 				if (rightLength >= 0) {
 					let rightValue = literal.value;
@@ -11316,45 +11346,68 @@ export class GenC extends GenCCpp
 	#writeTextWriterWrite(obj, args, newLine)
 	{
 		if (args.length == 0) {
-			this.write("putc('\\n', ");
-			obj.accept(this, FuPriority.ARGUMENT);
+			if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
+				this.write("g_string_append_c(");
+				obj.accept(this, FuPriority.ARGUMENT);
+				this.write(", '\\n'");
+			}
+			else {
+				this.write("putc('\\n', ");
+				obj.accept(this, FuPriority.ARGUMENT);
+			}
 			this.writeChar(41);
 		}
 		else {
 			let interpolated;
 			if ((interpolated = args[0]) instanceof FuInterpolatedString) {
-				this.write("fprintf(");
+				this.write(obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS ? "g_string_append_printf(" : "fprintf(");
 				obj.accept(this, FuPriority.ARGUMENT);
 				this.write(", ");
 				this.writePrintf(interpolated, newLine);
 			}
 			else if (args[0].type instanceof FuNumericType) {
-				this.write("fprintf(");
+				this.write(obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS ? "g_string_append_printf(" : "fprintf(");
 				obj.accept(this, FuPriority.ARGUMENT);
 				this.write(", ");
 				this.writePrintfNotInterpolated(args, newLine);
 			}
 			else if (!newLine) {
-				this.write("fputs(");
-				args[0].accept(this, FuPriority.ARGUMENT);
-				this.write(", ");
-				obj.accept(this, FuPriority.ARGUMENT);
+				if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
+					this.write("g_string_append(");
+					obj.accept(this, FuPriority.ARGUMENT);
+					this.write(", ");
+					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+				}
+				else {
+					this.write("fputs(");
+					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+					this.write(", ");
+					obj.accept(this, FuPriority.ARGUMENT);
+				}
 				this.writeChar(41);
 			}
 			else {
 				let literal;
 				if ((literal = args[0]) instanceof FuLiteralString) {
-					this.write("fputs(");
-					this.writeStringLiteralWithNewLine(literal.value);
-					this.write(", ");
-					obj.accept(this, FuPriority.ARGUMENT);
+					if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
+						this.write("g_string_append(");
+						obj.accept(this, FuPriority.ARGUMENT);
+						this.write(", ");
+						this.writeStringLiteralWithNewLine(literal.value);
+					}
+					else {
+						this.write("fputs(");
+						this.writeStringLiteralWithNewLine(literal.value);
+						this.write(", ");
+						obj.accept(this, FuPriority.ARGUMENT);
+					}
 					this.writeChar(41);
 				}
 				else {
-					this.write("fprintf(");
+					this.write(obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS ? "g_string_append_printf(" : "fprintf(");
 					obj.accept(this, FuPriority.ARGUMENT);
 					this.write(", \"%s\\n\", ");
-					args[0].accept(this, FuPriority.ARGUMENT);
+					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
 					this.writeChar(41);
 				}
 			}
@@ -11478,17 +11531,14 @@ export class GenC extends GenCCpp
 		this.writeChar(41);
 	}
 
-	writeStringSubstring(obj, args, parent)
+	writeStringSubstringStart(obj, args, parent)
 	{
-		if (args.length == 1) {
-			if (parent > FuPriority.ADD)
-				this.writeChar(40);
-			this.writeAdd(obj, args[0]);
-			if (parent > FuPriority.ADD)
-				this.writeChar(41);
-		}
-		else
-			this.notSupported(obj, "Substring");
+		console.assert(args.length == 1);
+		if (parent > FuPriority.ADD)
+			this.writeChar(40);
+		this.writeAdd(obj, args[0]);
+		if (parent > FuPriority.ADD)
+			this.writeChar(41);
 	}
 
 	#startArrayContains(obj)
@@ -11610,7 +11660,27 @@ export class GenC extends GenCCpp
 				this.writeChar(41);
 			break;
 		case FuId.STRING_SUBSTRING:
-			this.writeStringSubstring(obj, args, parent);
+			if (args.length == 1)
+				this.writeStringSubstringStart(obj, args, parent);
+			else {
+				this.include("string.h");
+				this.#stringSubstring = true;
+				this.write("FuString_Substring(");
+				this.writeArrayPtrAdd(obj, args[0]);
+				this.write(", ");
+				args[1].accept(this, FuPriority.ARGUMENT);
+				this.writeChar(41);
+			}
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.#writeGlib("g_utf8_strdown(");
+			this.#writeTemporaryOrExpr(obj, FuPriority.ARGUMENT);
+			this.write(", -1)");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.#writeGlib("g_utf8_strup(");
+			this.#writeTemporaryOrExpr(obj, FuPriority.ARGUMENT);
+			this.write(", -1)");
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
 		case FuId.ARRAY_BINARY_SEARCH_PART:
@@ -11863,7 +11933,16 @@ export class GenC extends GenCCpp
 			this.#writeTextWriterWrite(obj, args, false);
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
-			this.writeCall("putc", args[0], obj);
+			if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS)
+				this.writeCall("g_string_append_c", obj, args[0]);
+			else
+				this.writeCall("putc", args[0], obj);
+			break;
+		case FuId.TEXT_WRITER_WRITE_CODE_POINT:
+			if (obj.type.asClassType().class.id != FuId.STRING_WRITER_CLASS)
+				this.notSupported(obj, method.name);
+			else
+				this.writeCall("g_string_append_unichar", obj, args[0]);
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
 			this.#writeTextWriterWrite(obj, args, true);
@@ -11873,6 +11952,14 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.CONSOLE_WRITE_LINE:
 			this.#writeConsoleWrite(args, true);
+			break;
+		case FuId.STRING_WRITER_CLEAR:
+			this.write("g_string_truncate(");
+			obj.accept(this, FuPriority.ARGUMENT);
+			this.write(", 0)");
+			break;
+		case FuId.STRING_WRITER_TO_STRING:
+			this.writePostfix(obj, "->str");
 			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.#writeGlib("g_base64_encode(");
@@ -11893,6 +11980,15 @@ export class GenC extends GenCCpp
 			this.write(", strlen(");
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write("))");
+			break;
+		case FuId.U_T_F8_GET_STRING:
+			this.include("string.h");
+			this.#stringSubstring = true;
+			this.write("FuString_Substring((const char *) ");
+			this.writeArrayPtrAdd(args[0], args[1]);
+			this.write(", ");
+			args[2].accept(this, FuPriority.ARGUMENT);
+			this.writeChar(41);
 			break;
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.writeCall("getenv", args[0]);
@@ -12211,6 +12307,8 @@ export class GenC extends GenCCpp
 				this.#writeDestructMethodName(owning);
 				this.writeChar(40);
 				statement.accept(this, FuPriority.ARGUMENT);
+				if (owning.class.id == FuId.STRING_WRITER_CLASS)
+					this.write(", TRUE");
 				this.writeLine(");");
 				this.cleanupTemporaries();
 			}
@@ -12676,14 +12774,14 @@ export class GenC extends GenCCpp
 		for (let symbol = klass.first; symbol != null; symbol = symbol.next) {
 			let konst;
 			let method;
-			if ((konst = symbol) instanceof FuConst && (konst.visibility == FuVisibility.PUBLIC) == pub) {
+			if ((konst = symbol) instanceof FuConst && (klass.isPublic && konst.visibility == FuVisibility.PUBLIC) == pub) {
 				if (pub) {
 					this.writeNewLine();
 					this.writeDoc(konst.documentation);
 				}
 				this.writeConst(konst);
 			}
-			else if ((method = symbol) instanceof FuMethod && method.isLive && (method.visibility == FuVisibility.PUBLIC) == pub && method.callType != FuCallType.ABSTRACT && method.id != FuId.MAIN) {
+			else if ((method = symbol) instanceof FuMethod && method.isLive && (klass.isPublic && method.visibility == FuVisibility.PUBLIC) == pub && method.callType != FuCallType.ABSTRACT && method.id != FuId.MAIN) {
 				this.writeNewLine();
 				this.writeMethodDoc(method);
 				this.#writeSignature(method);
@@ -13474,12 +13572,13 @@ export class GenCl extends GenC
 		if (GenCl.isUTF8GetString(call)) {
 			this.#bytesEqualsString = true;
 			this.write("FuBytes_Equals(");
+			this.writeArrayPtrAdd(call.arguments_[0], call.arguments_[1]);
 		}
 		else {
 			this.#stringStartsWith = true;
 			this.write("FuString_StartsWith(");
+			this.writeArrayPtrAdd(call.method.left, call.arguments_[0]);
 		}
-		this.writeStringPtrAdd(call);
 		this.write(", ");
 		this.visitLiteralString(literal);
 		this.writeChar(41);
@@ -13542,7 +13641,10 @@ export class GenCl extends GenC
 			}
 			break;
 		case FuId.STRING_SUBSTRING:
-			this.writeStringSubstring(obj, args, parent);
+			if (args.length == 1)
+				this.writeStringSubstringStart(obj, args, parent);
+			else
+				this.notSupported(obj, "Substring");
 			break;
 		case FuId.ARRAY_COPY_TO:
 			this.write("for (size_t _i = 0; _i < ");
@@ -13715,7 +13817,10 @@ export class GenCpp extends GenCCpp
 {
 	#usingStringViewLiterals;
 	#hasEnumFlags;
+	#numberTryParse;
 	#stringReplace;
+	#stringToLower;
+	#stringToUpper;
 
 	getTargetName()
 	{
@@ -14287,14 +14392,6 @@ export class GenCpp extends GenCCpp
 		this.writeChar(41);
 	}
 
-	#writeCString(expr)
-	{
-		if (expr instanceof FuLiteralString)
-			expr.accept(this, FuPriority.ARGUMENT);
-		else
-			this.writePostfix(expr, ".data()");
-	}
-
 	#writeRegex(args, argIndex)
 	{
 		this.include("regex");
@@ -14450,25 +14547,11 @@ export class GenCpp extends GenCCpp
 			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
-			this.include("cstdlib");
-			this.write("[&] { char *ciend; ");
-			obj.accept(this, FuPriority.ASSIGN);
-			this.write(" = std::strtol");
-			if (method.id == FuId.LONG_TRY_PARSE)
-				this.writeChar(108);
-			this.writeChar(40);
-			this.#writeCString(args[0]);
-			this.write(", &ciend");
-			this.writeTryParseRadix(args);
-			this.write("); return *ciend == '\\0'; }()");
-			break;
 		case FuId.DOUBLE_TRY_PARSE:
-			this.include("cstdlib");
-			this.write("[&] { char *ciend; ");
-			obj.accept(this, FuPriority.ASSIGN);
-			this.write(" = std::strtod(");
-			this.#writeCString(args[0]);
-			this.write(", &ciend); return *ciend == '\\0'; }()");
+			this.include("charconv");
+			this.include("string_view");
+			this.#numberTryParse = true;
+			this.writeCall("FuNumber_TryParse", obj, args[0], args.length == 2 ? args[1] : null);
 			break;
 		case FuId.STRING_CONTAINS:
 			if (parent > FuPriority.EQUALITY)
@@ -14493,13 +14576,21 @@ export class GenCpp extends GenCCpp
 			break;
 		case FuId.STRING_REPLACE:
 			this.#stringReplace = true;
-			this.writeCall("FuString_replace", obj, args[0], args[1]);
+			this.writeCall("FuString_Replace", obj, args[0], args[1]);
 			break;
 		case FuId.STRING_STARTS_WITH:
 			this.#writeStringMethod(obj, "starts_with", method, args);
 			break;
 		case FuId.STRING_SUBSTRING:
 			this.#writeStringMethod(obj, "substr", method, args);
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.#stringToLower = true;
+			this.writeCall("FuString_ToLower", obj);
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.#stringToUpper = true;
+			this.writeCall("FuString_ToUpper", obj);
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
 		case FuId.ARRAY_BINARY_SEARCH_PART:
@@ -14842,7 +14933,16 @@ export class GenCpp extends GenCCpp
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.include("cstdlib");
 			this.write("std::getenv(");
-			this.#writeCString(args[0]);
+			if (args[0].type.id == FuId.STRING_STORAGE_TYPE)
+				this.writePostfix(args[0], ".c_str()");
+			else if (args[0] instanceof FuLiteralString)
+				args[0].accept(this, FuPriority.ARGUMENT);
+			else {
+				this.include("string");
+				this.write("std::string(");
+				args[0].accept(this, FuPriority.ARGUMENT);
+				this.write(").c_str()");
+			}
 			this.writeChar(41);
 			break;
 		case FuId.REGEX_COMPILE:
@@ -14853,7 +14953,9 @@ export class GenCpp extends GenCCpp
 		case FuId.MATCH_FIND_STR:
 		case FuId.MATCH_FIND_REGEX:
 			this.write("std::regex_search(");
-			if (args[0].type.id == FuId.STRING_PTR_TYPE && !(args[0] instanceof FuLiteral))
+			if (args[0].type.id == FuId.STRING_STORAGE_TYPE)
+				this.writePostfix(args[0], ".c_str()");
+			else if (args[0].type.id == FuId.STRING_PTR_TYPE && !(args[0] instanceof FuLiteral))
 				this.#writeBeginEnd(args[0]);
 			else
 				args[0].accept(this, FuPriority.ARGUMENT);
@@ -14904,12 +15006,12 @@ export class GenCpp extends GenCCpp
 		case FuId.MATH_MAX_INT:
 		case FuId.MATH_MAX_DOUBLE:
 			this.include("algorithm");
-			this.writeCall("std::max", args[0], args[1]);
+			this.writeCall("(std::max)", args[0], args[1]);
 			break;
 		case FuId.MATH_MIN_INT:
 		case FuId.MATH_MIN_DOUBLE:
 			this.include("algorithm");
-			this.writeCall("std::min", args[0], args[1]);
+			this.writeCall("(std::min)", args[0], args[1]);
 			break;
 		case FuId.MATH_TRUNCATE:
 			this.includeMath();
@@ -15247,22 +15349,23 @@ export class GenCpp extends GenCCpp
 	writeStronglyCoerced(type, expr)
 	{
 		if (type.id == FuId.STRING_STORAGE_TYPE && expr.type.id == FuId.STRING_PTR_TYPE && !(expr instanceof FuLiteral)) {
-			this.write("std::string(");
-			expr.accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
+			this.writeCall("std::string", expr);
 		}
 		else {
 			let call = GenCpp.isStringSubstring(expr);
-			if (call != null && type.id == FuId.STRING_STORAGE_TYPE && GenCpp.getStringSubstringPtr(call).type.id != FuId.STRING_STORAGE_TYPE) {
+			if (call != null && type.id == FuId.STRING_STORAGE_TYPE && (GenCpp.isUTF8GetString(call) ? call.arguments_[0] : call.method.left).type.id != FuId.STRING_STORAGE_TYPE) {
 				this.write("std::string(");
-				let cast = GenCpp.isUTF8GetString(call);
-				if (cast)
+				if (GenCpp.isUTF8GetString(call)) {
 					this.write("reinterpret_cast<const char *>(");
-				this.writeStringPtrAdd(call);
-				if (cast)
-					this.writeChar(41);
-				this.write(", ");
-				GenCpp.getStringSubstringLength(call).accept(this, FuPriority.ARGUMENT);
+					this.writeArrayPtrAdd(call.arguments_[0], call.arguments_[1]);
+					this.write("), ");
+					call.arguments_[2].accept(this, FuPriority.ARGUMENT);
+				}
+				else {
+					this.writeArrayPtrAdd(call.method.left, call.arguments_[0]);
+					this.write(", ");
+					call.arguments_[1].accept(this, FuPriority.ARGUMENT);
+				}
 				this.writeChar(41);
 			}
 			else
@@ -15607,7 +15710,10 @@ export class GenCpp extends GenCCpp
 		this.inHeaderFile = true;
 		this.#usingStringViewLiterals = false;
 		this.#hasEnumFlags = false;
+		this.#numberTryParse = false;
 		this.#stringReplace = false;
+		this.#stringToLower = false;
+		this.#stringToUpper = false;
 		this.openStringWriter();
 		this.#openNamespace();
 		this.writeRegexOptionsEnum(program);
@@ -15654,9 +15760,19 @@ export class GenCpp extends GenCCpp
 		this.createImplementationFile(program, ".hpp");
 		if (this.#usingStringViewLiterals)
 			this.writeLine("using namespace std::string_view_literals;");
+		if (this.#numberTryParse) {
+			this.writeNewLine();
+			this.writeLine("template <class T, class... Args>");
+			this.writeLine("bool FuNumber_TryParse(T &number, std::string_view s, Args... args)");
+			this.openBlock();
+			this.writeLine("const char *end = s.begin() + s.size();");
+			this.writeLine("auto result = std::from_chars(s.begin(), end, number, args...);");
+			this.writeLine("return result.ec == std::errc{} && result.ptr == end;");
+			this.closeBlock();
+		}
 		if (this.#stringReplace) {
 			this.writeNewLine();
-			this.writeLine("static std::string FuString_replace(std::string_view s, std::string_view oldValue, std::string_view newValue)");
+			this.writeLine("static std::string FuString_Replace(std::string_view s, std::string_view oldValue, std::string_view newValue)");
 			this.openBlock();
 			this.writeLine("std::string result;");
 			this.writeLine("result.reserve(s.size());");
@@ -15671,6 +15787,62 @@ export class GenCpp extends GenCCpp
 			this.writeLine("\ti = j + oldValue.size();");
 			this.writeCharLine(125);
 			this.closeBlock();
+		}
+		if (this.#stringToLower || this.#stringToUpper) {
+			this.writeNewLine();
+			this.writeLine("#ifdef _WIN32");
+			this.writeNewLine();
+			this.writeLine("#include <Windows.h>");
+			this.writeNewLine();
+			this.writeLine("static std::string FuString_Win32LCMap(std::string_view s, DWORD flags)");
+			this.openBlock();
+			this.writeLine("int size = MultiByteToWideChar(CP_UTF8, 0, s.data(), (int) s.size(), nullptr, 0);");
+			this.writeLine("std::wstring wide(size, 0);");
+			this.writeLine("MultiByteToWideChar(CP_UTF8, 0, s.data(), (int) s.size(), wide.data(), size);");
+			this.writeLine("size = LCMapStringEx(LOCALE_NAME_SYSTEM_DEFAULT, LCMAP_LINGUISTIC_CASING | flags, wide.data(), size, nullptr, 0, nullptr, nullptr, 0);");
+			this.writeLine("std::wstring wideResult(size, 0);");
+			this.writeLine("LCMapStringEx(LOCALE_NAME_SYSTEM_DEFAULT, LCMAP_LINGUISTIC_CASING | flags, wide.data(), wide.size(), wideResult.data(), size, nullptr, nullptr, 0);");
+			this.writeLine("int resultSize = WideCharToMultiByte(CP_UTF8, 0, wideResult.data(), size, nullptr, 0, nullptr, nullptr);");
+			this.writeLine("std::string result(resultSize, 0);");
+			this.writeLine("WideCharToMultiByte(CP_UTF8, 0, wideResult.data(), size, result.data(), resultSize, nullptr, nullptr);");
+			this.writeLine("return result;");
+			this.closeBlock();
+			if (this.#stringToLower) {
+				this.writeNewLine();
+				this.writeLine("static std::string FuString_ToLower(std::string_view s)");
+				this.openBlock();
+				this.writeLine("return FuString_Win32LCMap(s, LCMAP_LOWERCASE);");
+				this.closeBlock();
+			}
+			if (this.#stringToUpper) {
+				this.writeNewLine();
+				this.writeLine("static std::string FuString_ToUpper(std::string_view s)");
+				this.openBlock();
+				this.writeLine("return FuString_Win32LCMap(s, LCMAP_UPPERCASE);");
+				this.closeBlock();
+			}
+			this.writeNewLine();
+			this.writeLine("#else");
+			this.writeNewLine();
+			this.writeLine("#include <unicode/unistr.h>");
+			if (this.#stringToLower) {
+				this.writeNewLine();
+				this.writeLine("static std::string FuString_ToLower(std::string_view s)");
+				this.openBlock();
+				this.writeLine("std::string result;");
+				this.writeLine("return icu::UnicodeString::fromUTF8(s).toLower().toUTF8String(result);");
+				this.closeBlock();
+			}
+			if (this.#stringToUpper) {
+				this.writeNewLine();
+				this.writeLine("static std::string FuString_ToUpper(std::string_view s)");
+				this.openBlock();
+				this.writeLine("std::string result;");
+				this.writeLine("return icu::UnicodeString::fromUTF8(s).toUpper().toUTF8String(result);");
+				this.closeBlock();
+			}
+			this.writeNewLine();
+			this.writeLine("#endif");
 		}
 		this.closeStringWriter();
 		this.closeFile();
@@ -15934,6 +16106,10 @@ export class GenCs extends GenTyped
 				this.include("System.Text.RegularExpressions");
 				this.write(klass.class.name);
 				break;
+			case FuId.JSON_ELEMENT_CLASS:
+				this.include("System.Text.Json");
+				this.write("JsonElement");
+				break;
 			case FuId.LOCK_CLASS:
 				this.write("object");
 				break;
@@ -16108,6 +16284,16 @@ export class GenCs extends GenTyped
 				super.visitSymbolReference(expr, parent);
 			break;
 		}
+	}
+
+	#writeJsonElementIs(obj, name, parent)
+	{
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(40);
+		this.writePostfix(obj, ".ValueKind == JsonValueKind.");
+		this.write(name);
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(41);
 	}
 
 	writeCallExpr(obj, method, args, parent)
@@ -16336,6 +16522,42 @@ export class GenCs extends GenTyped
 			this.writePostfix(obj, ".Groups[");
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write("].Value");
+			break;
+		case FuId.JSON_ELEMENT_PARSE:
+			this.write("JsonDocument.Parse(");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write(").RootElement");
+			break;
+		case FuId.JSON_ELEMENT_IS_OBJECT:
+			this.#writeJsonElementIs(obj, "Object", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_ARRAY:
+			this.#writeJsonElementIs(obj, "Array", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_STRING:
+			this.#writeJsonElementIs(obj, "String", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NUMBER:
+			this.#writeJsonElementIs(obj, "Number", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_BOOLEAN:
+			if (parent > FuPriority.COND_OR)
+				this.writeChar(40);
+			this.writePostfix(obj, ".ValueKind == JsonValueKind.True || ");
+			this.writePostfix(obj, ".ValueKind == JsonValueKind.False");
+			if (parent > FuPriority.COND_OR)
+				this.writeChar(41);
+			break;
+		case FuId.JSON_ELEMENT_IS_NULL:
+			this.#writeJsonElementIs(obj, "Null", parent);
+			break;
+		case FuId.JSON_ELEMENT_GET_OBJECT:
+			this.include("System.Linq");
+			this.writePostfix(obj, ".EnumerateObject().ToDictionary(p => p.Name, p => p.Value)");
+			break;
+		case FuId.JSON_ELEMENT_GET_ARRAY:
+			this.include("System.Linq");
+			this.writePostfix(obj, ".EnumerateArray().ToList()");
 			break;
 		case FuId.MATH_METHOD:
 		case FuId.MATH_ABS:
@@ -17000,10 +17222,16 @@ export class GenD extends GenCCppD
 		return false;
 	}
 
+	static #isJsonElementList(list)
+	{
+		let json;
+		return (json = list.getElementType()) instanceof FuClassType && json.class.id == FuId.JSON_ELEMENT_CLASS;
+	}
+
 	static #isStructPtr(type)
 	{
 		let ptr;
-		return (ptr = type) instanceof FuClassType && (ptr.class.id == FuId.LIST_CLASS || ptr.class.id == FuId.STACK_CLASS || ptr.class.id == FuId.QUEUE_CLASS);
+		return (ptr = type) instanceof FuClassType && (ptr.class.id == FuId.LIST_CLASS || ptr.class.id == FuId.STACK_CLASS || ptr.class.id == FuId.QUEUE_CLASS) && !GenD.#isJsonElementList(ptr);
 	}
 
 	#writeElementType(type)
@@ -17062,10 +17290,16 @@ export class GenD extends GenCCppD
 				break;
 			case FuId.LIST_CLASS:
 			case FuId.STACK_CLASS:
-				this.include("std.container.array");
-				this.write("Array!(");
-				this.#writeElementType(klass.getElementType());
-				this.writeChar(41);
+				if (GenD.#isJsonElementList(klass)) {
+					this.include("std.json");
+					this.write("JSONValue[]");
+				}
+				else {
+					this.include("std.container.array");
+					this.write("Array!(");
+					this.#writeElementType(klass.getElementType());
+					this.writeChar(41);
+				}
 				break;
 			case FuId.QUEUE_CLASS:
 				this.include("std.container.dlist");
@@ -17118,6 +17352,10 @@ export class GenD extends GenCCppD
 			case FuId.MATCH_CLASS:
 				this.include("std.regex");
 				this.write("Captures!string");
+				break;
+			case FuId.JSON_ELEMENT_CLASS:
+				this.include("std.json");
+				this.write("JSONValue");
 				break;
 			case FuId.LOCK_CLASS:
 				this.write("Object");
@@ -17396,6 +17634,16 @@ export class GenD extends GenCCppD
 		this.writeChar(41);
 	}
 
+	#writeJsonElementIs(obj, name, parent)
+	{
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(40);
+		this.writePostfix(obj, ".type == JSONType.");
+		this.write(name);
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(41);
+	}
+
 	writeCallExpr(obj, method, args, parent)
 	{
 		switch (method.id) {
@@ -17447,6 +17695,14 @@ export class GenD extends GenCCppD
 			break;
 		case FuId.STRING_SUBSTRING:
 			this.#writeSlice(obj, args[0], args.length == 2 ? args[1] : null);
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.include("std.uni");
+			this.writePostfix(obj, ".toLower()");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.include("std.uni");
+			this.writePostfix(obj, ".toUpper()");
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
 		case FuId.ARRAY_BINARY_SEARCH_PART:
@@ -17725,6 +17981,47 @@ export class GenD extends GenCCppD
 			break;
 		case FuId.MATCH_GET_CAPTURE:
 			this.writeIndexing(obj, args[0]);
+			break;
+		case FuId.JSON_ELEMENT_PARSE:
+			this.writeCall("parseJSON", args[0]);
+			break;
+		case FuId.JSON_ELEMENT_IS_OBJECT:
+			this.#writeJsonElementIs(obj, "object", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_ARRAY:
+			this.#writeJsonElementIs(obj, "array", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_STRING:
+			this.#writeJsonElementIs(obj, "string", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NUMBER:
+			this.#writeJsonElementIs(obj, "float_", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_BOOLEAN:
+			if (parent > FuPriority.COND_OR)
+				this.writeChar(40);
+			this.writePostfix(obj, ".type == JSONType.true_ || ");
+			this.writePostfix(obj, ".type == JSONType.false_");
+			if (parent > FuPriority.COND_OR)
+				this.writeChar(41);
+			break;
+		case FuId.JSON_ELEMENT_IS_NULL:
+			this.#writeJsonElementIs(obj, "null_", parent);
+			break;
+		case FuId.JSON_ELEMENT_GET_OBJECT:
+			this.writePostfix(obj, ".object");
+			break;
+		case FuId.JSON_ELEMENT_GET_ARRAY:
+			this.writePostfix(obj, ".array");
+			break;
+		case FuId.JSON_ELEMENT_GET_STRING:
+			this.writePostfix(obj, ".str");
+			break;
+		case FuId.JSON_ELEMENT_GET_DOUBLE:
+			this.writePostfix(obj, ".get!double");
+			break;
+		case FuId.JSON_ELEMENT_GET_BOOLEAN:
+			this.writePostfix(obj, ".boolean");
 			break;
 		case FuId.MATH_METHOD:
 		case FuId.MATH_ABS:
@@ -18871,6 +19168,12 @@ export class GenJava extends GenTyped
 				this.writeAdd(args[0], args[1]);
 			}
 			this.writeChar(41);
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.writePostfix(obj, ".toLowerCase()");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.writePostfix(obj, ".toUpperCase()");
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
 		case FuId.ARRAY_BINARY_SEARCH_PART:
@@ -20128,6 +20431,19 @@ export class GenJsNoModule extends GenBase
 		}
 	}
 
+	#writeTypeofEquals(obj, name, parent)
+	{
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(40);
+		this.write("typeof(");
+		obj.accept(this, FuPriority.ARGUMENT);
+		this.write(") == \"");
+		this.write(name);
+		this.writeChar(34);
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(41);
+	}
+
 	static #hasLong(args)
 	{
 		return args.some(arg => arg.type.id == FuId.LONG_TYPE);
@@ -20228,6 +20544,12 @@ export class GenJsNoModule extends GenBase
 				this.writeAdd(args[0], args[1]);
 			}
 			this.writeChar(41);
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.writePostfix(obj, ".toLowerCase()");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.writePostfix(obj, ".toUpperCase()");
 			break;
 		case FuId.ARRAY_FILL_ALL:
 		case FuId.ARRAY_FILL_PART:
@@ -20468,6 +20790,43 @@ export class GenJsNoModule extends GenBase
 			break;
 		case FuId.MATCH_GET_CAPTURE:
 			this.writeIndexing(obj, args[0]);
+			break;
+		case FuId.JSON_ELEMENT_PARSE:
+			this.writeCall("JSON.parse", args[0]);
+			break;
+		case FuId.JSON_ELEMENT_IS_OBJECT:
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(40);
+			this.writePostfix(obj, "?.constructor == Object");
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(41);
+			break;
+		case FuId.JSON_ELEMENT_IS_ARRAY:
+			this.writeCall("Array.isArray", obj);
+			break;
+		case FuId.JSON_ELEMENT_IS_STRING:
+			this.#writeTypeofEquals(obj, "string", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NUMBER:
+			this.#writeTypeofEquals(obj, "number", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_BOOLEAN:
+			this.#writeTypeofEquals(obj, "boolean", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NULL:
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(40);
+			obj.accept(this, FuPriority.EQUALITY);
+			this.write(" === null");
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(41);
+			break;
+		case FuId.JSON_ELEMENT_GET_OBJECT:
+		case FuId.JSON_ELEMENT_GET_ARRAY:
+		case FuId.JSON_ELEMENT_GET_STRING:
+		case FuId.JSON_ELEMENT_GET_DOUBLE:
+		case FuId.JSON_ELEMENT_GET_BOOLEAN:
+			obj.accept(this, parent);
 			break;
 		case FuId.MATH_ABS:
 			this.writeCall(args[0].type.id == FuId.LONG_TYPE ? "(x => x < 0n ? -x : x)" : "Math.abs", args[0]);
@@ -21105,6 +21464,9 @@ export class GenTs extends GenJs
 					break;
 				case FuId.MATCH_CLASS:
 					this.write("RegExpMatchArray");
+					break;
+				case FuId.JSON_ELEMENT_CLASS:
+					this.write("any");
 					break;
 				default:
 					this.write(klass.class.name);
@@ -21916,6 +22278,9 @@ export class GenSwift extends GenPySwift
 		case FuId.ORDERED_DICTIONARY_CLASS:
 			this.notSupported(klass, "OrderedDictionary");
 			break;
+		case FuId.JSON_ELEMENT_CLASS:
+			this.write("Any");
+			break;
 		case FuId.LOCK_CLASS:
 			this.include("Foundation");
 			this.write("NSRecursiveLock");
@@ -22122,6 +22487,17 @@ export class GenSwift extends GenPySwift
 		return true;
 	}
 
+	#writeJsonElementIs(obj, name, parent)
+	{
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(40);
+		obj.accept(this, FuPriority.EQUALITY);
+		this.write(" is ");
+		this.write(name);
+		if (parent > FuPriority.EQUALITY)
+			this.writeChar(41);
+	}
+
 	writeCallExpr(obj, method, args, parent)
 	{
 		switch (method.id) {
@@ -22213,6 +22589,12 @@ export class GenSwift extends GenPySwift
 				this.writeCoerced(this.#system.intType, args[1], FuPriority.ARGUMENT);
 				this.writeChar(41);
 			}
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.writePostfix(obj, ".lowercased()");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.writePostfix(obj, ".uppercased()");
 			break;
 		case FuId.ARRAY_COPY_TO:
 		case FuId.LIST_COPY_TO:
@@ -22413,6 +22795,42 @@ export class GenSwift extends GenPySwift
 			this.write("ProcessInfo.processInfo.environment[");
 			this.#writeUnwrapped(args[0], FuPriority.ARGUMENT, false);
 			this.writeChar(93);
+			break;
+		case FuId.JSON_ELEMENT_PARSE:
+			this.include("Foundation");
+			this.write("try! JSONSerialization.jsonObject(with: ");
+			this.writePostfix(args[0], ".data(using: .utf8)!, options: .fragmentsAllowed)");
+			break;
+		case FuId.JSON_ELEMENT_IS_OBJECT:
+			this.#writeJsonElementIs(obj, "[String: Any]", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_ARRAY:
+			this.#writeJsonElementIs(obj, "[Any]", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_STRING:
+			this.#writeJsonElementIs(obj, "String", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NUMBER:
+			this.#writeJsonElementIs(obj, "Double", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_BOOLEAN:
+			this.#writeJsonElementIs(obj, "Bool", parent);
+			break;
+		case FuId.JSON_ELEMENT_IS_NULL:
+			this.#writeJsonElementIs(obj, "NSNull", parent);
+			break;
+		case FuId.JSON_ELEMENT_GET_OBJECT:
+		case FuId.JSON_ELEMENT_GET_ARRAY:
+		case FuId.JSON_ELEMENT_GET_STRING:
+		case FuId.JSON_ELEMENT_GET_DOUBLE:
+		case FuId.JSON_ELEMENT_GET_BOOLEAN:
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(40);
+			obj.accept(this, FuPriority.EQUALITY);
+			this.write(" as! ");
+			this.#writeType(method.type);
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(41);
 			break;
 		case FuId.MATH_METHOD:
 		case FuId.MATH_LOG2:
@@ -23683,6 +24101,7 @@ export class GenPy extends GenPySwift
 		case "global":
 		case "import":
 		case "is":
+		case "json":
 		case "lambda":
 		case "len":
 		case "list":
@@ -23844,6 +24263,9 @@ export class GenPy extends GenPySwift
 			case FuId.MATCH_CLASS:
 				this.include("re");
 				this.write("re.Match");
+				break;
+			case FuId.JSON_ELEMENT_CLASS:
+				this.write("dict | list | str | float | bool | None");
 				break;
 			case FuId.LOCK_CLASS:
 				this.include("threading");
@@ -24300,6 +24722,15 @@ export class GenPy extends GenPySwift
 		this.writeChar(41);
 	}
 
+	#writeJsonElementIs(obj, name)
+	{
+		this.write("isinstance(");
+		obj.accept(this, FuPriority.ARGUMENT);
+		this.write(", ");
+		this.write(name);
+		this.writeChar(41);
+	}
+
 	writeCallExpr(obj, method, args, parent)
 	{
 		switch (method.id) {
@@ -24333,6 +24764,12 @@ export class GenPy extends GenPySwift
 		case FuId.STRING_SUBSTRING:
 			obj.accept(this, FuPriority.PRIMARY);
 			this.#writeSlice(args[0], args.length == 2 ? args[1] : null);
+			break;
+		case FuId.STRING_TO_LOWER:
+			this.writePostfix(obj, ".lower()");
+			break;
+		case FuId.STRING_TO_UPPER:
+			this.writePostfix(obj, ".upper()");
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
 			this.include("bisect");
@@ -24563,6 +25000,40 @@ export class GenPy extends GenPySwift
 			break;
 		case FuId.MATCH_GET_CAPTURE:
 			this.writeMethodCall(obj, "group", args[0]);
+			break;
+		case FuId.JSON_ELEMENT_PARSE:
+			this.include("json");
+			this.writeCall("json.loads", args[0]);
+			break;
+		case FuId.JSON_ELEMENT_IS_OBJECT:
+			this.#writeJsonElementIs(obj, "dict");
+			break;
+		case FuId.JSON_ELEMENT_IS_ARRAY:
+			this.#writeJsonElementIs(obj, "list");
+			break;
+		case FuId.JSON_ELEMENT_IS_STRING:
+			this.#writeJsonElementIs(obj, "str");
+			break;
+		case FuId.JSON_ELEMENT_IS_NUMBER:
+			this.#writeJsonElementIs(obj, "float");
+			break;
+		case FuId.JSON_ELEMENT_IS_BOOLEAN:
+			this.#writeJsonElementIs(obj, "bool");
+			break;
+		case FuId.JSON_ELEMENT_IS_NULL:
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(40);
+			obj.accept(this, FuPriority.EQUALITY);
+			this.write(" is None");
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(41);
+			break;
+		case FuId.JSON_ELEMENT_GET_OBJECT:
+		case FuId.JSON_ELEMENT_GET_ARRAY:
+		case FuId.JSON_ELEMENT_GET_STRING:
+		case FuId.JSON_ELEMENT_GET_DOUBLE:
+		case FuId.JSON_ELEMENT_GET_BOOLEAN:
+			obj.accept(this, parent);
 			break;
 		case FuId.MATH_METHOD:
 		case FuId.MATH_IS_FINITE:
