@@ -12505,6 +12505,7 @@ export class GenC extends GenCCpp
 					return;
 				}
 				this.#writeCTemporaries(statement.value);
+				this.writeTemporaries(statement.value);
 				this.ensureChildBlock();
 				this.#startDefinition(this.currentMethod.type, true, true);
 				this.write("returnValue = ");
@@ -19301,6 +19302,10 @@ export class GenJava extends GenTyped
 				this.writeCall("System.err.print(Character.toChars", args[0]);
 				this.writeChar(41);
 			}
+			else if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
+				this.writeMethodCall(obj, "append(Character.toString", args[0]);
+				this.writeChar(41);
+			}
 			else {
 				this.write("try { ");
 				this.writeMethodCall(obj, "append(Character.toString", args[0]);
@@ -19610,6 +19615,54 @@ export class GenJava extends GenTyped
 		}
 		this.writeChar(41);
 		this.writeChild(statement.body);
+	}
+
+	static #isTryParse(id)
+	{
+		return id == FuId.INT_TRY_PARSE || id == FuId.LONG_TRY_PARSE || id == FuId.DOUBLE_TRY_PARSE;
+	}
+
+	visitIf(statement)
+	{
+		let not;
+		let call;
+		if (statement.onFalse == null && (not = statement.cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK && (call = not.inner) instanceof FuCallExpr && GenJava.#isTryParse(call.method.symbol.id)) {
+			this.write("try ");
+			this.openBlock();
+			call.method.left.accept(this, FuPriority.ASSIGN);
+			this.write(" = ");
+			switch (call.method.symbol.id) {
+			case FuId.INT_TRY_PARSE:
+				this.write("Integer.parseInt");
+				break;
+			case FuId.LONG_TRY_PARSE:
+				this.write("Long.parseLong");
+				break;
+			case FuId.DOUBLE_TRY_PARSE:
+				this.write("Double.parseDouble");
+				break;
+			default:
+				throw new Error();
+			}
+			this.writeChar(40);
+			call.arguments_[0].accept(this, FuPriority.ARGUMENT);
+			if (call.arguments_.length == 2) {
+				this.write(", ");
+				call.arguments_[1].accept(this, FuPriority.ARGUMENT);
+			}
+			this.writeLine(");");
+			this.closeBlock();
+			this.write("catch (NumberFormatException e) ");
+			this.openBlock();
+			if (!(statement.onTrue instanceof FuReturn) && !(statement.onTrue instanceof FuThrow)) {
+				call.method.left.accept(this, FuPriority.ASSIGN);
+				this.writeLine(" = 0;");
+			}
+			statement.onTrue.acceptStatement(this);
+			this.closeBlock();
+		}
+		else
+			super.visitIf(statement);
 	}
 
 	visitLock(statement)
