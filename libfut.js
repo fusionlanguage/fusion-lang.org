@@ -1883,7 +1883,7 @@ class FuImplicitEnumValue extends FuExpr
 
 export class FuSymbolReference extends FuExpr
 {
-	left;
+	left = null;
 	name;
 	symbol;
 
@@ -2687,6 +2687,11 @@ class FuStaticProperty extends FuMember
 	{
 		return Object.assign(new FuStaticProperty(), { visibility: FuVisibility.PUBLIC, type: type, id: id, name: name });
 	}
+}
+
+export class FuThrowsDeclaration extends FuSymbolReference
+{
+	documentation;
 }
 
 export class FuMethodBase extends FuMember
@@ -3620,12 +3625,11 @@ export class FuParser extends FuLexer
 		return result;
 	}
 
-	#parseSymbolReference(left)
+	#parseSymbolReference(result)
 	{
-		this.check(FuToken.ID);
-		let result = Object.assign(new FuSymbolReference(), { line: this.line, left: left, name: this.stringValue });
-		this.nextToken();
-		return result;
+		result.line = this.line;
+		result.name = this.stringValue;
+		this.expect(FuToken.ID);
 	}
 
 	#parseCollection(result, closing)
@@ -3691,7 +3695,8 @@ export class FuParser extends FuLexer
 			result = this.#parseParenthesized();
 			break;
 		case FuToken.ID:
-			let symbol = this.#parseSymbolReference(null);
+			let symbol = new FuSymbolReference();
+			this.#parseSymbolReference(symbol);
 			if (this.eat(FuToken.FAT_ARROW)) {
 				let lambda = Object.assign(new FuLambdaExpr(), { line: symbol.line });
 				lambda.add(FuVar.new(null, symbol.name));
@@ -3729,7 +3734,9 @@ export class FuParser extends FuLexer
 			switch (this.currentToken) {
 			case FuToken.DOT:
 				this.nextToken();
-				result = this.#parseSymbolReference(result);
+				let path = Object.assign(new FuSymbolReference(), { left: result });
+				this.#parseSymbolReference(path);
+				result = path;
 				break;
 			case FuToken.LEFT_PARENTHESIS:
 				this.nextToken();
@@ -3919,7 +3926,8 @@ export class FuParser extends FuLexer
 		let result = Object.assign(new FuAggregateInitializer(), { line: this.line });
 		do {
 			let line = this.line;
-			let field = this.#parseSymbolReference(null);
+			let field = new FuSymbolReference();
+			this.#parseSymbolReference(field);
 			this.expect(FuToken.ASSIGN);
 			result.items.push(Object.assign(new FuBinaryExpr(), { line: line, left: field, op: FuToken.ASSIGN, right: this.#parseExpr() }));
 		}
@@ -4216,7 +4224,8 @@ export class FuParser extends FuLexer
 	{
 		let result = Object.assign(new FuThrow(), { line: this.line });
 		this.expect(FuToken.THROW);
-		result.class = this.#parseSymbolReference(null);
+		result.class = new FuSymbolReference();
+		this.#parseSymbolReference(result.class);
 		this.expectOrSkip(FuToken.LEFT_PARENTHESIS);
 		result.message = this.see(FuToken.RIGHT_PARENTHESIS) ? null : this.#parseExpr();
 		this.expect(FuToken.RIGHT_PARENTHESIS);
@@ -4313,9 +4322,21 @@ export class FuParser extends FuLexer
 			while (this.eat(FuToken.COMMA));
 		}
 		this.expect(FuToken.RIGHT_PARENTHESIS);
+		let throwsDoc = this.#parseDoc();
 		if (this.eat(FuToken.THROWS)) {
-			do
-				method.throws.push(this.#parseSymbolReference(null));
+			do {
+				let decl = new FuThrowsDeclaration();
+				if (throwsDoc == null)
+					decl.documentation = this.#parseDoc();
+				else if (method.throws.length > 0) {
+					this.reportError("Exception documentation must follow the 'throws' keyword");
+					decl.documentation = null;
+				}
+				else
+					decl.documentation = throwsDoc;
+				this.#parseSymbolReference(decl);
+				method.throws.push(decl);
+			}
 			while (this.eat(FuToken.COMMA));
 		}
 		if (method.callType == FuCallType.ABSTRACT)
@@ -7284,7 +7305,20 @@ export class GenBase extends FuVisitor
 		this.writeNewLine();
 	}
 
-	writeParametersDoc(method)
+	writeReturnDoc(method)
+	{
+	}
+
+	writeThrowsDoc(decl)
+	{
+		this.write(" * @throws ");
+		this.writeExceptionClass(decl.symbol);
+		this.writeChar(32);
+		this.writeDocPara(decl.documentation.summary, false);
+		this.writeNewLine();
+	}
+
+	writeParametersAndThrowsDoc(method)
 	{
 		let first = true;
 		for (let param = method.firstParameter(); param != null; param = param.nextVar()) {
@@ -7293,10 +7327,11 @@ export class GenBase extends FuVisitor
 				first = false;
 			}
 		}
-	}
-
-	writeReturnDoc(method)
-	{
+		this.writeReturnDoc(method);
+		for (const decl of method.throws) {
+			if (decl.documentation != null)
+				this.writeThrowsDoc(decl);
+		}
 	}
 
 	writeMethodDoc(method)
@@ -7306,8 +7341,7 @@ export class GenBase extends FuVisitor
 		this.writeLine("/**");
 		this.writeContent(method.documentation);
 		this.writeSelfDoc(method);
-		this.writeParametersDoc(method);
-		this.writeReturnDoc(method);
+		this.writeParametersAndThrowsDoc(method);
 		this.writeLine(" */");
 	}
 
@@ -7737,6 +7771,15 @@ export class GenBase extends FuVisitor
 		this.visitLiteralLong(BigInt(id));
 	}
 
+	tryWriteTemporary(expr)
+	{
+		let id = this.currentTemporaries.indexOf(expr);
+		if (id < 0)
+			return false;
+		this.writeTemporaryName(id);
+		return true;
+	}
+
 	writeResourceName(name)
 	{
 		for (const c of name)
@@ -7771,10 +7814,7 @@ export class GenBase extends FuVisitor
 			else {
 				let init;
 				if ((init = expr.inner) instanceof FuAggregateInitializer) {
-					let tempId = this.currentTemporaries.indexOf(expr);
-					if (tempId >= 0)
-						this.writeTemporaryName(tempId);
-					else
+					if (!this.tryWriteTemporary(expr))
 						this.writeNewWithFields(dynamic, init);
 				}
 				else
@@ -8319,6 +8359,19 @@ export class GenBase extends FuVisitor
 		}
 	}
 
+	writeTemporariesNotSubstring(expr)
+	{
+		this.writeTemporaries(expr);
+	}
+
+	writeOwningTemporary(expr)
+	{
+	}
+
+	writeArgTemporary(method, param, arg)
+	{
+	}
+
 	writeTemporaries(expr)
 	{
 		if (expr instanceof FuVar) {
@@ -8343,12 +8396,14 @@ export class GenBase extends FuVisitor
 		else if (expr instanceof FuInterpolatedString) {
 			const interp = expr;
 			for (const part of interp.parts)
-				this.writeTemporaries(part.argument);
+				this.writeTemporariesNotSubstring(part.argument);
 		}
 		else if (expr instanceof FuSymbolReference) {
 			const symbol = expr;
-			if (symbol.left != null)
+			if (symbol.left != null) {
 				this.writeTemporaries(symbol.left);
+				this.writeOwningTemporary(symbol.left);
+			}
 		}
 		else if (expr instanceof FuUnaryExpr) {
 			const unary = expr;
@@ -8359,11 +8414,14 @@ export class GenBase extends FuVisitor
 		}
 		else if (expr instanceof FuBinaryExpr) {
 			const binary = expr;
-			this.writeTemporaries(binary.left);
+			this.writeTemporariesNotSubstring(binary.left);
 			if (binary.op == FuToken.IS)
 				this.defineIsVar(binary);
-			else
+			else {
 				this.writeTemporaries(binary.right);
+				if (binary.op != FuToken.ASSIGN)
+					this.writeOwningTemporary(binary.right);
+			}
 		}
 		else if (expr instanceof FuSelectExpr) {
 			const select = expr;
@@ -8374,8 +8432,13 @@ export class GenBase extends FuVisitor
 		else if (expr instanceof FuCallExpr) {
 			const call = expr;
 			this.writeTemporaries(call.method);
-			for (const arg of call.arguments_)
+			let method = call.method.symbol;
+			let param = method.firstParameter();
+			for (const arg of call.arguments_) {
 				this.writeTemporaries(arg);
+				this.writeArgTemporary(method, param, arg);
+				param = param.nextVar();
+			}
 		}
 		else
 			throw new Error();
@@ -8531,10 +8594,15 @@ export class GenBase extends FuVisitor
 		this.writeChar(41);
 	}
 
-	#writeIf(statement)
+	startIf(expr)
 	{
 		this.write("if (");
-		this.#startIfWhile(statement.cond);
+		this.#startIfWhile(expr);
+	}
+
+	#writeIf(statement)
+	{
+		this.startIf(statement.cond);
 		this.writeChild(statement.onTrue);
 		if (statement.onFalse != null) {
 			this.write("else");
@@ -9573,6 +9641,7 @@ export class GenC extends GenCCpp
 	#compares = new Set();
 	#contains = new Set();
 	#varsToDestruct = [];
+	#conditionVarInScope;
 	currentClass;
 
 	getCurrentContainer()
@@ -9601,6 +9670,10 @@ export class GenC extends GenCCpp
 		this.write(" * @return <code>");
 		this.#writeThrowReturnValue(method.type, false);
 		this.writeLine("</code> on error.");
+	}
+
+	writeThrowsDoc(decl)
+	{
 	}
 
 	includeStdInt()
@@ -9651,7 +9724,7 @@ export class GenC extends GenCCpp
 			expr.accept(this, FuPriority.PRIMARY);
 		}
 		else
-			this.#writeTemporaryOrExpr(expr, FuPriority.ARGUMENT);
+			expr.accept(this, FuPriority.ARGUMENT);
 	}
 
 	#writeStringPtrAdd(call, cast)
@@ -9677,15 +9750,6 @@ export class GenC extends GenCCpp
 		this.#startDefinition(type, true, true);
 	}
 
-	#writeTemporaryOrExpr(expr, parent)
-	{
-		let id = this.currentTemporaries.indexOf(expr);
-		if (id >= 0)
-			this.writeTemporaryName(id);
-		else
-			expr.accept(this, parent);
-	}
-
 	#writeUpcast(resultClass, klass)
 	{
 		for (; klass != resultClass; klass = klass.parent)
@@ -9698,7 +9762,7 @@ export class GenC extends GenCCpp
 		let ptr;
 		if ((storage = expr.type) instanceof FuStorageType && storage.class.id == FuId.NONE && !GenC.#isDictionaryClassStgIndexing(expr)) {
 			this.writeChar(38);
-			this.#writeTemporaryOrExpr(expr, FuPriority.PRIMARY);
+			expr.accept(this, FuPriority.PRIMARY);
 			this.#writeUpcast(resultClass, storage.class);
 		}
 		else if ((ptr = expr.type) instanceof FuClassType && ptr.class != resultClass) {
@@ -9734,6 +9798,8 @@ export class GenC extends GenCCpp
 
 	visitInterpolatedString(expr, parent)
 	{
+		if (this.tryWriteTemporary(expr))
+			return;
 		this.include("stdarg.h");
 		this.include("stdio.h");
 		this.#stringFormat = true;
@@ -9945,9 +10011,11 @@ export class GenC extends GenCCpp
 			this.#writeMatchProperty(expr, 2);
 			break;
 		case FuId.MATCH_VALUE:
-			this.write("g_match_info_fetch(");
-			expr.left.accept(this, FuPriority.ARGUMENT);
-			this.write(", 0)");
+			if (!this.tryWriteTemporary(expr)) {
+				this.write("g_match_info_fetch(");
+				expr.left.accept(this, FuPriority.ARGUMENT);
+				this.write(", 0)");
+			}
 			break;
 		default:
 			if (expr.left == null || expr.symbol instanceof FuConst)
@@ -10409,6 +10477,14 @@ export class GenC extends GenCCpp
 		}
 	}
 
+	#startDestructCall(klass)
+	{
+		let addressOf = this.#writeDestructMethodName(klass);
+		this.writeChar(40);
+		if (addressOf)
+			this.writeChar(38);
+	}
+
 	static #hasDictionaryDestroy(type)
 	{
 		return type instanceof FuOwningType || type instanceof FuStringStorageType;
@@ -10599,126 +10675,43 @@ export class GenC extends GenCCpp
 		return id;
 	}
 
-	#writeStorageTemporary(expr)
+	static #needsOwningTemporary(expr)
 	{
-		if (expr.isNewString(false) || (expr instanceof FuCallExpr && expr.type instanceof FuStorageType))
+		return expr.isNewString(false) || (expr instanceof FuCallExpr && expr.type instanceof FuOwningType);
+	}
+
+	writeOwningTemporary(expr)
+	{
+		if (GenC.#needsOwningTemporary(expr))
 			this.#writeCTemporary(expr.type, expr);
 	}
 
-	#writeCTemporaries(expr)
+	writeTemporariesNotSubstring(expr)
 	{
-		if (expr instanceof FuVar) {
-			const def = expr;
-			if (def.value != null)
-				this.#writeCTemporaries(def.value);
-		}
-		else if (expr instanceof FuAggregateInitializer) {
-			const init = expr;
-			for (const item of init.items) {
-				let assign = item;
-				this.#writeCTemporaries(assign.right);
-			}
-		}
-		else if (expr instanceof FuLiteral || expr instanceof FuLambdaExpr) {
-		}
-		else if (expr instanceof FuInterpolatedString) {
-			const interp = expr;
-			for (const part of interp.parts) {
-				this.#writeCTemporaries(part.argument);
-				if (GenC.isStringSubstring(part.argument) == null)
-					this.#writeStorageTemporary(part.argument);
-			}
-		}
-		else if (expr instanceof FuSymbolReference) {
-			const symbol = expr;
-			if (symbol.left != null)
-				this.#writeCTemporaries(symbol.left);
-		}
-		else if (expr instanceof FuUnaryExpr) {
-			const unary = expr;
-			if (unary.inner != null)
-				this.#writeCTemporaries(unary.inner);
-		}
-		else if (expr instanceof FuBinaryExpr) {
-			const binary = expr;
-			this.#writeCTemporaries(binary.left);
-			if (GenC.isStringSubstring(binary.left) == null)
-				this.#writeStorageTemporary(binary.left);
-			this.#writeCTemporaries(binary.right);
-			if (binary.op != FuToken.ASSIGN)
-				this.#writeStorageTemporary(binary.right);
-		}
-		else if (expr instanceof FuSelectExpr) {
-			const select = expr;
-			this.#writeCTemporaries(select.cond);
-		}
-		else if (expr instanceof FuCallExpr) {
-			const call = expr;
-			if (call.method.left != null) {
-				this.#writeCTemporaries(call.method.left);
-				this.#writeStorageTemporary(call.method.left);
-			}
-			let method = call.method.symbol;
-			let param = method.firstParameter();
-			for (const arg of call.arguments_) {
-				this.#writeCTemporaries(arg);
-				if (call.method.symbol.id != FuId.CONSOLE_WRITE && call.method.symbol.id != FuId.CONSOLE_WRITE_LINE && !(param.type instanceof FuStorageType))
-					this.#writeStorageTemporary(arg);
-				param = param.nextVar();
-			}
-		}
-		else
-			throw new Error();
+		this.writeTemporaries(expr);
+		if (GenC.isStringSubstring(expr) == null)
+			this.writeOwningTemporary(expr);
 	}
 
-	static #hasTemporariesToDestruct(expr)
+	writeArgTemporary(method, param, arg)
 	{
-		return GenC.#containsTemporariesToDestruct(expr) || expr.isNewString(false);
+		if (method.id != FuId.CONSOLE_WRITE && method.id != FuId.CONSOLE_WRITE_LINE && param.type.id != FuId.TYPE_PARAM0_NOT_FINAL && !(param.type instanceof FuOwningType))
+			this.writeOwningTemporary(arg);
 	}
 
-	static #containsTemporariesToDestruct(expr)
+	#hasTemporariesToDestruct()
 	{
-		if (expr instanceof FuAggregateInitializer) {
-			const init = expr;
-			return init.items.some(field => GenC.#hasTemporariesToDestruct(field));
-		}
-		else if (expr instanceof FuLiteral || expr instanceof FuLambdaExpr)
-			return false;
-		else if (expr instanceof FuInterpolatedString) {
-			const interp = expr;
-			return interp.parts.some(part => GenC.#hasTemporariesToDestruct(part.argument));
-		}
-		else if (expr instanceof FuSymbolReference) {
-			const symbol = expr;
-			return symbol.left != null && GenC.#hasTemporariesToDestruct(symbol.left);
-		}
-		else if (expr instanceof FuUnaryExpr) {
-			const unary = expr;
-			return unary.inner != null && GenC.#containsTemporariesToDestruct(unary.inner);
-		}
-		else if (expr instanceof FuBinaryExpr) {
-			const binary = expr;
-			return GenC.#hasTemporariesToDestruct(binary.left) || (binary.op != FuToken.IS && GenC.#hasTemporariesToDestruct(binary.right));
-		}
-		else if (expr instanceof FuSelectExpr) {
-			const select = expr;
-			return GenC.#containsTemporariesToDestruct(select.cond);
-		}
-		else if (expr instanceof FuCallExpr) {
-			const call = expr;
-			return (call.method.left != null && GenC.#hasTemporariesToDestruct(call.method.left)) || call.arguments_.some(arg => GenC.#hasTemporariesToDestruct(arg));
-		}
-		else
-			throw new Error();
+		return this.currentTemporaries.some(temp => !(temp instanceof FuType));
 	}
 
 	cleanupTemporary(i, temp)
 	{
-		if (temp.type.id == FuId.STRING_STORAGE_TYPE) {
-			this.write("free(futemp");
-			this.visitLiteralLong(BigInt(i));
-			this.writeLine(");");
-		}
+		let dynamicObjectLiteral;
+		if (!GenC.#needToDestructType(temp.type) || ((dynamicObjectLiteral = temp) instanceof FuPrefixExpr && dynamicObjectLiteral.inner instanceof FuAggregateInitializer))
+			return;
+		this.#startDestructCall(temp.type.asClassType());
+		this.writeTemporaryName(i);
+		this.writeLine(");");
 	}
 
 	writeVar(def)
@@ -10732,11 +10725,8 @@ export class GenC extends GenCCpp
 
 	#writeGPointerCast(type, expr)
 	{
-		if (type instanceof FuNumericType || type instanceof FuEnum) {
-			this.write("GINT_TO_POINTER(");
-			expr.accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
-		}
+		if (type instanceof FuNumericType || type instanceof FuEnum)
+			this.writeCall("GINT_TO_POINTER", expr);
 		else if (type.id == FuId.STRING_PTR_TYPE && expr.type.id == FuId.STRING_PTR_TYPE) {
 			this.write("(gpointer) ");
 			expr.accept(this, FuPriority.PRIMARY);
@@ -10842,9 +10832,7 @@ export class GenC extends GenCCpp
 					this.write(", ");
 					if (expr.right instanceof FuSymbolReference) {
 						this.#sharedAddRef = true;
-						this.write("FuShared_AddRef(");
-						expr.right.accept(this, FuPriority.ARGUMENT);
-						this.writeChar(41);
+						this.writeCall("FuShared_AddRef", expr.right);
 					}
 					else
 						expr.right.accept(this, FuPriority.ARGUMENT);
@@ -10925,10 +10913,7 @@ export class GenC extends GenCCpp
 			type = array.getElementType();
 		}
 		let klass = type;
-		let addressOf = this.#writeDestructMethodName(klass);
-		this.writeChar(40);
-		if (addressOf)
-			this.writeChar(38);
+		this.#startDestructCall(klass);
 		this.writeLocalName(symbol, FuPriority.PRIMARY);
 		for (let i = 0; i < nesting; i++) {
 			this.write("[_i");
@@ -11116,7 +11101,6 @@ export class GenC extends GenCCpp
 		let dynamic;
 		let klass;
 		if ((dynamic = type) instanceof FuDynamicPtrType && expr instanceof FuSymbolReference && parent != FuPriority.EQUALITY) {
-			this.#sharedAddRef = true;
 			if (dynamic.class.id == FuId.ARRAY_PTR_CLASS)
 				this.#writeDynamicArrayCast(dynamic.getElementType());
 			else {
@@ -11124,6 +11108,7 @@ export class GenC extends GenCCpp
 				this.writeName(dynamic.class);
 				this.write(" *) ");
 			}
+			this.#sharedAddRef = true;
 			this.writeCall("FuShared_AddRef", expr);
 		}
 		else if ((klass = type) instanceof FuClassType && klass.class.id != FuId.STRING_CLASS && klass.class.id != FuId.ARRAY_PTR_CLASS && !(klass instanceof FuStorageType)) {
@@ -11136,7 +11121,7 @@ export class GenC extends GenCCpp
 			if (type.id == FuId.STRING_STORAGE_TYPE)
 				this.#writeStringStorageValue(expr);
 			else if (expr.type.id == FuId.STRING_STORAGE_TYPE)
-				this.#writeTemporaryOrExpr(expr, parent);
+				expr.accept(this, parent);
 			else
 				super.writeCoercedInternal(type, expr, parent);
 		}
@@ -11165,11 +11150,7 @@ export class GenC extends GenCCpp
 		if (parent > FuPriority.EQUALITY)
 			this.writeChar(40);
 		this.include("string.h");
-		this.write("strcmp(");
-		this.#writeTemporaryOrExpr(left, FuPriority.ARGUMENT);
-		this.write(", ");
-		this.#writeTemporaryOrExpr(right, FuPriority.ARGUMENT);
-		this.writeChar(41);
+		this.writeCall("strcmp", left, right);
 		this.write(GenC.getEqOp(not));
 		this.writeChar(48);
 		if (parent > FuPriority.EQUALITY)
@@ -11372,19 +11353,10 @@ export class GenC extends GenCCpp
 				this.writePrintfNotInterpolated(args, newLine);
 			}
 			else if (!newLine) {
-				if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
-					this.write("g_string_append(");
-					obj.accept(this, FuPriority.ARGUMENT);
-					this.write(", ");
-					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
-				}
-				else {
-					this.write("fputs(");
-					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
-					this.write(", ");
-					obj.accept(this, FuPriority.ARGUMENT);
-				}
-				this.writeChar(41);
+				if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS)
+					this.writeCall("g_string_append", obj, args[0]);
+				else
+					this.writeCall("fputs", args[0], obj);
 			}
 			else {
 				let literal;
@@ -11407,7 +11379,7 @@ export class GenC extends GenCCpp
 					this.write(obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS ? "g_string_append_printf(" : "fprintf(");
 					obj.accept(this, FuPriority.ARGUMENT);
 					this.write(", \"%s\\n\", ");
-					this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+					args[0].accept(this, FuPriority.ARGUMENT);
 					this.writeChar(41);
 				}
 			}
@@ -11674,12 +11646,12 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.STRING_TO_LOWER:
 			this.#writeGlib("g_utf8_strdown(");
-			this.#writeTemporaryOrExpr(obj, FuPriority.ARGUMENT);
+			obj.accept(this, FuPriority.ARGUMENT);
 			this.write(", -1)");
 			break;
 		case FuId.STRING_TO_UPPER:
 			this.#writeGlib("g_utf8_strup(");
-			this.#writeTemporaryOrExpr(obj, FuPriority.ARGUMENT);
+			obj.accept(this, FuPriority.ARGUMENT);
 			this.write(", -1)");
 			break;
 		case FuId.ARRAY_BINARY_SEARCH_ALL:
@@ -11995,21 +11967,21 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.REGEX_COMPILE:
 			this.#writeGlib("g_regex_new(");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
 			this.#writeCRegexOptions(args);
 			this.write(", 0, NULL)");
 			break;
 		case FuId.REGEX_ESCAPE:
 			this.#writeGlib("g_regex_escape_string(");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", -1)");
 			break;
 		case FuId.REGEX_IS_MATCH_STR:
 			this.#writeGlib("g_regex_match_simple(");
-			this.#writeTemporaryOrExpr(args[1], FuPriority.ARGUMENT);
+			args[1].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
 			this.#writeCRegexOptions(args);
 			this.write(", 0)");
@@ -12018,7 +11990,7 @@ export class GenC extends GenCCpp
 			this.write("g_regex_match(");
 			obj.accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", 0, NULL)");
 			break;
 		case FuId.MATCH_FIND_STR:
@@ -12026,9 +11998,9 @@ export class GenC extends GenCCpp
 			this.write("FuMatch_Find(&");
 			obj.accept(this, FuPriority.PRIMARY);
 			this.write(", ");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.#writeTemporaryOrExpr(args[1], FuPriority.ARGUMENT);
+			args[1].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
 			this.#writeCRegexOptions(args);
 			this.writeChar(41);
@@ -12037,7 +12009,7 @@ export class GenC extends GenCCpp
 			this.write("g_regex_match(");
 			args[1].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.#writeTemporaryOrExpr(args[0], FuPriority.ARGUMENT);
+			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", 0, &");
 			obj.accept(this, FuPriority.PRIMARY);
 			this.writeChar(41);
@@ -12104,6 +12076,12 @@ export class GenC extends GenCCpp
 			this.notSupported(obj, method.name);
 			break;
 		}
+	}
+
+	visitCallExpr(expr, parent)
+	{
+		if (!this.tryWriteTemporary(expr))
+			super.visitCallExpr(expr, parent);
 	}
 
 	#writeDictionaryIndexing(function_, expr, parent)
@@ -12176,13 +12154,15 @@ export class GenC extends GenCCpp
 		switch (expr.op) {
 		case FuToken.PLUS:
 			if (expr.type.id == FuId.STRING_STORAGE_TYPE) {
+				if (this.tryWriteTemporary(expr))
+					return;
 				this.#stringFormat = true;
 				this.include("stdarg.h");
 				this.include("stdio.h");
 				this.write("FuString_Format(\"%s%s\", ");
-				this.#writeTemporaryOrExpr(expr.left, FuPriority.ARGUMENT);
+				expr.left.accept(this, FuPriority.ARGUMENT);
 				this.write(", ");
-				this.#writeTemporaryOrExpr(expr.right, FuPriority.ARGUMENT);
+				expr.right.accept(this, FuPriority.ARGUMENT);
 				this.writeChar(41);
 				return;
 			}
@@ -12209,7 +12189,7 @@ export class GenC extends GenCCpp
 					this.write(", FuString_Format(\"%s");
 					this.writePrintfFormat(rightInterpolated);
 					this.write("\", ");
-					this.#writeTemporaryOrExpr(expr.left, FuPriority.ARGUMENT);
+					expr.left.accept(this, FuPriority.ARGUMENT);
 					this.writeInterpolatedStringArgs(rightInterpolated);
 					this.writeChar(41);
 				}
@@ -12273,6 +12253,13 @@ export class GenC extends GenCCpp
 		this.#trimVarsToDestruct(i);
 	}
 
+	visitBlock(statement)
+	{
+		let wasConditionVarInScope = this.#conditionVarInScope;
+		super.visitBlock(statement);
+		this.#conditionVarInScope = wasConditionVarInScope;
+	}
+
 	visitBreak(statement)
 	{
 		this.#writeDestructLoopOrSwitch(statement.loopOrSwitch);
@@ -12287,34 +12274,27 @@ export class GenC extends GenCCpp
 
 	visitExpr(statement)
 	{
-		this.#writeCTemporaries(statement);
 		let throwingMethod = GenC.#getThrowingMethod(statement);
 		if (throwingMethod != null) {
+			this.writeTemporaries(statement);
 			this.ensureChildBlock();
 			statement.accept(this, this.#startForwardThrow(throwingMethod));
 			this.#endForwardThrow(throwingMethod);
 			this.cleanupTemporaries();
 		}
-		else if (statement.isNewString(false)) {
-			this.write("free(");
+		else if (GenC.#needsOwningTemporary(statement)) {
+			let klass = statement.type;
+			this.writeTemporaries(statement);
+			this.#writeDestructMethodName(klass);
+			this.writeChar(40);
 			statement.accept(this, FuPriority.ARGUMENT);
+			if (klass.class.id == FuId.STRING_WRITER_CLASS)
+				this.write(", TRUE");
 			this.writeLine(");");
 			this.cleanupTemporaries();
 		}
-		else {
-			let owning;
-			if (statement instanceof FuCallExpr && (owning = statement.type) instanceof FuOwningType) {
-				this.#writeDestructMethodName(owning);
-				this.writeChar(40);
-				statement.accept(this, FuPriority.ARGUMENT);
-				if (owning.class.id == FuId.STRING_WRITER_CLASS)
-					this.write(", TRUE");
-				this.writeLine(");");
-				this.cleanupTemporaries();
-			}
-			else
-				super.visitExpr(statement);
-		}
+		else
+			super.visitExpr(statement);
 	}
 
 	#startForeachHashTable(statement)
@@ -12454,6 +12434,23 @@ export class GenC extends GenCCpp
 			this.notSupported(statement.collection, statement.collection.type.toString());
 	}
 
+	startIf(expr)
+	{
+		if (this.#hasTemporariesToDestruct()) {
+			if (!this.#conditionVarInScope) {
+				this.#conditionVarInScope = true;
+				this.write("bool ");
+			}
+			this.write("fucondition = ");
+			expr.accept(this, FuPriority.ARGUMENT);
+			this.writeCharLine(59);
+			this.cleanupTemporaries();
+			this.write("if (fucondition)");
+		}
+		else
+			super.startIf(expr);
+	}
+
 	visitLock(statement)
 	{
 		this.write("mtx_lock(&");
@@ -12467,45 +12464,43 @@ export class GenC extends GenCCpp
 
 	visitReturn(statement)
 	{
-		if (statement.value == null) {
+		let symbol;
+		let local;
+		if (statement.value == null || statement.value instanceof FuLiteral) {
 			this.#writeDestructAll();
-			if (this.currentMethod.throws.length > 0)
+			if (statement.value == null && this.currentMethod.throws.length > 0)
 				this.writeLine("return true;");
 			else
 				super.visitReturn(statement);
 		}
+		else if ((symbol = statement.value) instanceof FuSymbolReference && (local = symbol.symbol) instanceof FuVar) {
+			if (this.#varsToDestruct.includes(local)) {
+				this.#writeDestructAll(local);
+				this.write("return ");
+				let resultPtr;
+				if ((resultPtr = this.currentMethod.type) instanceof FuClassType && !(resultPtr instanceof FuStorageType))
+					this.#writeClassPtr(resultPtr.class, symbol, FuPriority.ARGUMENT);
+				else
+					symbol.accept(this, FuPriority.ARGUMENT);
+				this.writeCharLine(59);
+			}
+			else {
+				this.#writeDestructAll();
+				super.visitReturn(statement);
+			}
+		}
 		else {
+			this.writeTemporaries(statement.value);
 			let throwingMethod = this.currentMethod.type instanceof FuNumericType ? GenC.#getThrowingMethod(statement.value) : null;
 			let methodRange;
 			let throwingRange;
 			if (throwingMethod != null && ((methodRange = this.currentMethod.type) instanceof FuRangeType ? (throwingRange = throwingMethod.type) instanceof FuRangeType && methodRange.min == throwingRange.min : throwingMethod.type instanceof FuFloatingType))
 				throwingMethod = null;
-			if (statement.value instanceof FuLiteral || (throwingMethod == null && this.#varsToDestruct.length == 0 && !GenC.#containsTemporariesToDestruct(statement.value))) {
+			if (throwingMethod == null && this.#varsToDestruct.length == 0 && !this.#hasTemporariesToDestruct()) {
 				this.#writeDestructAll();
-				this.#writeCTemporaries(statement.value);
 				super.visitReturn(statement);
 			}
 			else {
-				let symbol;
-				let local;
-				if ((symbol = statement.value) instanceof FuSymbolReference && (local = symbol.symbol) instanceof FuVar) {
-					if (this.#varsToDestruct.includes(local)) {
-						this.#writeDestructAll(local);
-						this.write("return ");
-						let resultPtr;
-						if ((resultPtr = this.currentMethod.type) instanceof FuClassType)
-							this.#writeClassPtr(resultPtr.class, symbol, FuPriority.ARGUMENT);
-						else
-							symbol.accept(this, FuPriority.ARGUMENT);
-						this.writeCharLine(59);
-						return;
-					}
-					this.#writeDestructAll();
-					super.visitReturn(statement);
-					return;
-				}
-				this.#writeCTemporaries(statement.value);
-				this.writeTemporaries(statement.value);
 				this.ensureChildBlock();
 				this.#startDefinition(this.currentMethod.type, true, true);
 				this.write("returnValue = ");
@@ -12572,9 +12567,7 @@ export class GenC extends GenCCpp
 			}
 			else {
 				this.includeMath();
-				this.write("!isnan(");
-				call.accept(this, FuPriority.ARGUMENT);
-				this.writeChar(41);
+				this.writeCall("!isnan", call);
 			}
 		}
 		else if (throwingMethod.type.id == FuId.VOID_TYPE)
@@ -12890,6 +12883,7 @@ export class GenC extends GenCCpp
 			}
 			this.writeLine("&vtbl;");
 		}
+		this.#conditionVarInScope = false;
 		this.writeConstructorBody(klass);
 		this.closeBlock();
 	}
@@ -13014,6 +13008,7 @@ export class GenC extends GenCCpp
 		}
 		this.writeNewLine();
 		this.currentMethod = method;
+		this.#conditionVarInScope = false;
 		this.openBlock();
 		let block;
 		if ((block = method.body) instanceof FuBlock) {
@@ -14142,9 +14137,7 @@ export class GenCpp extends GenCCpp
 		this.include("memory");
 		this.write("std::make_shared<");
 		this.writeType(elementType, false);
-		this.write("[]>(");
-		lengthExpr.accept(this, FuPriority.ARGUMENT);
-		this.writeChar(41);
+		this.writeCall("[]>", lengthExpr);
 	}
 
 	writeNew(klass, parent)
@@ -14312,9 +14305,7 @@ export class GenCpp extends GenCCpp
 
 	writeEnumAsInt(expr, parent)
 	{
-		this.write("static_cast<int>(");
-		expr.accept(this, FuPriority.ARGUMENT);
-		this.writeChar(41);
+		this.writeCall("static_cast<int>", expr);
 	}
 
 	#writeCollectionObject(obj, priority)
@@ -15078,9 +15069,7 @@ export class GenCpp extends GenCCpp
 					if (!(klass instanceof FuReadWriteClassType))
 						this.write("const ");
 					this.writeName(klass.class);
-					this.write(" &>(");
-					expr.accept(this, FuPriority.ARGUMENT);
-					this.writeChar(41);
+					this.writeCall(" &>", expr);
 				}
 				else
 					expr.accept(this, FuPriority.PRIMARY);
@@ -15249,9 +15238,16 @@ export class GenCpp extends GenCCpp
 
 	visitLambdaExpr(expr)
 	{
-		this.write("[](const ");
-		this.writeType(expr.first.type, false);
-		this.write(" &");
+		this.write("[](");
+		if (expr.first.type instanceof FuOwningType || expr.first.type.id == FuId.STRING_STORAGE_TYPE) {
+			this.write("const ");
+			this.writeType(expr.first.type, false);
+			this.write(" &");
+		}
+		else {
+			this.writeType(expr.first.type, false);
+			this.writeChar(32);
+		}
 		this.writeName(expr.first);
 		this.write(") { ");
 		this.writeTemporaries(expr.body);
@@ -16469,9 +16465,7 @@ export class GenCs extends GenTyped
 			break;
 		case FuId.U_T_F8_GET_BYTE_COUNT:
 			this.include("System.Text");
-			this.write("Encoding.UTF8.GetByteCount(");
-			args[0].accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
+			this.writeCall("Encoding.UTF8.GetByteCount", args[0]);
 			break;
 		case FuId.U_T_F8_GET_BYTES:
 			this.include("System.Text");
@@ -16783,6 +16777,15 @@ export class GenCs extends GenTyped
 		this.writeLine("</param>");
 	}
 
+	writeThrowsDoc(decl)
+	{
+		this.write("/// <exception cref=\"");
+		this.writeExceptionClass(decl.symbol);
+		this.write("\">");
+		this.writeDocPara(decl.documentation.summary, false);
+		this.writeLine("</exception>");
+	}
+
 	isShortMethod(method)
 	{
 		return method.body instanceof FuReturn;
@@ -16794,7 +16797,7 @@ export class GenCs extends GenTyped
 			return;
 		this.writeNewLine();
 		this.writeDoc(method.documentation);
-		this.writeParametersDoc(method);
+		this.writeParametersAndThrowsDoc(method);
 		this.#writeVisibility(method.visibility);
 		if (method.id == FuId.CLASS_TO_STRING)
 			this.write("override ");
@@ -16928,6 +16931,15 @@ export class GenD extends GenCCppD
 		this.writeName(param);
 		this.write(" = ");
 		this.writeDocPara(param.documentation.summary, false);
+		this.writeNewLine();
+	}
+
+	writeThrowsDoc(decl)
+	{
+		this.write("/// Throws: ");
+		this.writeExceptionClass(decl.symbol);
+		this.writeChar(32);
+		this.writeDocPara(decl.documentation.summary, false);
 		this.writeNewLine();
 	}
 
@@ -18319,7 +18331,7 @@ export class GenD extends GenCCppD
 			return;
 		this.writeNewLine();
 		this.writeDoc(method.documentation);
-		this.writeParametersDoc(method);
+		this.writeParametersAndThrowsDoc(method);
 		this.#writeVisibility(method.visibility);
 		if (method.id == FuId.CLASS_TO_STRING)
 			this.write("override ");
@@ -23737,10 +23749,19 @@ export class GenSwift extends GenPySwift
 
 	writeParameterDoc(param, first)
 	{
-		this.write("/// - parameter ");
+		this.write("/// - Parameter ");
 		this.writeName(param);
-		this.writeChar(32);
+		this.write(": ");
 		this.writeDocPara(param.documentation.summary, false);
+		this.writeNewLine();
+	}
+
+	writeThrowsDoc(decl)
+	{
+		this.write("/// - Throws: `");
+		this.writeExceptionClass(decl.symbol);
+		this.write("` ");
+		this.writeDocPara(decl.documentation.summary, false);
 		this.writeNewLine();
 	}
 
@@ -23748,7 +23769,7 @@ export class GenSwift extends GenPySwift
 	{
 		this.writeNewLine();
 		this.writeDoc(method.documentation);
-		this.writeParametersDoc(method);
+		this.writeParametersAndThrowsDoc(method);
 		switch (method.callType) {
 		case FuCallType.STATIC:
 			this.#writeVisibility(method.visibility);
@@ -24065,12 +24086,21 @@ export class GenPy extends GenPySwift
 		this.writeNewLine();
 	}
 
+	writeThrowsDoc(decl)
+	{
+		this.write(":raises ");
+		this.writeExceptionClass(decl.symbol);
+		this.write(": ");
+		this.writeDocPara(decl.documentation.summary, false);
+		this.writeNewLine();
+	}
+
 	#writePyDoc(method)
 	{
 		if (method.documentation == null)
 			return;
 		this.#startDoc(method.documentation);
-		this.writeParametersDoc(method);
+		this.writeParametersAndThrowsDoc(method);
 		this.writeLine("\"\"\"");
 	}
 
