@@ -77,7 +77,7 @@ class PlaygroundHost extends GenHost
 		this.hasErrors = true;
 		if (!this.annotations.has(filename))
 			this.annotations.set(filename, []);
-		this.annotations.get(filename).push({ row: startLine - 1, column: startColumn - 1, type: "error", text: message });
+		this.annotations.get(filename).push({ row: startLine, column: startColumn, type: "error", text: message });
 	}
 
 	createFile(directory, filename)
@@ -138,11 +138,11 @@ function transpile()
 {
 	const host = new PlaygroundHost();
 	const system = FuSystem.new();
+	host.program = new FuProgram();
+	host.program.parent = system;
+	host.program.system = system;
 	const parser = new FuParser();
 	parser.setHost(host);
-	parser.program = new FuProgram();
-	parser.program.parent = system;
-	parser.program.system = system;
 	const sources = layout.root.getItemsById("stack-fu")[0].contentItems;
 	for (const item of sources) {
 		const filename = item.config.id;
@@ -152,18 +152,18 @@ function transpile()
 	if (!host.hasErrors) {
 		const sema = new FuSema();
 		sema.setHost(host);
-		sema.process(parser.program);
+		sema.process();
 		if (!host.hasErrors) {
 			const filename = sources.length == 1 ? sources[0].config.id.replace(/fu$/, "") : "output.";
-			emit(parser.program, host, new GenC(), filename, "c", "c_cpp");
-			emit(parser.program, host, new GenCpp(), filename, "cpp", "c_cpp");
-			emit(parser.program, host, new GenCs(), filename, "cs", "csharp");
-			emit(parser.program, host, new GenD(), filename, "d", "d");
-			emit(parser.program, host, new GenJava(), filename, "java", "java");
-			emit(parser.program, host, new GenJs(), filename, "js", "javascript");
-			emit(parser.program, host, new GenPy(), filename, "py", "python");
-			emit(parser.program, host, new GenSwift(), filename, "swift", "swift");
-			emit(parser.program, host, new GenTs().withGenFullCode(), filename, "ts", "typescript");
+			emit(host.program, host, new GenC(), filename, "c", "c_cpp");
+			emit(host.program, host, new GenCpp(), filename, "cpp", "c_cpp");
+			emit(host.program, host, new GenCs(), filename, "cs", "csharp");
+			emit(host.program, host, new GenD(), filename, "d", "d");
+			emit(host.program, host, new GenJava(), filename, "java", "java");
+			emit(host.program, host, new GenJs(), filename, "js", "javascript");
+			emit(host.program, host, new GenPy(), filename, "py", "python");
+			emit(host.program, host, new GenSwift(), filename, "swift", "swift");
+			emit(host.program, host, new GenTs().withGenFullCode(), filename, "ts", "typescript");
 		}
 	}
 	for (const item of sources) {
