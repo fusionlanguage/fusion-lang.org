@@ -2451,7 +2451,7 @@ class FuNative extends FuStatement
 	}
 }
 
-class FuReturn extends FuStatement
+class FuReturn extends FuScope
 {
 	value;
 
@@ -2878,7 +2878,6 @@ export class FuMethodBase extends FuMember
 export class FuMethod extends FuMethodBase
 {
 	callType;
-	methodScope = new FuScope();
 
 	static new(klass, visibility, callType, type, id, name, isMutator, param0 = null, param1 = null, param2 = null, param3 = null)
 	{
@@ -5510,7 +5509,8 @@ export class FuSema
 			break;
 		case FuToken.EXCLAMATION_MARK:
 			inner = this.#resolveBool(expr.inner);
-			return Object.assign(new FuPrefixExpr(), { loc: expr.loc, op: FuToken.EXCLAMATION_MARK, inner: inner, type: this.#host.program.system.boolType });
+			type = this.#host.program.system.boolType;
+			break;
 		case FuToken.NEW:
 			return this.#resolveNew(expr);
 		case FuToken.RESOURCE:
@@ -6153,7 +6153,11 @@ export class FuSema
 				else
 					this.#currentPureArguments[param] = param.value;
 			}
+			let callSite = this.#currentScope;
+			ret.parent = method.parameters;
+			this.#currentScope = ret;
 			let result = this.#visitExpr(ret.value);
+			this.#currentScope = callSite;
 			for (let param = method.firstParameter(); param != null; param = param.nextVar())
 				delete this.#currentPureArguments[param];
 			this.#currentPureMethods.delete(method);
@@ -6477,7 +6481,8 @@ export class FuSema
 		}
 		else
 			baseType = this.#toBaseType(expr, ptrModifier, nullable);
-		baseType.loc = expr.loc;
+		if (!(baseType instanceof FuEnum))
+			baseType.loc = expr.loc;
 		if (outerArray == null)
 			return baseType;
 		innerArray.typeArg0 = baseType;
@@ -6691,12 +6696,14 @@ export class FuSema
 		else if (statement.value == null)
 			this.#reportError(statement, "Missing return value");
 		else {
+			this.#openScope(statement);
 			statement.value = this.#visitExpr(statement.value);
 			this.#coercePermanent(statement.value, this.#currentMethod.type);
 			let symbol;
 			let local;
 			if ((symbol = statement.value) instanceof FuSymbolReference && (local = symbol.symbol) instanceof FuVar && ((local.type.isFinal() && !(this.#currentMethod.type instanceof FuStorageType)) || (local.type.id == FuId.STRING_STORAGE_TYPE && this.#currentMethod.type.id != FuId.STRING_STORAGE_TYPE)))
 				this.#reportError(statement, "Returning dangling reference to local storage");
+			this.#closeScope();
 		}
 	}
 
@@ -7090,8 +7097,6 @@ export class FuSema
 					}
 					this.#currentScope = method.parameters;
 					this.#currentMethod = method;
-					if (!(method.body instanceof FuScope))
-						this.#openScope(method.methodScope);
 					this.#visitStatement(method.body);
 					if (method.type.id != FuId.VOID_TYPE && method.body.completesNormally())
 						this.#reportError(method.body, "Method can complete without a return value");
