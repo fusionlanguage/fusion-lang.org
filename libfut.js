@@ -172,7 +172,7 @@ export class FuLexer
 		let file = this.host.program.sourceFiles.at(-1);
 		let line = this.host.program.lineLocs.length - file.line - 1;
 		let lineLoc = this.host.program.lineLocs.at(-1);
-		this.host.reportError(file.filename, line, this.tokenLoc - lineLoc, line, this.loc - lineLoc, message);
+		this.host.reportError(file.filename, line, this.tokenLoc - lineLoc, this.loc - lineLoc, message);
 	}
 
 	#readByte()
@@ -1480,7 +1480,7 @@ export class FuVisitor
 
 export class FuStatement
 {
-	loc;
+	loc = 0;
 
 	getLocLength()
 	{
@@ -2777,6 +2777,10 @@ export class FuMember extends FuNamedValue
 		super();
 	}
 	visibility;
+	startLine;
+	startColumn;
+	endLine;
+	endColumn;
 }
 
 export class FuVar extends FuNamedValue
@@ -2971,6 +2975,10 @@ class FuMethodGroup extends FuMember
 export class FuContainerType extends FuType
 {
 	isPublic;
+	startLine;
+	startColumn;
+	endLine;
+	endColumn;
 }
 
 export class FuEnum extends FuContainerType
@@ -3696,6 +3704,8 @@ export class FuParser extends FuLexer
 		if (this.#foundDefinition == null || this.#foundDefinition.symbol == null)
 			return null;
 		let loc = this.#foundDefinition.symbol.loc;
+		if (loc <= 0)
+			return null;
 		let line = this.host.program.getLine(loc);
 		let file = this.host.program.getSourceFile(line);
 		this.#findDefinitionLine = line - file.line;
@@ -4212,7 +4222,7 @@ export class FuParser extends FuLexer
 		this.nextToken();
 		this.expect(FuToken.ASSIGN);
 		konst.value = this.#parseConstInitializer();
-		this.expect(FuToken.SEMICOLON);
+		this.#closeMember(FuToken.SEMICOLON, konst);
 		return konst;
 	}
 
@@ -4241,13 +4251,13 @@ export class FuParser extends FuLexer
 		}
 	}
 
-	#parseBlock()
+	#parseBlock(method)
 	{
 		let result = Object.assign(new FuBlock(), { loc: this.tokenLoc });
 		this.expect(FuToken.LEFT_BRACE);
 		while (!this.see(FuToken.RIGHT_BRACE) && !this.see(FuToken.END_OF_FILE))
 			result.statements.push(this.#parseStatement());
-		this.expect(FuToken.RIGHT_BRACE);
+		this.#closeMember(FuToken.RIGHT_BRACE, method);
 		return result;
 	}
 
@@ -4400,13 +4410,43 @@ export class FuParser extends FuLexer
 		return result;
 	}
 
-	#parseReturn()
+	#getCurrentLine()
+	{
+		return this.host.program.lineLocs.length - this.host.program.sourceFiles.at(-1).line - 1;
+	}
+
+	#getTokenColumn()
+	{
+		return this.tokenLoc - this.host.program.lineLocs.at(-1);
+	}
+
+	#setMemberEnd(member)
+	{
+		member.endLine = this.#getCurrentLine();
+		member.endColumn = this.loc - this.host.program.lineLocs.at(-1);
+	}
+
+	#closeMember(expected, member)
+	{
+		if (member != null)
+			this.#setMemberEnd(member);
+		this.expect(expected);
+	}
+
+	#closeContainer(type)
+	{
+		type.endLine = this.#getCurrentLine();
+		type.endColumn = this.loc - this.host.program.lineLocs.at(-1);
+		this.expect(FuToken.RIGHT_BRACE);
+	}
+
+	#parseReturn(method)
 	{
 		let result = Object.assign(new FuReturn(), { loc: this.tokenLoc });
 		this.nextToken();
 		if (!this.see(FuToken.SEMICOLON))
 			result.value = this.#parseExpr();
-		this.expect(FuToken.SEMICOLON);
+		this.#closeMember(FuToken.SEMICOLON, method);
 		return result;
 	}
 
@@ -4490,7 +4530,7 @@ export class FuParser extends FuLexer
 	{
 		switch (this.currentToken) {
 		case FuToken.LEFT_BRACE:
-			return this.#parseBlock();
+			return this.#parseBlock(null);
 		case FuToken.ASSERT:
 			return this.#parseAssert();
 		case FuToken.BREAK:
@@ -4512,7 +4552,7 @@ export class FuParser extends FuLexer
 		case FuToken.NATIVE:
 			return this.#parseNative();
 		case FuToken.RETURN:
-			return this.#parseReturn();
+			return this.#parseReturn(null);
 		case FuToken.SWITCH:
 			return this.#parseSwitch();
 		case FuToken.THROW:
@@ -4584,11 +4624,11 @@ export class FuParser extends FuLexer
 			while (this.eat(FuToken.COMMA));
 		}
 		if (method.callType == FuCallType.ABSTRACT)
-			this.expect(FuToken.SEMICOLON);
+			this.#closeMember(FuToken.SEMICOLON, method);
 		else if (this.see(FuToken.FAT_ARROW))
-			method.body = this.#parseReturn();
+			method.body = this.#parseReturn(method);
 		else if (this.check(FuToken.LEFT_BRACE))
-			method.body = this.#parseBlock();
+			method.body = this.#parseBlock(method);
 	}
 
 	static #callTypeToString(callType)
@@ -4596,8 +4636,6 @@ export class FuParser extends FuLexer
 		switch (callType) {
 		case FuCallType.STATIC:
 			return "static";
-		case FuCallType.NORMAL:
-			return "normal";
 		case FuCallType.ABSTRACT:
 			return "abstract";
 		case FuCallType.VIRTUAL:
@@ -4611,10 +4649,21 @@ export class FuParser extends FuLexer
 		}
 	}
 
-	#parseClass(doc, isPublic, callType)
+	#reportFormerError(line, column, length, message)
+	{
+		this.host.reportError(this.host.program.sourceFiles.at(-1).filename, line, column, column + length, message);
+	}
+
+	#reportCallTypeError(line, column, kind, callType)
+	{
+		let callTypeString = FuParser.#callTypeToString(callType);
+		this.#reportFormerError(line, column, callTypeString.length, `${kind} cannot be ${callTypeString}`);
+	}
+
+	#parseClass(doc, line, column, isPublic, callType)
 	{
 		this.expect(FuToken.CLASS);
-		let klass = Object.assign(new FuClass(), { loc: this.tokenLoc, documentation: doc, isPublic: isPublic, callType: callType, name: this.stringValue });
+		let klass = Object.assign(new FuClass(), { loc: this.tokenLoc, documentation: doc, startLine: line, startColumn: column, isPublic: isPublic, callType: callType, name: this.stringValue });
 		if (this.expect(FuToken.ID))
 			this.#addSymbol(this.host.program, klass);
 		if (this.eat(FuToken.COLON)) {
@@ -4624,6 +4673,8 @@ export class FuParser extends FuLexer
 		this.expect(FuToken.LEFT_BRACE);
 		while (!this.see(FuToken.RIGHT_BRACE) && !this.see(FuToken.END_OF_FILE)) {
 			doc = this.#parseDoc();
+			line = this.#getCurrentLine();
+			column = this.#getTokenColumn();
 			let visibility;
 			switch (this.currentToken) {
 			case FuToken.INTERNAL:
@@ -4644,10 +4695,14 @@ export class FuParser extends FuLexer
 			}
 			if (this.see(FuToken.CONST)) {
 				let konst = this.#parseConst(visibility);
+				konst.startLine = line;
+				konst.startColumn = column;
 				konst.documentation = doc;
 				this.#addSymbol(klass, konst);
 				continue;
 			}
+			let callTypeLine = this.#getCurrentLine();
+			let callTypeColumn = this.#getTokenColumn();
 			callType = this.#parseCallType();
 			let type = this.eat(FuToken.VOID) ? this.host.program.system.voidType : this.#parseType();
 			let call;
@@ -4658,7 +4713,7 @@ export class FuParser extends FuLexer
 					if (klass.callType == FuCallType.STATIC)
 						this.reportError("Constructor in a static class");
 					if (callType != FuCallType.NORMAL)
-						this.reportError(`Constructor cannot be ${FuParser.#callTypeToString(callType)}`);
+						this.#reportCallTypeError(callTypeLine, callTypeColumn, "Constructor", callType);
 					if (call.arguments_.length != 0)
 						this.reportError("Constructor parameters not supported");
 					if (klass.constructor_ != null)
@@ -4666,9 +4721,10 @@ export class FuParser extends FuLexer
 				}
 				if (visibility == FuVisibility.PRIVATE)
 					visibility = FuVisibility.INTERNAL;
-				klass.constructor_ = Object.assign(new FuMethodBase(), { loc: call.loc, documentation: doc, visibility: visibility, parent: klass, type: this.host.program.system.voidType, name: klass.name, body: this.#parseBlock() });
+				klass.constructor_ = Object.assign(new FuMethodBase(), { startLine: line, startColumn: column, loc: call.loc, documentation: doc, visibility: visibility, parent: klass, type: this.host.program.system.voidType, name: klass.name });
 				klass.constructor_.parameters.parent = klass;
 				klass.constructor_.addThis(klass, true);
+				klass.constructor_.body = this.#parseBlock(klass.constructor_);
 				continue;
 			}
 			let loc = this.tokenLoc;
@@ -4681,35 +4737,37 @@ export class FuParser extends FuLexer
 				else if (klass.callType == FuCallType.STATIC)
 					this.reportError("Only static methods allowed in a static class");
 				else if (callType == FuCallType.ABSTRACT)
-					this.reportError("Abstract methods allowed only in an abstract class");
+					this.#reportFormerError(callTypeLine, callTypeColumn, 8, "Abstract methods allowed only in an abstract class");
 				else if (klass.callType == FuCallType.SEALED && callType == FuCallType.VIRTUAL)
-					this.reportError("Virtual methods disallowed in a sealed class");
+					this.#reportFormerError(callTypeLine, callTypeColumn, 7, "Virtual methods disallowed in a sealed class");
 				if (visibility == FuVisibility.PRIVATE && callType != FuCallType.STATIC && callType != FuCallType.NORMAL)
-					this.reportError(`${FuParser.#callTypeToString(callType)} method cannot be private`);
-				let method = Object.assign(new FuMethod(), { loc: loc, documentation: doc, visibility: visibility, callType: callType, typeExpr: type, name: name });
+					this.#reportCallTypeError(callTypeLine, callTypeColumn, "Private method", callType);
+				let method = Object.assign(new FuMethod(), { startLine: line, startColumn: column, loc: loc, documentation: doc, visibility: visibility, callType: callType, typeExpr: type, name: name });
 				this.#parseMethod(klass, method);
 				continue;
 			}
 			if (visibility == FuVisibility.PUBLIC)
-				this.reportError("Field cannot be public");
+				this.#reportFormerError(line, column, 6, "Field cannot be public");
 			if (callType != FuCallType.NORMAL)
-				this.reportError(`Field cannot be ${FuParser.#callTypeToString(callType)}`);
+				this.#reportCallTypeError(callTypeLine, callTypeColumn, "Field", callType);
 			if (type == this.host.program.system.voidType)
 				this.reportError("Field cannot be void");
-			let field = Object.assign(new FuField(), { loc: loc, documentation: doc, visibility: visibility, typeExpr: type, name: name, value: this.#parseInitializer() });
+			let field = Object.assign(new FuField(), { startLine: line, startColumn: column, loc: loc, documentation: doc, visibility: visibility, typeExpr: type, name: name, value: this.#parseInitializer() });
 			this.#addSymbol(klass, field);
-			this.expect(FuToken.SEMICOLON);
+			this.#closeMember(FuToken.SEMICOLON, field);
 		}
-		this.expect(FuToken.RIGHT_BRACE);
+		this.#closeContainer(klass);
 	}
 
-	#parseEnum(doc, isPublic)
+	#parseEnum(doc, line, column, isPublic)
 	{
 		this.expect(FuToken.ENUM);
 		let flags = this.eat(FuToken.ASTERISK);
 		let enu = this.host.program.system.newEnum(flags);
-		enu.loc = this.tokenLoc;
 		enu.documentation = doc;
+		enu.startLine = line;
+		enu.startColumn = column;
+		enu.loc = this.tokenLoc;
 		enu.isPublic = isPublic;
 		enu.name = this.stringValue;
 		if (this.expect(FuToken.ID))
@@ -4717,15 +4775,18 @@ export class FuParser extends FuLexer
 		this.expect(FuToken.LEFT_BRACE);
 		do {
 			let konst = Object.assign(new FuConst(), { visibility: FuVisibility.PUBLIC, documentation: this.#parseDoc(), loc: this.tokenLoc, name: this.stringValue, type: enu, visitStatus: FuVisitStatus.NOT_YET });
+			konst.startLine = this.#getCurrentLine();
+			konst.startColumn = this.#getTokenColumn();
 			this.expect(FuToken.ID);
 			if (this.eat(FuToken.ASSIGN))
 				konst.value = this.#parseExpr();
 			else if (flags)
 				this.reportError("enum* symbol must be assigned a value");
 			this.#addSymbol(enu, konst);
+			this.#setMemberEnd(konst);
 		}
 		while (this.eat(FuToken.COMMA));
-		this.expect(FuToken.RIGHT_BRACE);
+		this.#closeContainer(enu);
 	}
 
 	parse(filename, input, inputLength)
@@ -4733,18 +4794,20 @@ export class FuParser extends FuLexer
 		this.open(filename, input, inputLength);
 		while (!this.see(FuToken.END_OF_FILE)) {
 			let doc = this.#parseDoc();
+			let line = this.#getCurrentLine();
+			let column = this.#getTokenColumn();
 			let isPublic = this.eat(FuToken.PUBLIC);
 			switch (this.currentToken) {
 			case FuToken.CLASS:
-				this.#parseClass(doc, isPublic, FuCallType.NORMAL);
+				this.#parseClass(doc, line, column, isPublic, FuCallType.NORMAL);
 				break;
 			case FuToken.STATIC:
 			case FuToken.ABSTRACT:
 			case FuToken.SEALED:
-				this.#parseClass(doc, isPublic, this.#parseCallType());
+				this.#parseClass(doc, line, column, isPublic, this.#parseCallType());
 				break;
 			case FuToken.ENUM:
-				this.#parseEnum(doc, isPublic);
+				this.#parseEnum(doc, line, column, isPublic);
 				break;
 			case FuToken.NATIVE:
 				this.host.program.topLevelNatives.push(this.#parseNative().content);
@@ -4771,8 +4834,7 @@ export class FuSemaHost extends FuParserHost
 		let line = this.program.getLine(statement.loc);
 		let column = statement.loc - this.program.lineLocs[line];
 		let file = this.program.getSourceFile(line);
-		line -= file.line;
-		this.reportError(file.filename, line, column, line, column + statement.getLocLength(), message);
+		this.reportError(file.filename, line - file.line, column, column + statement.getLocLength(), message);
 	}
 }
 
@@ -4784,10 +4846,10 @@ export class FuConsoleHost extends GenHost
 {
 	hasErrors = false;
 
-	reportError(filename, startLine, startUtf16Column, endLine, endUtf16Column, message)
+	reportError(filename, line, startUtf16Column, endUtf16Column, message)
 	{
 		this.hasErrors = true;
-		console.error(`${filename}(${startLine + 1}): ERROR: ${message}`);
+		console.error(`${filename}(${line + 1}): ERROR: ${message}`);
 	}
 }
 
@@ -6640,44 +6702,45 @@ export class FuSema
 		this.#openScope(statement);
 		let element = statement.getVar();
 		this.#resolveType(element);
-		this.#visitExpr(statement.collection);
-		let klass;
-		if ((klass = statement.collection.type) instanceof FuClassType) {
-			switch (klass.class.id) {
-			case FuId.STRING_CLASS:
-				if (statement.count() != 1 || !element.type.isAssignableFrom(this.#host.program.system.intType))
-					this.#reportError(element.type, "Expected 'int' iterator variable");
-				break;
-			case FuId.ARRAY_STORAGE_CLASS:
-			case FuId.LIST_CLASS:
-			case FuId.HASH_SET_CLASS:
-			case FuId.SORTED_SET_CLASS:
-				if (statement.count() != 1)
-					this.#reportError(statement.getValueVar(), "Expected one iterator variable");
-				else if (!element.type.isAssignableFrom(klass.getElementType()))
-					this.#reportError(element.type, `Cannot convert '${klass.getElementType()}' to '${element.type}'`);
-				break;
-			case FuId.DICTIONARY_CLASS:
-			case FuId.SORTED_DICTIONARY_CLASS:
-			case FuId.ORDERED_DICTIONARY_CLASS:
-				if (statement.count() != 2)
-					this.#reportError(element, "Expected '(TKey key, TValue value)' iterator");
-				else {
-					let value = statement.getValueVar();
-					this.#resolveType(value);
-					if (!element.type.isAssignableFrom(klass.getKeyType()))
-						this.#reportError(element, `Cannot convert '${klass.getKeyType()}' to '${element.type}'`);
-					if (!value.type.isAssignableFrom(klass.getValueType()))
-						this.#reportError(value, `Cannot convert '${klass.getValueType()}' to '${value.type}'`);
+		if (this.#visitExpr(statement.collection) != this.#poison) {
+			let klass;
+			if ((klass = statement.collection.type) instanceof FuClassType) {
+				switch (klass.class.id) {
+				case FuId.STRING_CLASS:
+					if (statement.count() != 1 || !element.type.isAssignableFrom(this.#host.program.system.intType))
+						this.#reportError(element.type, "Expected 'int' iterator variable");
+					break;
+				case FuId.ARRAY_STORAGE_CLASS:
+				case FuId.LIST_CLASS:
+				case FuId.HASH_SET_CLASS:
+				case FuId.SORTED_SET_CLASS:
+					if (statement.count() != 1)
+						this.#reportError(statement.getValueVar(), "Expected one iterator variable");
+					else if (!element.type.isAssignableFrom(klass.getElementType()))
+						this.#reportError(element.type, `Cannot convert '${klass.getElementType()}' to '${element.type}'`);
+					break;
+				case FuId.DICTIONARY_CLASS:
+				case FuId.SORTED_DICTIONARY_CLASS:
+				case FuId.ORDERED_DICTIONARY_CLASS:
+					if (statement.count() != 2)
+						this.#reportError(element, "Expected '(TKey key, TValue value)' iterator");
+					else {
+						let value = statement.getValueVar();
+						this.#resolveType(value);
+						if (!element.type.isAssignableFrom(klass.getKeyType()))
+							this.#reportError(element, `Cannot convert '${klass.getKeyType()}' to '${element.type}'`);
+						if (!value.type.isAssignableFrom(klass.getValueType()))
+							this.#reportError(value, `Cannot convert '${klass.getValueType()}' to '${value.type}'`);
+					}
+					break;
+				default:
+					this.#reportError(statement.collection, `'foreach' invalid on '${klass.class.name}'`);
+					break;
 				}
-				break;
-			default:
-				this.#reportError(statement.collection, `'foreach' invalid on '${klass.class.name}'`);
-				break;
 			}
+			else
+				this.#reportError(statement.collection, `'foreach' invalid on '${statement.collection.type}'`);
 		}
-		else
-			this.#reportError(statement.collection, `'foreach' invalid on '${statement.collection.type}'`);
 		statement.setCompletesNormally(true);
 		this.#visitStatement(statement.body);
 		this.#closeScope();

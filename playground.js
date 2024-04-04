@@ -72,12 +72,12 @@ class PlaygroundHost extends GenHost
 	annotations = new Map();
 	outputs = new Map();
 
-	reportError(filename, startLine, startColumn, endLine, endColumn, message)
+	reportError(filename, line, startColumn, endColumn, message)
 	{
 		this.hasErrors = true;
 		if (!this.annotations.has(filename))
 			this.annotations.set(filename, []);
-		this.annotations.get(filename).push({ row: startLine, column: startColumn, type: "error", text: message });
+		this.annotations.get(filename).push({ row: line, column: startColumn, type: "error", text: message });
 	}
 
 	createFile(directory, filename)
