@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "ace-builds": "^1.32.6",
+    "ace-builds": "^1.33.1",
     "golden-layout": "^2.6.0",
     "jquery": "^3.7.1"
   }

@@ -1543,17 +1543,26 @@ export class FuExpr extends FuStatement
 	}
 }
 
-export class FuSymbol extends FuExpr
+export class FuName extends FuExpr
 {
-	id = FuId.NONE;
 	name = "";
-	next;
-	parent;
-	documentation = null;
 
 	getLocLength()
 	{
 		return this.name.length;
+	}
+}
+
+export class FuSymbol extends FuName
+{
+	id = FuId.NONE;
+	next;
+	parent;
+	documentation = null;
+
+	getSymbol()
+	{
+		return this;
 	}
 
 	toString()
@@ -1909,16 +1918,10 @@ class FuImplicitEnumValue extends FuExpr
 	}
 }
 
-export class FuSymbolReference extends FuExpr
+export class FuSymbolReference extends FuName
 {
 	left = null;
-	name;
 	symbol;
-
-	getLocLength()
-	{
-		return this.name.length;
-	}
 
 	isConstEnum()
 	{
@@ -1944,6 +1947,11 @@ export class FuSymbolReference extends FuExpr
 	isNewString(substringOffset)
 	{
 		return this.symbol.id == FuId.MATCH_VALUE;
+	}
+
+	getSymbol()
+	{
+		return this.symbol;
 	}
 
 	toString()
@@ -2927,6 +2935,11 @@ export class FuMethod extends FuMethodBase
 		return this.callType == FuCallType.ABSTRACT || this.callType == FuCallType.VIRTUAL;
 	}
 
+	isAbstractVirtualOrOverride()
+	{
+		return this.callType == FuCallType.ABSTRACT || this.callType == FuCallType.VIRTUAL || this.callType == FuCallType.OVERRIDE;
+	}
+
 	firstParameter()
 	{
 		let first = this.parameters.first;
@@ -3015,13 +3028,13 @@ export class FuClass extends FuContainerType
 	callType;
 	typeParameterCount = 0;
 	hasSubclasses = false;
-	baseClassName = "";
+	baseClass = new FuSymbolReference();
 	constructor_;
 	constArrays = [];
 
 	hasBaseClass()
 	{
-		return this.baseClassName.length > 0;
+		return this.baseClass.name.length > 0;
 	}
 
 	addsVirtualMethods()
@@ -3686,41 +3699,22 @@ export class FuParser extends FuLexer
 	#xcrementParent = null;
 	#currentLoop = null;
 	#currentLoopOrSwitch = null;
-	#findDefinitionFilename;
-	#findDefinitionLine = -1;
-	#findDefinitionColumn;
-	#foundDefinition = null;
+	#findNameFilename;
+	#findNameLine = -1;
+	#findNameColumn;
+	#foundName = null;
 
-	findDefinition(filename, line, column)
+	findName(filename, line, column)
 	{
-		this.#findDefinitionFilename = filename;
-		this.#findDefinitionLine = line;
-		this.#findDefinitionColumn = column;
-		this.#foundDefinition = null;
+		this.#findNameFilename = filename;
+		this.#findNameLine = line;
+		this.#findNameColumn = column;
+		this.#foundName = null;
 	}
 
-	getFoundDefinitionFilename()
+	getFoundDefinition()
 	{
-		if (this.#foundDefinition == null || this.#foundDefinition.symbol == null)
-			return null;
-		let loc = this.#foundDefinition.symbol.loc;
-		if (loc <= 0)
-			return null;
-		let line = this.host.program.getLine(loc);
-		let file = this.host.program.getSourceFile(line);
-		this.#findDefinitionLine = line - file.line;
-		this.#findDefinitionColumn = loc - this.host.program.lineLocs[line];
-		return file.filename;
-	}
-
-	getFoundDefinitionLine()
-	{
-		return this.#findDefinitionLine;
-	}
-
-	getFoundDefinitionColumn()
-	{
-		return this.#findDefinitionColumn;
+		return this.#foundName == null ? null : this.#foundName.getSymbol();
 	}
 
 	#docParseLine(para)
@@ -3872,17 +3866,23 @@ export class FuParser extends FuLexer
 		return result;
 	}
 
-	#parseSymbolReference(result)
+	#isFindName()
 	{
 		let file = this.host.program.sourceFiles.at(-1);
-		if (this.host.program.lineLocs.length - file.line - 1 == this.#findDefinitionLine && file.filename == this.#findDefinitionFilename) {
-			let loc = this.host.program.lineLocs.at(-1) + this.#findDefinitionColumn;
-			if (loc >= this.tokenLoc && loc <= this.loc)
-				this.#foundDefinition = result;
+		if (this.host.program.lineLocs.length - file.line - 1 == this.#findNameLine && file.filename == this.#findNameFilename) {
+			let loc = this.host.program.lineLocs.at(-1) + this.#findNameColumn;
+			return loc >= this.tokenLoc && loc <= this.loc;
 		}
+		return false;
+	}
+
+	#parseName(result)
+	{
+		if (this.#isFindName())
+			this.#foundName = result;
 		result.loc = this.tokenLoc;
 		result.name = this.stringValue;
-		this.expect(FuToken.ID);
+		return this.expect(FuToken.ID);
 	}
 
 	#parseCollection(result, closing)
@@ -3949,7 +3949,7 @@ export class FuParser extends FuLexer
 			break;
 		case FuToken.ID:
 			let symbol = new FuSymbolReference();
-			this.#parseSymbolReference(symbol);
+			this.#parseName(symbol);
 			if (this.eat(FuToken.FAT_ARROW)) {
 				let lambda = Object.assign(new FuLambdaExpr(), { loc: symbol.loc });
 				lambda.add(FuVar.new(null, symbol.name));
@@ -3989,7 +3989,7 @@ export class FuParser extends FuLexer
 			case FuToken.DOT:
 				this.nextToken();
 				let path = Object.assign(new FuSymbolReference(), { left: result });
-				this.#parseSymbolReference(path);
+				this.#parseName(path);
 				result = path;
 				break;
 			case FuToken.LEFT_PARENTHESIS:
@@ -4181,7 +4181,7 @@ export class FuParser extends FuLexer
 		do {
 			let loc = this.tokenLoc;
 			let field = new FuSymbolReference();
-			this.#parseSymbolReference(field);
+			this.#parseName(field);
 			this.expect(FuToken.ASSIGN);
 			result.items.push(Object.assign(new FuBinaryExpr(), { loc: loc, left: field, op: FuToken.ASSIGN, right: this.#parseExpr() }));
 		}
@@ -4209,8 +4209,8 @@ export class FuParser extends FuLexer
 
 	#parseVar(type, initializer)
 	{
-		let result = Object.assign(new FuVar(), { loc: this.tokenLoc, typeExpr: type, name: this.stringValue });
-		this.nextToken();
+		let result = Object.assign(new FuVar(), { typeExpr: type });
+		this.#parseName(result);
 		result.value = initializer ? this.#parseInitializer() : null;
 		return result;
 	}
@@ -4218,8 +4218,8 @@ export class FuParser extends FuLexer
 	#parseConst(visibility)
 	{
 		this.expect(FuToken.CONST);
-		let konst = Object.assign(new FuConst(), { visibility: visibility, typeExpr: this.#parseType(), loc: this.tokenLoc, name: this.stringValue, visitStatus: FuVisitStatus.NOT_YET });
-		this.nextToken();
+		let konst = Object.assign(new FuConst(), { visibility: visibility, typeExpr: this.#parseType(), visitStatus: FuVisitStatus.NOT_YET });
+		this.#parseName(konst);
 		this.expect(FuToken.ASSIGN);
 		konst.value = this.#parseConstInitializer();
 		this.#closeMember(FuToken.SEMICOLON, konst);
@@ -4509,7 +4509,7 @@ export class FuParser extends FuLexer
 		let result = Object.assign(new FuThrow(), { loc: this.tokenLoc });
 		this.expect(FuToken.THROW);
 		result.class = new FuSymbolReference();
-		this.#parseSymbolReference(result.class);
+		this.#parseName(result.class);
 		this.expectOrSkip(FuToken.LEFT_PARENTHESIS);
 		result.message = this.see(FuToken.RIGHT_PARENTHESIS) ? null : this.#parseExpr();
 		this.expect(FuToken.RIGHT_PARENTHESIS);
@@ -4618,7 +4618,7 @@ export class FuParser extends FuLexer
 				}
 				else
 					decl.documentation = throwsDoc;
-				this.#parseSymbolReference(decl);
+				this.#parseName(decl);
 				method.throws.push(decl);
 			}
 			while (this.eat(FuToken.COMMA));
@@ -4663,13 +4663,11 @@ export class FuParser extends FuLexer
 	#parseClass(doc, line, column, isPublic, callType)
 	{
 		this.expect(FuToken.CLASS);
-		let klass = Object.assign(new FuClass(), { loc: this.tokenLoc, documentation: doc, startLine: line, startColumn: column, isPublic: isPublic, callType: callType, name: this.stringValue });
-		if (this.expect(FuToken.ID))
+		let klass = Object.assign(new FuClass(), { documentation: doc, startLine: line, startColumn: column, isPublic: isPublic, callType: callType });
+		if (this.#parseName(klass))
 			this.#addSymbol(this.host.program, klass);
-		if (this.eat(FuToken.COLON)) {
-			klass.baseClassName = this.stringValue;
-			this.expect(FuToken.ID);
-		}
+		if (this.eat(FuToken.COLON))
+			this.#parseName(klass.baseClass);
 		this.expect(FuToken.LEFT_BRACE);
 		while (!this.see(FuToken.RIGHT_BRACE) && !this.see(FuToken.END_OF_FILE)) {
 			doc = this.#parseDoc();
@@ -4727,6 +4725,7 @@ export class FuParser extends FuLexer
 				klass.constructor_.body = this.#parseBlock(klass.constructor_);
 				continue;
 			}
+			let foundName = this.#isFindName();
 			let loc = this.tokenLoc;
 			let name = this.stringValue;
 			if (!this.expect(FuToken.ID))
@@ -4744,6 +4743,8 @@ export class FuParser extends FuLexer
 					this.#reportCallTypeError(callTypeLine, callTypeColumn, "Private method", callType);
 				let method = Object.assign(new FuMethod(), { startLine: line, startColumn: column, loc: loc, documentation: doc, visibility: visibility, callType: callType, typeExpr: type, name: name });
 				this.#parseMethod(klass, method);
+				if (foundName)
+					this.#foundName = method;
 				continue;
 			}
 			if (visibility == FuVisibility.PUBLIC)
@@ -4755,6 +4756,8 @@ export class FuParser extends FuLexer
 			let field = Object.assign(new FuField(), { startLine: line, startColumn: column, loc: loc, documentation: doc, visibility: visibility, typeExpr: type, name: name, value: this.#parseInitializer() });
 			this.#addSymbol(klass, field);
 			this.#closeMember(FuToken.SEMICOLON, field);
+			if (foundName)
+				this.#foundName = field;
 		}
 		this.#closeContainer(klass);
 	}
@@ -4767,17 +4770,15 @@ export class FuParser extends FuLexer
 		enu.documentation = doc;
 		enu.startLine = line;
 		enu.startColumn = column;
-		enu.loc = this.tokenLoc;
 		enu.isPublic = isPublic;
-		enu.name = this.stringValue;
-		if (this.expect(FuToken.ID))
+		if (this.#parseName(enu))
 			this.#addSymbol(this.host.program, enu);
 		this.expect(FuToken.LEFT_BRACE);
 		do {
-			let konst = Object.assign(new FuConst(), { visibility: FuVisibility.PUBLIC, documentation: this.#parseDoc(), loc: this.tokenLoc, name: this.stringValue, type: enu, visitStatus: FuVisitStatus.NOT_YET });
+			let konst = Object.assign(new FuConst(), { visibility: FuVisibility.PUBLIC, documentation: this.#parseDoc(), type: enu, visitStatus: FuVisitStatus.NOT_YET });
 			konst.startLine = this.#getCurrentLine();
 			konst.startColumn = this.#getTokenColumn();
-			this.expect(FuToken.ID);
+			this.#parseName(konst);
 			if (this.eat(FuToken.ASSIGN))
 				konst.value = this.#parseExpr();
 			else if (flags)
@@ -4883,14 +4884,15 @@ export class FuSema
 		if (klass.hasBaseClass()) {
 			this.#currentScope = klass;
 			let baseClass;
-			if ((baseClass = this.#host.program.tryLookup(klass.baseClassName, true)) instanceof FuClass) {
+			if ((baseClass = this.#host.program.tryLookup(klass.baseClass.name, true)) instanceof FuClass) {
 				if (klass.isPublic && !baseClass.isPublic)
-					this.#reportError(klass, "Public class cannot derive from an internal class");
+					this.#reportError(klass.baseClass, "Public class cannot derive from an internal class");
+				klass.baseClass.symbol = baseClass;
 				baseClass.hasSubclasses = true;
 				klass.parent = baseClass;
 			}
 			else
-				this.#reportError(klass, `Base class '${klass.baseClassName}' not found`);
+				this.#reportError(klass.baseClass, `Base class '${klass.baseClass.name}' not found`);
 		}
 		this.#host.program.classes.push(klass);
 	}
@@ -7134,20 +7136,13 @@ export class FuSema
 					if (method.callType == FuCallType.OVERRIDE || method.callType == FuCallType.SEALED) {
 						let baseMethod;
 						if ((baseMethod = klass.parent.tryLookup(method.name, false)) instanceof FuMethod) {
-							switch (baseMethod.callType) {
-							case FuCallType.ABSTRACT:
-							case FuCallType.VIRTUAL:
-							case FuCallType.OVERRIDE:
-								if (method.isMutator() != baseMethod.isMutator()) {
-									if (method.isMutator())
-										this.#reportError(method, "Mutating method cannot override a non-mutating method");
-									else
-										this.#reportError(method, "Non-mutating method cannot override a mutating method");
-								}
-								break;
-							default:
+							if (!baseMethod.isAbstractVirtualOrOverride())
 								this.#reportError(method, "Base method is not abstract or virtual");
-								break;
+							else if (method.isMutator() != baseMethod.isMutator()) {
+								if (method.isMutator())
+									this.#reportError(method, "Mutating method cannot override a non-mutating method");
+								else
+									this.#reportError(method, "Non-mutating method cannot override a mutating method");
 							}
 							if (!method.type.equalsType(baseMethod.type))
 								this.#reportError(method.type, "Base method has a different return type");
@@ -10256,9 +10251,7 @@ export class GenC extends GenCCpp
 		let forEach;
 		if ((forEach = symbol.parent) instanceof FuForeach) {
 			let klass = forEach.collection.type;
-			switch (klass.class.id) {
-			case FuId.STRING_CLASS:
-			case FuId.LIST_CLASS:
+			if (klass.class.id == FuId.STRING_CLASS || (klass.class.id == FuId.LIST_CLASS && !(klass.getElementType() instanceof FuStorageType))) {
 				if (parent == FuPriority.PRIMARY)
 					this.writeChar(40);
 				this.writeChar(42);
@@ -10266,7 +10259,8 @@ export class GenC extends GenCCpp
 				if (parent == FuPriority.PRIMARY)
 					this.writeChar(41);
 				return;
-			case FuId.ARRAY_STORAGE_CLASS:
+			}
+			else if (klass.class.id == FuId.ARRAY_STORAGE_CLASS) {
 				if (klass.getElementType() instanceof FuStorageType) {
 					if (parent > FuPriority.ADD)
 						this.writeChar(40);
@@ -10279,8 +10273,6 @@ export class GenC extends GenCCpp
 				else
 					this.#writeForeachArrayIndexing(forEach, symbol);
 				return;
-			default:
-				break;
 			}
 		}
 		if (symbol instanceof FuField)
@@ -11769,11 +11761,8 @@ export class GenC extends GenCCpp
 			this.#writeUpcast(declaringClass, klass.parent);
 		}
 		else {
-			let definingClass = declaringClass;
-			switch (method.callType) {
-			case FuCallType.ABSTRACT:
-			case FuCallType.VIRTUAL:
-			case FuCallType.OVERRIDE:
+			if (method.isAbstractVirtualOrOverride()) {
+				let definingClass = declaringClass;
 				if (method.callType == FuCallType.OVERRIDE) {
 					let declaringClass1 = method.getDeclaringMethod().parent;
 					declaringClass = declaringClass1;
@@ -11798,11 +11787,9 @@ export class GenC extends GenCCpp
 					this.writeChar(41);
 				this.write("->");
 				this.writeCamelCase(method.name);
-				break;
-			default:
-				this.writeName(method);
-				break;
 			}
+			else
+				this.writeName(method);
 			this.writeChar(40);
 			if (method.callType != FuCallType.STATIC) {
 				if (obj != null)
@@ -12703,7 +12690,7 @@ export class GenC extends GenCCpp
 				this.writePostfix(statement.collection, "->data, ");
 				for (; elementType.isArray(); elementType = elementType.asClassType().getElementType())
 					this.writeChar(42);
-				if (elementType instanceof FuClassType)
+				if (elementType instanceof FuClassType && !(elementType instanceof FuStorageType))
 					this.write("* const ");
 				this.write("*fuend = ");
 				this.writeCamelCaseNotKeyword(element);
@@ -15878,12 +15865,12 @@ export class GenCpp extends GenCCpp
 		if (constructor) {
 			if (klass.id == FuId.EXCEPTION_CLASS) {
 				this.write("using ");
-				if (klass.baseClassName == "Exception")
+				if (klass.baseClass.name == "Exception")
 					this.write("std::runtime_error::runtime_error");
 				else {
-					this.write(klass.baseClassName);
+					this.write(klass.baseClass.name);
 					this.write("::");
-					this.write(klass.baseClassName);
+					this.write(klass.baseClass.name);
 				}
 			}
 			else {
