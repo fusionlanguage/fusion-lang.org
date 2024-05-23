@@ -10,6 +10,14 @@ export const RegexOptions = {
 export class FuParserHost
 {
 	program;
+
+	reportStatementError(statement, message)
+	{
+		let line = this.program.getLine(statement.loc);
+		let column = statement.loc - this.program.lineLocs[line];
+		let file = this.program.getSourceFile(line);
+		this.reportError(file.filename, line - file.line, column, column + statement.getLocLength(), message);
+	}
 }
 
 export const FuToken = {
@@ -138,7 +146,7 @@ export class FuLexer
 	stringValue;
 	#preSymbols = new Set();
 	#lineMode = false;
-	#enableDocComments = true;
+	#skippingUnmet = false;
 	parsingTypeArg = false;
 	#preElseStack = [];
 
@@ -436,7 +444,7 @@ export class FuLexer
 
 	readString(interpolated)
 	{
-		for (let offset = this.charOffset;; this.#readCharLiteral()) {
+		for (let offset = this.charOffset;;) {
 			switch (this.peekChar()) {
 			case -1:
 				this.reportError("Unterminated string literal");
@@ -456,13 +464,27 @@ export class FuLexer
 				if (interpolated) {
 					let endOffset = this.charOffset;
 					this.readChar();
-					if (this.peekChar() != 123) {
+					if (this.#eatChar(123))
+						break;
+					if (!this.#skippingUnmet) {
 						this.stringValue = new TextDecoder().decode(this.input.subarray(offset, offset + endOffset - offset));
 						return FuToken.INTERPOLATED_STRING;
 					}
+					for (;;) {
+						let token = this.#readPreToken();
+						if (token == FuToken.RIGHT_BRACE)
+							break;
+						if (token == FuToken.END_OF_FILE) {
+							this.reportError("Unterminated string literal");
+							return FuToken.END_OF_FILE;
+						}
+					}
 				}
+				else
+					this.readChar();
 				break;
 			default:
+				this.#readCharLiteral();
 				break;
 			}
 		}
@@ -571,7 +593,7 @@ export class FuLexer
 			case 47:
 				if (this.#eatChar(47)) {
 					c = this.readChar();
-					if (c == 47 && this.#enableDocComments) {
+					if (c == 47 && !this.#skippingUnmet) {
 						this.#skipWhitespace();
 						switch (this.peekChar()) {
 						case 10:
@@ -1111,7 +1133,7 @@ export class FuLexer
 
 	#skipUnmet(state)
 	{
-		this.#enableDocComments = false;
+		this.#skippingUnmet = true;
 		for (;;) {
 			switch (this.#readPreToken()) {
 			case FuToken.END_OF_FILE:
@@ -1151,7 +1173,7 @@ export class FuLexer
 	#readToken()
 	{
 		for (;;) {
-			this.#enableDocComments = true;
+			this.#skippingUnmet = false;
 			let token = this.#readPreToken();
 			let matched;
 			switch (token) {
@@ -2821,6 +2843,7 @@ const FuVisitStatus = {
 export class FuConst extends FuMember
 {
 	inMethod;
+	inMethodIndex = 0;
 	visitStatus;
 
 	acceptStatement(visitor)
@@ -4202,7 +4225,7 @@ export class FuParser extends FuLexer
 	#addSymbol(scope, symbol)
 	{
 		if (scope.contains(symbol))
-			this.reportError("Duplicate symbol");
+			this.host.reportStatementError(symbol, "Duplicate symbol");
 		else
 			scope.add(symbol);
 	}
@@ -4828,14 +4851,6 @@ export class FuSemaHost extends FuParserHost
 	getResourceLength(name, expr)
 	{
 		return 0;
-	}
-
-	reportStatementError(statement, message)
-	{
-		let line = this.program.getLine(statement.loc);
-		let column = statement.loc - this.program.lineLocs[line];
-		let file = this.program.getSourceFile(line);
-		this.reportError(file.filename, line - file.line, column, column + statement.getLocLength(), message);
 	}
 }
 
@@ -5688,11 +5703,11 @@ export class FuSema
 	{
 		let rightPtr;
 		if (!((rightPtr = def.type) instanceof FuClassType) || rightPtr instanceof FuStorageType)
-			this.#reportError(def.type, `'${op}' with non-reference type`);
+			this.#reportError(def.typeExpr, `'${op}' with non-reference type`);
 		else {
 			let leftPtr = left.type;
 			if (rightPtr instanceof FuReadWriteClassType && !(leftPtr instanceof FuDynamicPtrType) && (rightPtr instanceof FuDynamicPtrType || !(leftPtr instanceof FuReadWriteClassType)))
-				this.#reportError(rightPtr, `'${leftPtr}' cannot be casted to '${rightPtr}'`);
+				this.#reportError(def.typeExpr, `'${leftPtr}' cannot be casted to '${rightPtr}'`);
 			else {
 				this.#checkIsHierarchy(leftPtr, left, rightPtr.class, expr, op, alwaysMessage, neverMessage);
 			}
@@ -6404,7 +6419,7 @@ export class FuSema
 		for (const typeArgExpr of typeArgExprs.items)
 			typeArgs.push(this.#toType(typeArgExpr, false));
 		if (typeArgs.length != klass.typeParameterCount) {
-			this.#reportError(result, `Expected ${klass.typeParameterCount} type arguments for '${klass.name}', got ${typeArgs.length}`);
+			this.#reportError(typeArgExprs, `Expected ${klass.typeParameterCount} type arguments for '${klass.name}', got ${typeArgs.length}`);
 			return;
 		}
 		result.class = klass;
@@ -6463,9 +6478,9 @@ export class FuSema
 				return this.#poisonError(call, "Expected empty parentheses for storage type");
 			let typeArgExprs2;
 			if ((typeArgExprs2 = call.method.left) instanceof FuAggregateInitializer) {
-				let storage = Object.assign(new FuStorageType(), { loc: call.loc });
 				let klass;
 				if ((klass = this.#host.program.tryLookup(call.method.name, true)) instanceof FuClass) {
+					let storage = new FuStorageType();
 					this.#fillGenericClass(storage, klass, typeArgExprs2);
 					return storage;
 				}
@@ -6560,8 +6575,6 @@ export class FuSema
 		}
 		else
 			baseType = this.#toBaseType(expr, ptrModifier, nullable);
-		if (!(baseType instanceof FuEnum))
-			baseType.loc = expr.loc;
 		if (outerArray == null)
 			return baseType;
 		innerArray.typeArg0 = baseType;
@@ -6594,6 +6607,16 @@ export class FuSema
 				this.#currentScope.add(konst);
 				if (konst.type instanceof FuArrayStorageType) {
 					let klass = this.#getCurrentContainer();
+					let last = null;
+					for (const previous of klass.constArrays) {
+						if (previous.name == konst.name && previous.inMethod == konst.inMethod)
+							last = previous;
+					}
+					if (last != null) {
+						if (last.inMethodIndex == 0)
+							last.inMethodIndex = 1;
+						konst.inMethodIndex = last.inMethodIndex + 1;
+					}
 					klass.constArrays.push(konst);
 				}
 			}
@@ -6710,7 +6733,7 @@ export class FuSema
 				switch (klass.class.id) {
 				case FuId.STRING_CLASS:
 					if (statement.count() != 1 || !element.type.isAssignableFrom(this.#host.program.system.intType))
-						this.#reportError(element.type, "Expected 'int' iterator variable");
+						this.#reportError(element.typeExpr, "Expected 'int' iterator variable");
 					break;
 				case FuId.ARRAY_STORAGE_CLASS:
 				case FuId.LIST_CLASS:
@@ -6719,7 +6742,7 @@ export class FuSema
 					if (statement.count() != 1)
 						this.#reportError(statement.getValueVar(), "Expected one iterator variable");
 					else if (!element.type.isAssignableFrom(klass.getElementType()))
-						this.#reportError(element.type, `Cannot convert '${klass.getElementType()}' to '${element.type}'`);
+						this.#reportError(element.typeExpr, `Cannot convert '${klass.getElementType()}' to '${element.type}'`);
 					break;
 				case FuId.DICTIONARY_CLASS:
 				case FuId.SORTED_DICTIONARY_CLASS:
@@ -7077,7 +7100,7 @@ export class FuSema
 					if (method.visibility != FuVisibility.PUBLIC || method.callType != FuCallType.STATIC)
 						this.#reportError(method, "'Main' method must be 'public static'");
 					if (method.type.id != FuId.VOID_TYPE && method.type.id != FuId.INT_TYPE)
-						this.#reportError(method.type, "'Main' method must return 'void' or 'int'");
+						this.#reportError(method.typeExpr, "'Main' method must return 'void' or 'int'");
 					switch (method.getParametersCount()) {
 					case 0:
 						break;
@@ -7145,7 +7168,7 @@ export class FuSema
 									this.#reportError(method, "Non-mutating method cannot override a mutating method");
 							}
 							if (!method.type.equalsType(baseMethod.type))
-								this.#reportError(method.type, "Base method has a different return type");
+								this.#reportError(method.typeExpr, "Base method has a different return type");
 							let baseParam = baseMethod.firstParameter();
 							for (let param = method.firstParameter();; param = param.nextVar()) {
 								if (param == null) {
@@ -7158,7 +7181,7 @@ export class FuSema
 									break;
 								}
 								if (!param.type.equalsType(baseParam.type)) {
-									this.#reportError(param.type, "Base method has a different parameter type");
+									this.#reportError(param.typeExpr, "Base method has a different parameter type");
 									break;
 								}
 								baseParam = baseParam.nextVar();
@@ -7457,6 +7480,19 @@ export class GenBase extends FuVisitor
 	{
 		this.write(s);
 		this.writeNewLine();
+	}
+
+	writeUppercaseConstName(konst)
+	{
+		if (konst.inMethod != null) {
+			this.writeUppercaseWithUnderscores(konst.inMethod.name);
+			this.writeChar(95);
+		}
+		this.writeUppercaseWithUnderscores(konst.name);
+		if (konst.inMethodIndex > 0) {
+			this.writeChar(95);
+			this.visitLiteralLong(BigInt(konst.inMethodIndex));
+		}
 	}
 
 	writeBanner()
@@ -16079,8 +16115,8 @@ export class GenCpp extends GenCCpp
 			this.writeLine("template <class T, class... Args>");
 			this.writeLine("bool FuNumber_TryParse(T &number, std::string_view s, Args... args)");
 			this.openBlock();
-			this.writeLine("const char *end = s.begin() + s.size();");
-			this.writeLine("auto result = std::from_chars(s.begin(), end, number, args...);");
+			this.writeLine("const char *end = s.data() + s.size();");
+			this.writeLine("auto result = std::from_chars(s.data(), end, number, args...);");
 			this.writeLine("return result.ec == std::errc{} && result.ptr == end;");
 			this.closeBlock();
 		}
@@ -16249,8 +16285,13 @@ export class GenCs extends GenTyped
 	writeName(symbol)
 	{
 		let konst;
-		if ((konst = symbol) instanceof FuConst && konst.inMethod != null)
+		if ((konst = symbol) instanceof FuConst && konst.inMethod != null) {
 			this.write(konst.inMethod.name);
+			this.write(symbol.name);
+			if (konst.inMethodIndex > 0)
+				this.visitLiteralLong(BigInt(konst.inMethodIndex));
+			return;
+		}
 		this.write(symbol.name);
 		switch (symbol.name) {
 		case "as":
@@ -19013,11 +19054,7 @@ export class GenJava extends GenTyped
 			this.write(symbol.name);
 		else if (symbol instanceof FuConst) {
 			const konst = symbol;
-			if (konst.inMethod != null) {
-				this.writeUppercaseWithUnderscores(konst.inMethod.name);
-				this.writeChar(95);
-			}
-			this.writeUppercaseWithUnderscores(symbol.name);
+			this.writeUppercaseConstName(konst);
 		}
 		else if (symbol instanceof FuVar) {
 			let forEach;
@@ -20368,11 +20405,7 @@ export class GenJsNoModule extends GenBase
 			const konst = symbol;
 			if (konst.visibility == FuVisibility.PRIVATE)
 				this.writeChar(35);
-			if (konst.inMethod != null) {
-				this.writeUppercaseWithUnderscores(konst.inMethod.name);
-				this.writeChar(95);
-			}
-			this.writeUppercaseWithUnderscores(symbol.name);
+			this.writeUppercaseConstName(konst);
 		}
 		else if (symbol instanceof FuVar)
 			this.#writeCamelCaseNotKeyword(symbol.name);
@@ -22584,6 +22617,8 @@ export class GenSwift extends GenPySwift
 		else if ((konst = symbol) instanceof FuConst && konst.inMethod != null) {
 			this.writeCamelCase(konst.inMethod.name);
 			this.writePascalCase(symbol.name);
+			if (konst.inMethodIndex > 0)
+				this.visitLiteralLong(BigInt(konst.inMethodIndex));
 		}
 		else if (symbol instanceof FuVar || symbol instanceof FuMember)
 			this.#writeCamelCaseNotKeyword(symbol.name);
@@ -24539,11 +24574,7 @@ export class GenPy extends GenPySwift
 			const konst = symbol;
 			if (konst.visibility != FuVisibility.PUBLIC)
 				this.writeChar(95);
-			if (konst.inMethod != null) {
-				this.writeUppercaseWithUnderscores(konst.inMethod.name);
-				this.writeChar(95);
-			}
-			this.writeUppercaseWithUnderscores(symbol.name);
+			this.writeUppercaseConstName(konst);
 		}
 		else if (symbol instanceof FuVar)
 			this.#writeNameNotKeyword(symbol.name);
