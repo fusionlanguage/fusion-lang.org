@@ -1563,6 +1563,15 @@ export class FuExpr extends FuStatement
 	{
 		return false;
 	}
+
+	isUnique()
+	{
+		return false;
+	}
+
+	setShared()
+	{
+	}
 }
 
 export class FuName extends FuExpr
@@ -1675,6 +1684,11 @@ class FuLiteralNull extends FuLiteral
 	accept(visitor, parent)
 	{
 		visitor.visitLiteralNull();
+	}
+
+	isUnique()
+	{
+		return true;
 	}
 
 	toString()
@@ -1971,6 +1985,14 @@ export class FuSymbolReference extends FuName
 		return this.symbol.id == FuId.MATCH_VALUE;
 	}
 
+	setShared()
+	{
+		let varOrField;
+		let dynamic;
+		if ((varOrField = this.symbol) instanceof FuNamedValue && (dynamic = varOrField.type) instanceof FuDynamicPtrType)
+			dynamic.unique = false;
+	}
+
 	getSymbol()
 	{
 		return this.symbol;
@@ -2026,6 +2048,11 @@ export class FuPrefixExpr extends FuUnaryExpr
 	accept(visitor, parent)
 	{
 		visitor.visitPrefixExpr(this, parent);
+	}
+
+	isUnique()
+	{
+		return this.op == FuToken.NEW && !(this.inner instanceof FuAggregateInitializer);
 	}
 }
 
@@ -2252,6 +2279,17 @@ export class FuSelectExpr extends FuExpr
 	accept(visitor, parent)
 	{
 		visitor.visitSelectExpr(this, parent);
+	}
+
+	isUnique()
+	{
+		return this.onTrue.isUnique() && this.onFalse.isUnique();
+	}
+
+	setShared()
+	{
+		this.onTrue.setShared();
+		this.onFalse.setShared();
 	}
 
 	toString()
@@ -3267,6 +3305,7 @@ export class FuStorageType extends FuOwningType
 
 class FuDynamicPtrType extends FuOwningType
 {
+	unique = false;
 
 	isAssignableFrom(right)
 	{
@@ -5108,8 +5147,12 @@ export class FuSema
 		let baseSymbol;
 		let isBase = (baseSymbol = left) instanceof FuSymbolReference && baseSymbol.symbol.id == FuId.BASE_PTR;
 		if (isBase) {
+			if (this.#currentMethod == null)
+				return this.#poisonError(left, "'base' invalid outside methods");
+			if (this.#currentMethod.isStatic())
+				return this.#poisonError(left, "'base' invalid in static context");
 			let baseClass;
-			if (this.#currentMethod == null || !((baseClass = this.#currentMethod.parent.parent) instanceof FuClass))
+			if (!((baseClass = this.#currentMethod.parent.parent) instanceof FuClass))
 				return this.#poisonError(left, "No base class");
 			scope = baseClass;
 		}
@@ -5691,6 +5734,14 @@ export class FuSema
 		return Object.assign(new FuBinaryExpr(), { loc: expr.loc, left: left, op: expr.op, right: right, type: this.#host.program.system.boolType });
 	}
 
+	#setSharedAssign(left, right)
+	{
+		if (left.type instanceof FuDynamicPtrType && !right.isUnique()) {
+			left.setShared();
+			right.setShared();
+		}
+	}
+
 	#checkIsHierarchy(leftPtr, left, rightClass, expr, op, alwaysMessage, neverMessage)
 	{
 		if (rightClass.isSameOrBaseOf(leftPtr.class))
@@ -5710,6 +5761,11 @@ export class FuSema
 				this.#reportError(def.typeExpr, `'${leftPtr}' cannot be casted to '${rightPtr}'`);
 			else {
 				this.#checkIsHierarchy(leftPtr, left, rightPtr.class, expr, op, alwaysMessage, neverMessage);
+				let dynamic;
+				if ((dynamic = rightPtr) instanceof FuDynamicPtrType) {
+					left.setShared();
+					dynamic.unique = false;
+				}
 			}
 		}
 	}
@@ -5958,6 +6014,7 @@ export class FuSema
 		case FuToken.ASSIGN:
 			this.#checkLValue(left);
 			this.#coercePermanent(right, left.type);
+			this.#setSharedAssign(left, right);
 			expr.left = left;
 			expr.right = right;
 			expr.type = left.type;
@@ -6222,8 +6279,11 @@ export class FuSema
 				this.#coerce(lambda.body, this.#host.program.system.boolType);
 				this.#coerce(lambda.body, this.#host.program.system.boolType);
 			}
-			else
+			else {
 				this.#coerce(arg, type);
+				if (type instanceof FuDynamicPtrType)
+					arg.setShared();
+			}
 		}
 		if (i < arguments_.length)
 			return this.#poisonError(arguments_[i], `Too many arguments for '${method.name}'`);
@@ -6238,7 +6298,7 @@ export class FuSema
 		}
 		symbol.symbol = method;
 		let ret;
-		if (method.callType == FuCallType.STATIC && (ret = method.body) instanceof FuReturn && arguments_.every(arg => arg instanceof FuLiteral) && !this.#currentPureMethods.has(method)) {
+		if (method.isStatic() && (ret = method.body) instanceof FuReturn && arguments_.every(arg => arg instanceof FuLiteral) && !this.#currentPureMethods.has(method)) {
 			this.#currentPureMethods.add(method);
 			i = 0;
 			for (let param = method.firstParameter(); param != null; param = param.nextVar()) {
@@ -6299,9 +6359,21 @@ export class FuSema
 			if (symbol.symbol instanceof FuField) {
 				field.right = this.#visitExpr(field.right);
 				this.#coerce(field.right, symbol.type);
+				this.#setSharedAssign(field.left, field.right);
 			}
 			else
 				this.#reportError(field.left, "Expected a field");
+		}
+	}
+
+	static #initUnique(varOrField)
+	{
+		let dynamic;
+		if ((dynamic = varOrField.type) instanceof FuDynamicPtrType) {
+			if (varOrField.value == null || varOrField.value.isUnique())
+				dynamic.unique = true;
+			else
+				varOrField.value.setShared();
 		}
 	}
 
@@ -6327,6 +6399,7 @@ export class FuSema
 				}
 			}
 		}
+		FuSema.#initUnique(expr);
 		this.#currentScope.add(expr);
 	}
 
@@ -6802,6 +6875,8 @@ export class FuSema
 			this.#openScope(statement);
 			statement.value = this.#visitExpr(statement.value);
 			this.#coercePermanent(statement.value, this.#currentMethod.type);
+			if (this.#currentMethod.type instanceof FuDynamicPtrType)
+				statement.value.setShared();
 			let symbol;
 			let local;
 			if ((symbol = statement.value) instanceof FuSymbolReference && (local = symbol.symbol) instanceof FuVar && ((local.type.isFinal() && !(this.#currentMethod.type instanceof FuStorageType)) || (local.type.id == FuId.STRING_STORAGE_TYPE && this.#currentMethod.type.id != FuId.STRING_STORAGE_TYPE)))
@@ -7080,6 +7155,8 @@ export class FuSema
 			if (symbol instanceof FuField) {
 				const field = symbol;
 				this.#resolveType(field);
+				if (field.visibility != FuVisibility.PROTECTED)
+					FuSema.#initUnique(field);
 			}
 			else if (symbol instanceof FuMethod) {
 				const method = symbol;
@@ -10783,15 +10860,25 @@ export class GenC extends GenCCpp
 			throw new Error();
 	}
 
+	static #isUnique(dynamic)
+	{
+		return dynamic.unique && dynamic.class.id == FuId.ARRAY_PTR_CLASS && !GenC.#hasDictionaryDestroy(dynamic.getElementType());
+	}
+
 	#writeDestructMethodName(klass)
 	{
 		switch (klass.class.id) {
 		case FuId.NONE:
 		case FuId.ARRAY_PTR_CLASS:
 		case FuId.JSON_ELEMENT_CLASS:
-			if (klass instanceof FuDynamicPtrType) {
-				this.#sharedRelease = true;
-				this.write("FuShared_Release");
+			let dynamic;
+			if ((dynamic = klass) instanceof FuDynamicPtrType) {
+				if (GenC.#isUnique(dynamic))
+					this.write("free");
+				else {
+					this.#sharedRelease = true;
+					this.write("FuShared_Release");
+				}
 				return false;
 			}
 			this.writeName(klass.class);
@@ -11180,6 +11267,13 @@ export class GenC extends GenCCpp
 				if (dynamic.class.id == FuId.REGEX_CLASS) {
 					super.writeAssign(expr, parent);
 				}
+				else if (GenC.#isUnique(dynamic)) {
+					this.ensureChildBlock();
+					this.write("free(");
+					expr.left.accept(this, FuPriority.ARGUMENT);
+					this.writeLine(");");
+					super.writeAssign(expr, parent);
+				}
 				else {
 					this.#sharedAssign = true;
 					this.write("FuShared_Assign((void **) &");
@@ -11453,18 +11547,35 @@ export class GenC extends GenCCpp
 
 	writeCoercedInternal(type, expr, parent)
 	{
-		let dynamic;
 		let klass;
-		if ((dynamic = type) instanceof FuDynamicPtrType && expr instanceof FuSymbolReference && parent != FuPriority.EQUALITY) {
-			if (dynamic.class.id == FuId.ARRAY_PTR_CLASS)
-				this.#writeDynamicArrayCast(dynamic.getElementType());
-			else {
-				this.writeChar(40);
-				this.writeName(dynamic.class);
-				this.write(" *) ");
+		if (type instanceof FuDynamicPtrType) {
+			const dynamic = type;
+			let prefix;
+			if (GenC.#isUnique(dynamic) && (prefix = expr) instanceof FuPrefixExpr) {
+				console.assert(prefix.op == FuToken.NEW);
+				let newClass = prefix.type;
+				this.#writeDynamicArrayCast(newClass.getElementType());
+				this.write("malloc(");
+				prefix.inner.accept(this, FuPriority.MUL);
+				this.write(" * sizeof(");
+				this.writeType(newClass.getElementType(), false);
+				this.write("))");
 			}
-			this.#sharedAddRef = true;
-			this.writeCall("FuShared_AddRef", expr);
+			else if (expr instanceof FuSymbolReference && parent != FuPriority.EQUALITY) {
+				if (dynamic.class.id == FuId.ARRAY_PTR_CLASS)
+					this.#writeDynamicArrayCast(dynamic.getElementType());
+				else {
+					this.writeChar(40);
+					this.writeName(dynamic.class);
+					this.write(" *) ");
+				}
+				this.#sharedAddRef = true;
+				this.writeCall("FuShared_AddRef", expr);
+			}
+			else if (dynamic.class.id != FuId.ARRAY_PTR_CLASS)
+				this.#writeClassPtr(dynamic.class, expr, parent);
+			else
+				super.writeCoercedInternal(type, expr, parent);
 		}
 		else if ((klass = type) instanceof FuClassType && klass.class.id != FuId.STRING_CLASS && klass.class.id != FuId.ARRAY_PTR_CLASS && !(klass instanceof FuStorageType)) {
 			if (klass.class.id == FuId.QUEUE_CLASS && expr.type instanceof FuStorageType)
@@ -14343,6 +14454,14 @@ export class GenCpp extends GenCCpp
 		this.writeName(symbol);
 	}
 
+	#writeSharedUnique(prefix, unique, suffix)
+	{
+		this.include("memory");
+		this.write(prefix);
+		this.write(unique ? "unique" : "shared");
+		this.write(suffix);
+	}
+
 	#writeCollectionType(name, elementType)
 	{
 		this.include(name);
@@ -14456,14 +14575,12 @@ export class GenCpp extends GenCCpp
 				this.write("std::regex");
 				break;
 			case FuId.ARRAY_PTR_CLASS:
-				this.include("memory");
-				this.write("std::shared_ptr<");
+				this.#writeSharedUnique("std::", dynamic.unique, "_ptr<");
 				this.writeType(dynamic.getElementType(), false);
 				this.write("[]>");
 				break;
 			default:
-				this.include("memory");
-				this.write("std::shared_ptr<");
+				this.#writeSharedUnique("std::", dynamic.unique, "_ptr<");
 				this.#writeClassType(dynamic);
 				this.writeChar(62);
 				break;
@@ -14485,20 +14602,28 @@ export class GenCpp extends GenCCpp
 			this.write(type.name);
 	}
 
-	writeNewArray(elementType, lengthExpr, parent)
+	#writeNewUniqueArray(unique, elementType, lengthExpr)
 	{
-		this.include("memory");
-		this.write("std::make_shared<");
+		this.#writeSharedUnique("std::make_", unique, "<");
 		this.writeType(elementType, false);
 		this.writeCall("[]>", lengthExpr);
 	}
 
-	writeNew(klass, parent)
+	writeNewArray(elementType, lengthExpr, parent)
 	{
-		this.include("memory");
-		this.write("std::make_shared<");
+		this.#writeNewUniqueArray(false, elementType, lengthExpr);
+	}
+
+	#writeNewUnique(unique, klass)
+	{
+		this.#writeSharedUnique("std::make_", unique, "<");
 		this.#writeClassType(klass);
 		this.write(">()");
+	}
+
+	writeNew(klass, parent)
+	{
+		this.#writeNewUnique(false, klass);
 	}
 
 	writeStorageInit(def)
@@ -15391,8 +15516,23 @@ export class GenCpp extends GenCCpp
 
 	writeCoercedInternal(type, expr, parent)
 	{
-		let klass;
-		if ((klass = type) instanceof FuClassType && !(klass instanceof FuOwningType)) {
+		if (type instanceof FuStorageType) {
+		}
+		else if (type instanceof FuDynamicPtrType) {
+			const dynamic = type;
+			let prefix;
+			if (dynamic.unique && (prefix = expr) instanceof FuPrefixExpr) {
+				console.assert(prefix.op == FuToken.NEW);
+				let newClass = prefix.type;
+				if (newClass.class.id == FuId.ARRAY_PTR_CLASS)
+					this.#writeNewUniqueArray(true, newClass.getElementType(), prefix.inner);
+				else
+					this.#writeNewUnique(true, newClass);
+				return;
+			}
+		}
+		else if (type instanceof FuClassType) {
+			const klass = type;
 			if (klass.class.id == FuId.STRING_CLASS) {
 				if (expr.type.id == FuId.NULL_TYPE) {
 					this.include("string_view");
@@ -16287,6 +16427,7 @@ export class GenCs extends GenTyped
 		let konst;
 		if ((konst = symbol) instanceof FuConst && konst.inMethod != null) {
 			this.write(konst.inMethod.name);
+			this.writeChar(95);
 			this.write(symbol.name);
 			if (konst.inMethodIndex > 0)
 				this.visitLiteralLong(BigInt(konst.inMethodIndex));
