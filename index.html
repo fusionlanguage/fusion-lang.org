@@ -2,42 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Fusion Playground</title>
-<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-<!-- <script type="module" src="node_modules/golden-layout/dist/esm/index.js"></script>- -->
-<script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
-<script type="text/javascript" src="node_modules/ace-builds/src-min-noconflict/ace.js"></script>
-<script type="module" src="playground.js"></script>
-<!--
-<link rel="stylesheet" href="node_modules/golden-layout/dist/css/goldenlayout-base.css" />
-<link rel="stylesheet" href="node_modules/golden-layout/dist/css/themes/goldenlayout-dark-theme.css" />
--->
-<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
-<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-dark-theme.css" />
+<title>Fusion</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
 <style>
-	html, body {
+	html {
 		background: #000;
 		color: #fff;
+		padding: 0 2em;
 		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
 	}
-	h1 {
-		display: inline;
-		margin-right: 1em;
-	}
-	#goldenLayout {
-		flex-grow: 1;
-	}
-	.editor {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	}
+	body { max-width: 800px; margin: auto; }
+	a { color: #49f; }
+	img { display: block; margin: auto; }
+	.keyword { color: #6bf; }
+	.string { color: #c4f; }
+	.terminal { color: #0c6; }
 </style>
 <meta name="description" content="Transpiling to C, C++, C#, D, Java, JavaScript, Python, Swift, TypeScript and OpenCL."/>
 <meta name="keywords" content="Programming language,transpiler"/>
@@ -53,18 +32,28 @@
 <meta property="og:image" content="https://fusion-lang.org/fut-preview.png" />
 </head>
 <body>
-<div>
-<h1>Fusion Playground</h1>
+<h1>Fusion Programming Language</h1>
 <a class="github-fork-ribbon" href="https://github.com/fusionlanguage/fut" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
-<label for="sampleSelect">Sample:</label>
-<select id="sampleSelect">
-	<option value="">Hello, world!</option>
-	<option value="qoi">Quite OK Image</option>
-	<option value="qoa">Quite OK Audio</option>
-	<option value="datamatrix">Data Matrix Encoder</option>
-	<option value="ray">Toy Ray Tracer</option>
-</select>
-</div>
-<div id="goldenLayout"></div>
+<p>Fusion is a programming language designed for implementing reusable components
+(libraries) for C, C++, C#, D, Java, JavaScript, Python, Swift, TypeScript
+and OpenCL C, all from single codebase.</p>
+<img src="fut-dark.png" />
+<p>A "Hello, world" library:</p>
+<pre><span class="keyword">public class</span> HelloFu
+{
+    <span class="keyword">public static string</span> GetMessage()
+    {
+        <span class="keyword">return</span> <span class="string">"Hello, world!"</span>;
+    }
+}
+</pre>
+<p>can be translated to all the listed languages with:</p>
+<pre class="terminal">fut -o hello.c,cpp,cs,d,java,js,py,swift,ts,cl hello.fu
+</pre>
+<p>The translated code is lightweight (no virtual machine, emulation nor
+dependencies), human-readable and fits well with the target language,
+including naming conventions and documentation comments.</p>
+<p>Check out <a href="playground">Fusion Playground</a> in your browser.</p>
+<p>For further instructions, see <a href="https://github.com/fusionlanguage/fut/blob/master/doc/getting-started.md">Getting Started</a>.</p>
 </body>
 </html>

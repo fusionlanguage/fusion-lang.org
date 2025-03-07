@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fusion Playground</title>
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+<!-- <script type="module" src="node_modules/golden-layout/dist/esm/index.js"></script>- -->
+<script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
+<script type="text/javascript" src="node_modules/ace-builds/src-min-noconflict/ace.js"></script>
+<script type="module" src="playground.js"></script>
+<!--
+<link rel="stylesheet" href="node_modules/golden-layout/dist/css/goldenlayout-base.css" />
+<link rel="stylesheet" href="node_modules/golden-layout/dist/css/themes/goldenlayout-dark-theme.css" />
+-->
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-dark-theme.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+<style>
+	html, body {
+		background: #000;
+		color: #fff;
+		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	h1 {
+		display: inline;
+		margin-right: 1em;
+	}
+	#goldenLayout {
+		flex-grow: 1;
+	}
+	.editor {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+</style>
+<meta name="description" content="Transpiling to C, C++, C#, D, Java, JavaScript, Python, Swift, TypeScript and OpenCL."/>
+<meta name="keywords" content="Programming language,transpiler"/>
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@fox6502" />
+<meta name="twitter:title" content="Fusion Programming Language" />
+<meta name="twitter:description" content="Transpiling to C, C++, C#, D, Java, JavaScript, Python, Swift, TypeScript and OpenCL." />
+<meta name="twitter:image" content="https://fusion-lang.org/fut-preview.png" />
+<meta property="og:title" content="Fusion Programming Language" />
+<meta property="og:description" content="Transpiling to C, C++, C#, D, Java, JavaScript, Python, Swift, TypeScript and OpenCL." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://fusion-lang.org" />
+<meta property="og:image" content="https://fusion-lang.org/fut-preview.png" />
+</head>
+<body>
+<div>
+<h1>Fusion Playground</h1>
+<a class="github-fork-ribbon" href="https://github.com/fusionlanguage/fut" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+<label for="sampleSelect">Sample:</label>
+<select id="sampleSelect">
+	<option value="">Hello, world!</option>
+	<option value="qoi">Quite OK Image</option>
+	<option value="qoa">Quite OK Audio</option>
+	<option value="datamatrix">Data Matrix Encoder</option>
+	<option value="ray">Toy Ray Tracer</option>
+</select>
+</div>
+<div id="goldenLayout"></div>
+</body>
+</html>
