@@ -120,11 +120,9 @@ function ensureEditor(stack, filename, mode, content)
 function emit(program, host, gen, filename, lang, mode)
 {
 	host.outputs.clear();
-	gen.namespace = "";
-	gen.outputFile = filename + lang;
 	gen.setHost(host);
 	host.hasErrors = false;
-	gen.writeProgram(program);
+	gen.writeProgram(program, filename + lang, "");
 	if (!host.hasErrors) {
 		const stack = layout.root.getItemsById("stack-" + lang)[0];
 		for (const item of stack.getItemsByFilter(item => !host.outputs.has(item.config.id)))
@@ -138,9 +136,7 @@ function transpile()
 {
 	const host = new PlaygroundHost();
 	const system = FuSystem.new();
-	host.program = new FuProgram();
-	host.program.parent = system;
-	host.program.system = system;
+	new FuProgram().init(system, system, host);
 	const parser = new FuParser();
 	parser.setHost(host);
 	const sources = layout.root.getItemsById("stack-fu")[0].contentItems;
