@@ -1348,125 +1348,126 @@ export const FuId = {
 	MATH_POSITIVE_INFINITY : 54,
 	ENUM_FROM_INT : 55,
 	ENUM_HAS_FLAG : 56,
-	INT_TRY_PARSE : 57,
-	N_INT_TRY_PARSE : 58,
-	LONG_TRY_PARSE : 59,
-	DOUBLE_TRY_PARSE : 60,
-	STRING_CONTAINS : 61,
-	STRING_ENDS_WITH : 62,
-	STRING_INDEX_OF : 63,
-	STRING_LAST_INDEX_OF : 64,
-	STRING_REPLACE : 65,
-	STRING_STARTS_WITH : 66,
-	STRING_SUBSTRING : 67,
-	STRING_TO_LOWER : 68,
-	STRING_TO_UPPER : 69,
-	ARRAY_BINARY_SEARCH_ALL : 70,
-	ARRAY_BINARY_SEARCH_PART : 71,
-	ARRAY_CONTAINS : 72,
-	ARRAY_COPY_TO : 73,
-	ARRAY_FILL_ALL : 74,
-	ARRAY_FILL_PART : 75,
-	ARRAY_SORT_ALL : 76,
-	ARRAY_SORT_PART : 77,
-	LIST_ADD : 78,
-	LIST_ADD_RANGE : 79,
-	LIST_ALL : 80,
-	LIST_ANY : 81,
-	LIST_CLEAR : 82,
-	LIST_CONTAINS : 83,
-	LIST_COPY_TO : 84,
-	LIST_COUNT : 85,
-	LIST_INDEX_OF : 86,
-	LIST_INSERT : 87,
-	LIST_LAST : 88,
-	LIST_REMOVE_AT : 89,
-	LIST_REMOVE_RANGE : 90,
-	LIST_SORT_ALL : 91,
-	LIST_SORT_PART : 92,
-	QUEUE_CLEAR : 93,
-	QUEUE_COUNT : 94,
-	QUEUE_DEQUEUE : 95,
-	QUEUE_ENQUEUE : 96,
-	QUEUE_PEEK : 97,
-	STACK_CLEAR : 98,
-	STACK_COUNT : 99,
-	STACK_PEEK : 100,
-	STACK_PUSH : 101,
-	STACK_POP : 102,
-	PRIORITY_QUEUE_CLEAR : 103,
-	PRIORITY_QUEUE_COUNT : 104,
-	PRIORITY_QUEUE_DEQUEUE : 105,
-	PRIORITY_QUEUE_ENQUEUE : 106,
-	PRIORITY_QUEUE_PEEK : 107,
-	HASH_SET_ADD : 108,
-	HASH_SET_CLEAR : 109,
-	HASH_SET_CONTAINS : 110,
-	HASH_SET_COUNT : 111,
-	HASH_SET_REMOVE : 112,
-	SORTED_SET_ADD : 113,
-	SORTED_SET_CLEAR : 114,
-	SORTED_SET_CONTAINS : 115,
-	SORTED_SET_COUNT : 116,
-	SORTED_SET_REMOVE : 117,
-	DICTIONARY_ADD : 118,
-	DICTIONARY_CLEAR : 119,
-	DICTIONARY_CONTAINS_KEY : 120,
-	DICTIONARY_COUNT : 121,
-	DICTIONARY_REMOVE : 122,
-	SORTED_DICTIONARY_CLEAR : 123,
-	SORTED_DICTIONARY_CONTAINS_KEY : 124,
-	SORTED_DICTIONARY_COUNT : 125,
-	SORTED_DICTIONARY_REMOVE : 126,
-	ORDERED_DICTIONARY_CLEAR : 127,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 128,
-	ORDERED_DICTIONARY_COUNT : 129,
-	ORDERED_DICTIONARY_REMOVE : 130,
-	TEXT_WRITER_WRITE : 131,
-	TEXT_WRITER_WRITE_CHAR : 132,
-	TEXT_WRITER_WRITE_CODE_POINT : 133,
-	TEXT_WRITER_WRITE_LINE : 134,
-	CONSOLE_WRITE : 135,
-	CONSOLE_WRITE_LINE : 136,
-	STRING_WRITER_CLEAR : 137,
-	STRING_WRITER_TO_STRING : 138,
-	CONVERT_TO_BASE64_STRING : 139,
-	U_T_F8_GET_BYTE_COUNT : 140,
-	U_T_F8_GET_BYTES : 141,
-	U_T_F8_GET_STRING : 142,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 143,
-	REGEX_COMPILE : 144,
-	REGEX_ESCAPE : 145,
-	REGEX_IS_MATCH_STR : 146,
-	REGEX_IS_MATCH_REGEX : 147,
-	MATCH_FIND_STR : 148,
-	MATCH_FIND_REGEX : 149,
-	MATCH_GET_CAPTURE : 150,
-	JSON_ELEMENT_PARSE : 151,
-	JSON_ELEMENT_IS_OBJECT : 152,
-	JSON_ELEMENT_IS_ARRAY : 153,
-	JSON_ELEMENT_IS_STRING : 154,
-	JSON_ELEMENT_IS_NUMBER : 155,
-	JSON_ELEMENT_IS_BOOLEAN : 156,
-	JSON_ELEMENT_IS_NULL : 157,
-	JSON_ELEMENT_GET_OBJECT : 158,
-	JSON_ELEMENT_GET_ARRAY : 159,
-	JSON_ELEMENT_GET_STRING : 160,
-	JSON_ELEMENT_GET_DOUBLE : 161,
-	JSON_ELEMENT_GET_BOOLEAN : 162,
-	MATH_METHOD : 163,
-	MATH_ABS : 164,
-	MATH_CEILING : 165,
-	MATH_CLAMP : 166,
-	MATH_FUSED_MULTIPLY_ADD : 167,
-	MATH_IS_FINITE : 168,
-	MATH_IS_INFINITY : 169,
-	MATH_IS_NA_N : 170,
-	MATH_LOG2 : 171,
-	MATH_MAX : 172,
-	MATH_MIN : 173,
-	MATH_ROUND : 174,
-	MATH_TRUNCATE : 175
+	ENUM_TO_INT : 57,
+	INT_TRY_PARSE : 58,
+	N_INT_TRY_PARSE : 59,
+	LONG_TRY_PARSE : 60,
+	DOUBLE_TRY_PARSE : 61,
+	STRING_CONTAINS : 62,
+	STRING_ENDS_WITH : 63,
+	STRING_INDEX_OF : 64,
+	STRING_LAST_INDEX_OF : 65,
+	STRING_REPLACE : 66,
+	STRING_STARTS_WITH : 67,
+	STRING_SUBSTRING : 68,
+	STRING_TO_LOWER : 69,
+	STRING_TO_UPPER : 70,
+	ARRAY_BINARY_SEARCH_ALL : 71,
+	ARRAY_BINARY_SEARCH_PART : 72,
+	ARRAY_CONTAINS : 73,
+	ARRAY_COPY_TO : 74,
+	ARRAY_FILL_ALL : 75,
+	ARRAY_FILL_PART : 76,
+	ARRAY_SORT_ALL : 77,
+	ARRAY_SORT_PART : 78,
+	LIST_ADD : 79,
+	LIST_ADD_RANGE : 80,
+	LIST_ALL : 81,
+	LIST_ANY : 82,
+	LIST_CLEAR : 83,
+	LIST_CONTAINS : 84,
+	LIST_COPY_TO : 85,
+	LIST_COUNT : 86,
+	LIST_INDEX_OF : 87,
+	LIST_INSERT : 88,
+	LIST_LAST : 89,
+	LIST_REMOVE_AT : 90,
+	LIST_REMOVE_RANGE : 91,
+	LIST_SORT_ALL : 92,
+	LIST_SORT_PART : 93,
+	QUEUE_CLEAR : 94,
+	QUEUE_COUNT : 95,
+	QUEUE_DEQUEUE : 96,
+	QUEUE_ENQUEUE : 97,
+	QUEUE_PEEK : 98,
+	STACK_CLEAR : 99,
+	STACK_COUNT : 100,
+	STACK_PEEK : 101,
+	STACK_PUSH : 102,
+	STACK_POP : 103,
+	PRIORITY_QUEUE_CLEAR : 104,
+	PRIORITY_QUEUE_COUNT : 105,
+	PRIORITY_QUEUE_DEQUEUE : 106,
+	PRIORITY_QUEUE_ENQUEUE : 107,
+	PRIORITY_QUEUE_PEEK : 108,
+	HASH_SET_ADD : 109,
+	HASH_SET_CLEAR : 110,
+	HASH_SET_CONTAINS : 111,
+	HASH_SET_COUNT : 112,
+	HASH_SET_REMOVE : 113,
+	SORTED_SET_ADD : 114,
+	SORTED_SET_CLEAR : 115,
+	SORTED_SET_CONTAINS : 116,
+	SORTED_SET_COUNT : 117,
+	SORTED_SET_REMOVE : 118,
+	DICTIONARY_ADD : 119,
+	DICTIONARY_CLEAR : 120,
+	DICTIONARY_CONTAINS_KEY : 121,
+	DICTIONARY_COUNT : 122,
+	DICTIONARY_REMOVE : 123,
+	SORTED_DICTIONARY_CLEAR : 124,
+	SORTED_DICTIONARY_CONTAINS_KEY : 125,
+	SORTED_DICTIONARY_COUNT : 126,
+	SORTED_DICTIONARY_REMOVE : 127,
+	ORDERED_DICTIONARY_CLEAR : 128,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 129,
+	ORDERED_DICTIONARY_COUNT : 130,
+	ORDERED_DICTIONARY_REMOVE : 131,
+	TEXT_WRITER_WRITE : 132,
+	TEXT_WRITER_WRITE_CHAR : 133,
+	TEXT_WRITER_WRITE_CODE_POINT : 134,
+	TEXT_WRITER_WRITE_LINE : 135,
+	CONSOLE_WRITE : 136,
+	CONSOLE_WRITE_LINE : 137,
+	STRING_WRITER_CLEAR : 138,
+	STRING_WRITER_TO_STRING : 139,
+	CONVERT_TO_BASE64_STRING : 140,
+	U_T_F8_GET_BYTE_COUNT : 141,
+	U_T_F8_GET_BYTES : 142,
+	U_T_F8_GET_STRING : 143,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 144,
+	REGEX_COMPILE : 145,
+	REGEX_ESCAPE : 146,
+	REGEX_IS_MATCH_STR : 147,
+	REGEX_IS_MATCH_REGEX : 148,
+	MATCH_FIND_STR : 149,
+	MATCH_FIND_REGEX : 150,
+	MATCH_GET_CAPTURE : 151,
+	JSON_ELEMENT_PARSE : 152,
+	JSON_ELEMENT_IS_OBJECT : 153,
+	JSON_ELEMENT_IS_ARRAY : 154,
+	JSON_ELEMENT_IS_STRING : 155,
+	JSON_ELEMENT_IS_NUMBER : 156,
+	JSON_ELEMENT_IS_BOOLEAN : 157,
+	JSON_ELEMENT_IS_NULL : 158,
+	JSON_ELEMENT_GET_OBJECT : 159,
+	JSON_ELEMENT_GET_ARRAY : 160,
+	JSON_ELEMENT_GET_STRING : 161,
+	JSON_ELEMENT_GET_DOUBLE : 162,
+	JSON_ELEMENT_GET_BOOLEAN : 163,
+	MATH_METHOD : 164,
+	MATH_ABS : 165,
+	MATH_CEILING : 166,
+	MATH_CLAMP : 167,
+	MATH_FUSED_MULTIPLY_ADD : 168,
+	MATH_IS_FINITE : 169,
+	MATH_IS_INFINITY : 170,
+	MATH_IS_NA_N : 171,
+	MATH_LOG2 : 172,
+	MATH_MAX : 173,
+	MATH_MIN : 174,
+	MATH_ROUND : 175,
+	MATH_TRUNCATE : 176
 }
 
 export class FuDocInline
@@ -3720,6 +3721,7 @@ export class FuSystem extends FuScope
 	{
 		let enu = flags ? new FuEnumFlags() : new FuEnum();
 		enu.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.STATIC, enu, FuId.ENUM_FROM_INT, "FromInt", false, FuVar.new(this.intType, "value")));
+		enu.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.intType, FuId.ENUM_TO_INT, "ToInt", false));
 		if (flags)
 			enu.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.ENUM_HAS_FLAG, "HasFlag", false, FuVar.new(enu, "flag")));
 		return enu;
@@ -5527,56 +5529,79 @@ export class FuSema
 
 	#checkLValue(expr)
 	{
-		let indexing;
-		if (expr instanceof FuSymbolReference) {
-			const symbol = expr;
-			if (symbol.symbol instanceof FuVar) {
-				const def = symbol.symbol;
-				def.isAssigned = true;
-				if (symbol.symbol.parent instanceof FuFor) {
-					const forLoop = symbol.symbol.parent;
-					forLoop.isRange = false;
-				}
-				else if (symbol.symbol.parent instanceof FuForeach)
-					this.#reportError(expr, "Cannot assign a foreach iteration variable");
-				for (let scope = this.#currentScope; !(scope instanceof FuClass); scope = scope.parent) {
-					let forLoop;
-					let binaryCond;
-					if ((forLoop = scope) instanceof FuFor && forLoop.isRange && (binaryCond = forLoop.cond) instanceof FuBinaryExpr && binaryCond.right.isReferenceTo(symbol.symbol))
+		for (;;) {
+			let indexing;
+			if (expr instanceof FuSymbolReference) {
+				const symbol = expr;
+				if (symbol.symbol instanceof FuVar) {
+					const def = symbol.symbol;
+					def.isAssigned = true;
+					if (symbol.symbol.parent instanceof FuFor) {
+						const forLoop = symbol.symbol.parent;
 						forLoop.isRange = false;
-				}
-			}
-			else if (symbol.symbol instanceof FuField) {
-				if (symbol.left == null) {
-					if (!this.#currentMethod.isMutator())
-						this.#reportError(expr, "Cannot modify field in a non-mutating method");
-				}
-				else {
-					if (symbol.left.type instanceof FuStorageType) {
 					}
-					else if (symbol.left.type instanceof FuReadWriteClassType) {
+					else if (symbol.symbol.parent instanceof FuForeach)
+						this.#reportError(expr, "Cannot assign a foreach iteration variable");
+					for (let scope = this.#currentScope; !(scope instanceof FuClass); scope = scope.parent) {
+						let forLoop;
+						let binaryCond;
+						if ((forLoop = scope) instanceof FuFor && forLoop.isRange && (binaryCond = forLoop.cond) instanceof FuBinaryExpr && binaryCond.right.isReferenceTo(symbol.symbol))
+							forLoop.isRange = false;
 					}
-					else if (symbol.left.type instanceof FuClassType)
+					return;
+				}
+				else if (symbol.symbol instanceof FuField) {
+					if (symbol.left == null) {
+						if (!this.#currentMethod.isMutator())
+							this.#reportError(expr, "Cannot modify field in a non-mutating method");
+						return;
+					}
+					if (symbol.left.type instanceof FuStorageType)
+						expr = symbol.left;
+					else if (symbol.left.type instanceof FuReadWriteClassType)
+						return;
+					else if (symbol.left.type instanceof FuClassType) {
 						this.#reportError(expr, "Cannot modify field through a read-only reference");
+						return;
+					}
 					else
 						throw new Error();
 				}
+				else if (symbol.symbol instanceof FuStaticProperty)
+					return;
+				else {
+					this.#reportError(expr, "Cannot modify this");
+					return;
+				}
 			}
-			else
+			else if ((indexing = expr) instanceof FuBinaryExpr && indexing.op == FuToken.LEFT_BRACKET) {
+				if (indexing.left.type instanceof FuStorageType)
+					expr = indexing.left;
+				else if (indexing.left.type instanceof FuReadWriteClassType)
+					return;
+				else if (indexing.left.type instanceof FuClassType) {
+					this.#reportError(expr, "Cannot modify collection through a read-only reference");
+					return;
+				}
+				else
+					throw new Error();
+			}
+			else if (expr instanceof FuCallExpr) {
+				const call = expr;
+				if (call.type instanceof FuReadWriteClassType)
+					return;
+				else if (call.type instanceof FuClassType) {
+					this.#reportError(expr, "Cannot modify this");
+					return;
+				}
+				else
+					throw new Error();
+			}
+			else {
 				this.#reportError(expr, "Cannot modify this");
-		}
-		else if ((indexing = expr) instanceof FuBinaryExpr && indexing.op == FuToken.LEFT_BRACKET) {
-			if (indexing.left.type instanceof FuStorageType) {
+				return;
 			}
-			else if (indexing.left.type instanceof FuReadWriteClassType) {
-			}
-			else if (indexing.left.type instanceof FuClassType)
-				this.#reportError(expr, "Cannot modify collection through a read-only reference");
-			else
-				throw new Error();
 		}
-		else
-			this.#reportError(expr, "Cannot modify this");
 	}
 
 	#concatenate(left, right)
@@ -6324,6 +6349,8 @@ export class FuSema
 				let baseRef;
 				if ((baseRef = symbol.left) instanceof FuSymbolReference && baseRef.symbol.id == FuId.BASE_PTR) {
 				}
+				else if (symbol.left.type instanceof FuStorageType)
+					this.#checkLValue(symbol.left);
 				else if (!(symbol.left.type instanceof FuReadWriteClassType)) {
 					switch (method.id) {
 					case FuId.INT_TRY_PARSE:
@@ -7323,6 +7350,9 @@ export class FuSema
 			this.#currentMethod = null;
 		}
 		for (let symbol = klass.first; symbol != null; symbol = symbol.next) {
+			let baseSymbol = klass.parent.tryLookup(symbol.name, false);
+			if (baseSymbol == symbol)
+				baseSymbol = null;
 			if (symbol instanceof FuField) {
 				const field = symbol;
 				if (field.value != null) {
@@ -7335,10 +7365,10 @@ export class FuSema
 			}
 			else if (symbol instanceof FuMethod) {
 				const method = symbol;
-				if (method.body != null) {
+				if (method.callType != FuCallType.ABSTRACT) {
 					if (method.callType == FuCallType.OVERRIDE || method.callType == FuCallType.SEALED) {
 						let baseMethod;
-						if ((baseMethod = klass.parent.tryLookup(method.name, false)) instanceof FuMethod) {
+						if ((baseMethod = baseSymbol) instanceof FuMethod) {
 							if (!baseMethod.isAbstractVirtualOrOverride())
 								this.#reportError(method, "Base method is not abstract or virtual");
 							else if (method.isMutator() != baseMethod.isMutator()) {
@@ -7370,6 +7400,7 @@ export class FuSema
 						}
 						else
 							this.#reportError(method, "No method to override");
+						baseSymbol = null;
 					}
 					this.#currentScope = method.parameters;
 					this.#currentMethod = method;
@@ -7378,6 +7409,13 @@ export class FuSema
 						this.#reportError(method, "Method can complete without a return value");
 					this.#currentMethod = null;
 				}
+			}
+			let baseMember;
+			if ((baseMember = baseSymbol) instanceof FuMember && baseMember.visibility != FuVisibility.PRIVATE) {
+				if (symbol instanceof FuMethod && baseSymbol instanceof FuMethod)
+					this.#reportError(symbol, `Method defined in base class '${baseSymbol.parent.name}'. Did you mean 'override'?`);
+				else
+					this.#reportError(symbol, `Duplicate definition of '${symbol.name}' in base class '${baseSymbol.parent.name}'`);
 			}
 		}
 	}
@@ -9362,18 +9400,17 @@ export class GenBase extends FuVisitor
 			this.writeName(klass);
 	}
 
-	writeThrowNoMessage()
+	writeThrowMessage(expr)
 	{
+		if (expr != null)
+			expr.accept(this, FuPriority.ARGUMENT);
 	}
 
 	writeThrowArgument(statement)
 	{
 		this.writeExceptionClass(statement.class.symbol);
 		this.writeChar(40);
-		if (statement.message != null)
-			statement.message.accept(this, FuPriority.ARGUMENT);
-		else
-			this.writeThrowNoMessage();
+		this.writeThrowMessage(statement.message);
 		this.writeChar(41);
 	}
 
@@ -9904,11 +9941,6 @@ export class GenCCppD extends GenTyped
 		}
 		else
 			this.writeSwitchAsIfs(statement, true);
-	}
-
-	writeThrowNoMessage()
-	{
-		this.write("\"\"");
 	}
 }
 
@@ -11842,7 +11874,9 @@ export class GenC extends GenCCpp
 
 	writeArrayFill(obj, args)
 	{
-		this.write("for (size_t _i = 0; _i < ");
+		this.write("for (");
+		this.write(args.length != 1 && this.getTypeId(args[2].type, true) == FuId.INT_TYPE ? "int" : "size_t");
+		this.write(" _i = 0; _i < ");
 		if (args.length == 1)
 			this.writeArrayStorageLength(obj);
 		else
@@ -12195,6 +12229,9 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
+			break;
+		case FuId.ENUM_TO_INT:
+			obj.accept(this, parent);
 			break;
 		case FuId.INT_TRY_PARSE:
 			this.include("limits.h");
@@ -14353,6 +14390,9 @@ export class GenCl extends GenC
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
 			break;
+		case FuId.ENUM_TO_INT:
+			obj.accept(this, parent);
+			break;
 		case FuId.STRING_STARTS_WITH:
 			let c = this.getOneAscii(args[0]);
 			if (c >= 0) {
@@ -15343,6 +15383,9 @@ export class GenCpp extends GenCCpp
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
 			break;
+		case FuId.ENUM_TO_INT:
+			this.writeEnumAsInt(obj, parent);
+			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
@@ -16305,6 +16348,16 @@ export class GenCpp extends GenCCpp
 		this.write("std::runtime_error");
 	}
 
+	writeThrowMessage(expr)
+	{
+		if (expr == null)
+			this.write("\"\"");
+		else if (expr.type.id == FuId.STRING_PTR_TYPE && !(expr instanceof FuLiteralString))
+			this.writeCall("std::string", expr);
+		else
+			expr.accept(this, FuPriority.ARGUMENT);
+	}
+
 	visitThrow(statement)
 	{
 		this.write("throw ");
@@ -17174,6 +17227,10 @@ export class GenCs extends GenTyped
 		switch (method.id) {
 		case FuId.ENUM_FROM_INT:
 			this.writeStaticCast(type, args[0]);
+			break;
+		case FuId.ENUM_TO_INT:
+			this.write("(int) ");
+			obj.accept(this, FuPriority.PRIMARY);
 			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
@@ -18555,6 +18612,9 @@ export class GenD extends GenCCppD
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
 			break;
+		case FuId.ENUM_TO_INT:
+			obj.accept(this, parent);
+			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
@@ -19168,6 +19228,14 @@ export class GenD extends GenCCppD
 			this.indent--;
 			this.writeCharLine(125);
 		}
+	}
+
+	writeThrowMessage(expr)
+	{
+		if (expr == null)
+			this.write("\"\"");
+		else
+			expr.accept(this, FuPriority.ARGUMENT);
 	}
 
 	writeEnum(enu)
@@ -20044,6 +20112,13 @@ export class GenJava extends GenTyped
 			break;
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
+			break;
+		case FuId.ENUM_TO_INT:
+			let enu = obj.type;
+			if (GenJava.#isJavaEnum(enu))
+				this.writePostfix(obj, ".ordinal()");
+			else
+				obj.accept(this, parent);
 			break;
 		case FuId.DOUBLE_TRY_PARSE:
 			this.include("java.util.function.DoubleSupplier");
@@ -21449,6 +21524,9 @@ export class GenJsNoModule extends GenBase
 			break;
 		case FuId.ENUM_HAS_FLAG:
 			this.writeEnumHasFlag(obj, args, parent);
+			break;
+		case FuId.ENUM_TO_INT:
+			obj.accept(this, parent);
 			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
@@ -23190,6 +23268,11 @@ export class GenSwift extends GenPySwift
 		this.writeChar(91);
 	}
 
+	getTypeId(type, promote)
+	{
+		return type.id == FuId.INT_TYPE || (promote && type instanceof FuRangeType) ? FuId.N_INT_TYPE : type.id;
+	}
+
 	static #isArrayRef(array)
 	{
 		return array.ptrTaken || array.getElementType() instanceof FuStorageType;
@@ -23490,6 +23573,9 @@ export class GenSwift extends GenPySwift
 			this.write("(rawValue: ");
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.writeChar(41);
+			break;
+		case FuId.ENUM_TO_INT:
+			this.writePostfix(obj, ".rawValue");
 			break;
 		case FuId.ENUM_HAS_FLAG:
 			this.writeMethodCall(obj, "contains", args[0]);
@@ -25709,6 +25795,9 @@ export class GenPy extends GenPySwift
 		case FuId.ENUM_FROM_INT:
 			this.writeName(type);
 			this.writeInParentheses(args);
+			break;
+		case FuId.ENUM_TO_INT:
+			this.writePostfix(obj, ".value");
 			break;
 		case FuId.ENUM_HAS_FLAG:
 		case FuId.STRING_CONTAINS:
