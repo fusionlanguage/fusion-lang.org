@@ -1300,176 +1300,177 @@ export const FuId = {
 	TYPE_PARAM0 : 4,
 	TYPE_PARAM0_NOT_FINAL : 5,
 	TYPE_PARAM0_PREDICATE : 6,
-	S_BYTE_RANGE : 7,
-	BYTE_RANGE : 8,
-	SHORT_RANGE : 9,
-	U_SHORT_RANGE : 10,
-	INT_TYPE : 11,
-	N_INT_TYPE : 12,
-	LONG_TYPE : 13,
-	FLOAT_TYPE : 14,
-	DOUBLE_TYPE : 15,
-	FLOAT_INT_TYPE : 16,
-	FLOATING_TYPE : 17,
-	NUMERIC_TYPE : 18,
-	BOOL_TYPE : 19,
-	STRING_CLASS : 20,
-	STRING_PTR_TYPE : 21,
-	STRING_STORAGE_TYPE : 22,
-	MAIN_ARGS_TYPE : 23,
-	ARRAY_PTR_CLASS : 24,
-	ARRAY_STORAGE_CLASS : 25,
-	EXCEPTION_CLASS : 26,
-	LIST_CLASS : 27,
-	QUEUE_CLASS : 28,
-	STACK_CLASS : 29,
-	PRIORITY_QUEUE_CLASS : 30,
-	HASH_SET_CLASS : 31,
-	SORTED_SET_CLASS : 32,
-	DICTIONARY_CLASS : 33,
-	SORTED_DICTIONARY_CLASS : 34,
-	ORDERED_DICTIONARY_CLASS : 35,
-	TEXT_WRITER_CLASS : 36,
-	STRING_WRITER_CLASS : 37,
-	REGEX_OPTIONS_ENUM : 38,
-	REGEX_CLASS : 39,
-	MATCH_CLASS : 40,
-	JSON_ELEMENT_CLASS : 41,
-	LOCK_CLASS : 42,
-	STRING_LENGTH : 43,
-	ARRAY_LENGTH : 44,
-	CONSOLE_ERROR : 45,
-	MAIN : 46,
-	CLASS_TO_STRING : 47,
-	MATCH_START : 48,
-	MATCH_END : 49,
-	MATCH_LENGTH : 50,
-	MATCH_VALUE : 51,
-	MATH_NA_N : 52,
-	MATH_NEGATIVE_INFINITY : 53,
-	MATH_POSITIVE_INFINITY : 54,
-	ENUM_FROM_INT : 55,
-	ENUM_HAS_FLAG : 56,
-	ENUM_TO_INT : 57,
-	INT_TRY_PARSE : 58,
-	N_INT_TRY_PARSE : 59,
-	LONG_TRY_PARSE : 60,
-	DOUBLE_TRY_PARSE : 61,
-	STRING_CONTAINS : 62,
-	STRING_ENDS_WITH : 63,
-	STRING_INDEX_OF : 64,
-	STRING_LAST_INDEX_OF : 65,
-	STRING_REPLACE : 66,
-	STRING_STARTS_WITH : 67,
-	STRING_SUBSTRING : 68,
-	STRING_TO_LOWER : 69,
-	STRING_TO_UPPER : 70,
-	ARRAY_BINARY_SEARCH_ALL : 71,
-	ARRAY_BINARY_SEARCH_PART : 72,
-	ARRAY_CONTAINS : 73,
-	ARRAY_COPY_TO : 74,
-	ARRAY_FILL_ALL : 75,
-	ARRAY_FILL_PART : 76,
-	ARRAY_SORT_ALL : 77,
-	ARRAY_SORT_PART : 78,
-	LIST_ADD : 79,
-	LIST_ADD_RANGE : 80,
-	LIST_ALL : 81,
-	LIST_ANY : 82,
-	LIST_CLEAR : 83,
-	LIST_CONTAINS : 84,
-	LIST_COPY_TO : 85,
-	LIST_COUNT : 86,
-	LIST_INDEX_OF : 87,
-	LIST_INSERT : 88,
-	LIST_LAST : 89,
-	LIST_REMOVE_AT : 90,
-	LIST_REMOVE_RANGE : 91,
-	LIST_SORT_ALL : 92,
-	LIST_SORT_PART : 93,
-	QUEUE_CLEAR : 94,
-	QUEUE_COUNT : 95,
-	QUEUE_DEQUEUE : 96,
-	QUEUE_ENQUEUE : 97,
-	QUEUE_PEEK : 98,
-	STACK_CLEAR : 99,
-	STACK_COUNT : 100,
-	STACK_PEEK : 101,
-	STACK_PUSH : 102,
-	STACK_POP : 103,
-	PRIORITY_QUEUE_CLEAR : 104,
-	PRIORITY_QUEUE_COUNT : 105,
-	PRIORITY_QUEUE_DEQUEUE : 106,
-	PRIORITY_QUEUE_ENQUEUE : 107,
-	PRIORITY_QUEUE_PEEK : 108,
-	HASH_SET_ADD : 109,
-	HASH_SET_CLEAR : 110,
-	HASH_SET_CONTAINS : 111,
-	HASH_SET_COUNT : 112,
-	HASH_SET_REMOVE : 113,
-	SORTED_SET_ADD : 114,
-	SORTED_SET_CLEAR : 115,
-	SORTED_SET_CONTAINS : 116,
-	SORTED_SET_COUNT : 117,
-	SORTED_SET_REMOVE : 118,
-	DICTIONARY_ADD : 119,
-	DICTIONARY_CLEAR : 120,
-	DICTIONARY_CONTAINS_KEY : 121,
-	DICTIONARY_COUNT : 122,
-	DICTIONARY_REMOVE : 123,
-	SORTED_DICTIONARY_CLEAR : 124,
-	SORTED_DICTIONARY_CONTAINS_KEY : 125,
-	SORTED_DICTIONARY_COUNT : 126,
-	SORTED_DICTIONARY_REMOVE : 127,
-	ORDERED_DICTIONARY_CLEAR : 128,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 129,
-	ORDERED_DICTIONARY_COUNT : 130,
-	ORDERED_DICTIONARY_REMOVE : 131,
-	TEXT_WRITER_WRITE : 132,
-	TEXT_WRITER_WRITE_CHAR : 133,
-	TEXT_WRITER_WRITE_CODE_POINT : 134,
-	TEXT_WRITER_WRITE_LINE : 135,
-	CONSOLE_WRITE : 136,
-	CONSOLE_WRITE_LINE : 137,
-	STRING_WRITER_CLEAR : 138,
-	STRING_WRITER_TO_STRING : 139,
-	CONVERT_TO_BASE64_STRING : 140,
-	U_T_F8_GET_BYTE_COUNT : 141,
-	U_T_F8_GET_BYTES : 142,
-	U_T_F8_GET_STRING : 143,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 144,
-	REGEX_COMPILE : 145,
-	REGEX_ESCAPE : 146,
-	REGEX_IS_MATCH_STR : 147,
-	REGEX_IS_MATCH_REGEX : 148,
-	MATCH_FIND_STR : 149,
-	MATCH_FIND_REGEX : 150,
-	MATCH_GET_CAPTURE : 151,
-	JSON_ELEMENT_PARSE : 152,
-	JSON_ELEMENT_IS_OBJECT : 153,
-	JSON_ELEMENT_IS_ARRAY : 154,
-	JSON_ELEMENT_IS_STRING : 155,
-	JSON_ELEMENT_IS_NUMBER : 156,
-	JSON_ELEMENT_IS_BOOLEAN : 157,
-	JSON_ELEMENT_IS_NULL : 158,
-	JSON_ELEMENT_GET_OBJECT : 159,
-	JSON_ELEMENT_GET_ARRAY : 160,
-	JSON_ELEMENT_GET_STRING : 161,
-	JSON_ELEMENT_GET_DOUBLE : 162,
-	JSON_ELEMENT_GET_BOOLEAN : 163,
-	MATH_METHOD : 164,
-	MATH_ABS : 165,
-	MATH_CEILING : 166,
-	MATH_CLAMP : 167,
-	MATH_FUSED_MULTIPLY_ADD : 168,
-	MATH_IS_FINITE : 169,
-	MATH_IS_INFINITY : 170,
-	MATH_IS_NA_N : 171,
-	MATH_LOG2 : 172,
-	MATH_MAX : 173,
-	MATH_MIN : 174,
-	MATH_ROUND : 175,
-	MATH_TRUNCATE : 176
+	TYPE_PARAM1 : 7,
+	S_BYTE_RANGE : 8,
+	BYTE_RANGE : 9,
+	SHORT_RANGE : 10,
+	U_SHORT_RANGE : 11,
+	INT_TYPE : 12,
+	N_INT_TYPE : 13,
+	LONG_TYPE : 14,
+	FLOAT_TYPE : 15,
+	DOUBLE_TYPE : 16,
+	FLOAT_INT_TYPE : 17,
+	FLOATING_TYPE : 18,
+	NUMERIC_TYPE : 19,
+	BOOL_TYPE : 20,
+	STRING_CLASS : 21,
+	STRING_PTR_TYPE : 22,
+	STRING_STORAGE_TYPE : 23,
+	MAIN_ARGS_TYPE : 24,
+	ARRAY_PTR_CLASS : 25,
+	ARRAY_STORAGE_CLASS : 26,
+	EXCEPTION_CLASS : 27,
+	LIST_CLASS : 28,
+	QUEUE_CLASS : 29,
+	STACK_CLASS : 30,
+	PRIORITY_QUEUE_CLASS : 31,
+	HASH_SET_CLASS : 32,
+	SORTED_SET_CLASS : 33,
+	DICTIONARY_CLASS : 34,
+	SORTED_DICTIONARY_CLASS : 35,
+	ORDERED_DICTIONARY_CLASS : 36,
+	TEXT_WRITER_CLASS : 37,
+	STRING_WRITER_CLASS : 38,
+	REGEX_OPTIONS_ENUM : 39,
+	REGEX_CLASS : 40,
+	MATCH_CLASS : 41,
+	JSON_ELEMENT_CLASS : 42,
+	LOCK_CLASS : 43,
+	STRING_LENGTH : 44,
+	ARRAY_LENGTH : 45,
+	CONSOLE_ERROR : 46,
+	MAIN : 47,
+	CLASS_TO_STRING : 48,
+	MATCH_START : 49,
+	MATCH_END : 50,
+	MATCH_LENGTH : 51,
+	MATCH_VALUE : 52,
+	MATH_NA_N : 53,
+	MATH_NEGATIVE_INFINITY : 54,
+	MATH_POSITIVE_INFINITY : 55,
+	ENUM_FROM_INT : 56,
+	ENUM_HAS_FLAG : 57,
+	ENUM_TO_INT : 58,
+	INT_TRY_PARSE : 59,
+	N_INT_TRY_PARSE : 60,
+	LONG_TRY_PARSE : 61,
+	DOUBLE_TRY_PARSE : 62,
+	STRING_CONTAINS : 63,
+	STRING_ENDS_WITH : 64,
+	STRING_INDEX_OF : 65,
+	STRING_LAST_INDEX_OF : 66,
+	STRING_REPLACE : 67,
+	STRING_STARTS_WITH : 68,
+	STRING_SUBSTRING : 69,
+	STRING_TO_LOWER : 70,
+	STRING_TO_UPPER : 71,
+	ARRAY_BINARY_SEARCH_ALL : 72,
+	ARRAY_BINARY_SEARCH_PART : 73,
+	ARRAY_CONTAINS : 74,
+	ARRAY_COPY_TO : 75,
+	ARRAY_FILL_ALL : 76,
+	ARRAY_FILL_PART : 77,
+	ARRAY_SORT_ALL : 78,
+	ARRAY_SORT_PART : 79,
+	LIST_ADD : 80,
+	LIST_ADD_RANGE : 81,
+	LIST_ALL : 82,
+	LIST_ANY : 83,
+	LIST_CLEAR : 84,
+	LIST_CONTAINS : 85,
+	LIST_COPY_TO : 86,
+	LIST_COUNT : 87,
+	LIST_INDEX_OF : 88,
+	LIST_INSERT : 89,
+	LIST_LAST : 90,
+	LIST_REMOVE_AT : 91,
+	LIST_REMOVE_RANGE : 92,
+	LIST_SORT_ALL : 93,
+	LIST_SORT_PART : 94,
+	QUEUE_CLEAR : 95,
+	QUEUE_COUNT : 96,
+	QUEUE_DEQUEUE : 97,
+	QUEUE_ENQUEUE : 98,
+	QUEUE_PEEK : 99,
+	STACK_CLEAR : 100,
+	STACK_COUNT : 101,
+	STACK_PEEK : 102,
+	STACK_PUSH : 103,
+	STACK_POP : 104,
+	PRIORITY_QUEUE_CLEAR : 105,
+	PRIORITY_QUEUE_COUNT : 106,
+	PRIORITY_QUEUE_DEQUEUE : 107,
+	PRIORITY_QUEUE_ENQUEUE : 108,
+	PRIORITY_QUEUE_PEEK : 109,
+	HASH_SET_ADD : 110,
+	HASH_SET_CLEAR : 111,
+	HASH_SET_CONTAINS : 112,
+	HASH_SET_COUNT : 113,
+	HASH_SET_REMOVE : 114,
+	SORTED_SET_ADD : 115,
+	SORTED_SET_CLEAR : 116,
+	SORTED_SET_CONTAINS : 117,
+	SORTED_SET_COUNT : 118,
+	SORTED_SET_REMOVE : 119,
+	DICTIONARY_ADD : 120,
+	DICTIONARY_CLEAR : 121,
+	DICTIONARY_CONTAINS_KEY : 122,
+	DICTIONARY_COUNT : 123,
+	DICTIONARY_REMOVE : 124,
+	SORTED_DICTIONARY_CLEAR : 125,
+	SORTED_DICTIONARY_CONTAINS_KEY : 126,
+	SORTED_DICTIONARY_COUNT : 127,
+	SORTED_DICTIONARY_REMOVE : 128,
+	ORDERED_DICTIONARY_CLEAR : 129,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 130,
+	ORDERED_DICTIONARY_COUNT : 131,
+	ORDERED_DICTIONARY_REMOVE : 132,
+	TEXT_WRITER_WRITE : 133,
+	TEXT_WRITER_WRITE_CHAR : 134,
+	TEXT_WRITER_WRITE_CODE_POINT : 135,
+	TEXT_WRITER_WRITE_LINE : 136,
+	CONSOLE_WRITE : 137,
+	CONSOLE_WRITE_LINE : 138,
+	STRING_WRITER_CLEAR : 139,
+	STRING_WRITER_TO_STRING : 140,
+	CONVERT_TO_BASE64_STRING : 141,
+	U_T_F8_GET_BYTE_COUNT : 142,
+	U_T_F8_GET_BYTES : 143,
+	U_T_F8_GET_STRING : 144,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 145,
+	REGEX_COMPILE : 146,
+	REGEX_ESCAPE : 147,
+	REGEX_IS_MATCH_STR : 148,
+	REGEX_IS_MATCH_REGEX : 149,
+	MATCH_FIND_STR : 150,
+	MATCH_FIND_REGEX : 151,
+	MATCH_GET_CAPTURE : 152,
+	JSON_ELEMENT_PARSE : 153,
+	JSON_ELEMENT_IS_OBJECT : 154,
+	JSON_ELEMENT_IS_ARRAY : 155,
+	JSON_ELEMENT_IS_STRING : 156,
+	JSON_ELEMENT_IS_NUMBER : 157,
+	JSON_ELEMENT_IS_BOOLEAN : 158,
+	JSON_ELEMENT_IS_NULL : 159,
+	JSON_ELEMENT_GET_OBJECT : 160,
+	JSON_ELEMENT_GET_ARRAY : 161,
+	JSON_ELEMENT_GET_STRING : 162,
+	JSON_ELEMENT_GET_DOUBLE : 163,
+	JSON_ELEMENT_GET_BOOLEAN : 164,
+	MATH_METHOD : 165,
+	MATH_ABS : 166,
+	MATH_CEILING : 167,
+	MATH_CLAMP : 168,
+	MATH_FUSED_MULTIPLY_ADD : 169,
+	MATH_IS_FINITE : 170,
+	MATH_IS_INFINITY : 171,
+	MATH_IS_NA_N : 172,
+	MATH_LOG2 : 173,
+	MATH_MAX : 174,
+	MATH_MIN : 175,
+	MATH_ROUND : 176,
+	MATH_TRUNCATE : 177
 }
 
 export class FuDocInline
@@ -3547,9 +3548,9 @@ export class FuSystem extends FuScope
 		stackClass.addMethod(this.#typeParam0, FuId.STACK_PEEK, "Peek", false);
 		stackClass.addMethod(this.voidType, FuId.STACK_PUSH, "Push", true, FuVar.new(this.#typeParam0, "value"));
 		stackClass.addMethod(this.#typeParam0, FuId.STACK_POP, "Pop", true);
-		let priorityQueueClass = this.#addCollection(FuId.PRIORITY_QUEUE_CLASS, "PriorityQueue", 1, FuId.PRIORITY_QUEUE_CLEAR, FuId.PRIORITY_QUEUE_COUNT);
+		let priorityQueueClass = this.#addCollection(FuId.PRIORITY_QUEUE_CLASS, "PriorityQueue", 2, FuId.PRIORITY_QUEUE_CLEAR, FuId.PRIORITY_QUEUE_COUNT);
 		priorityQueueClass.addMethod(this.#typeParam0, FuId.PRIORITY_QUEUE_DEQUEUE, "Dequeue", true);
-		priorityQueueClass.addMethod(this.voidType, FuId.PRIORITY_QUEUE_ENQUEUE, "Enqueue", true, FuVar.new(this.#typeParam0, "value"));
+		priorityQueueClass.addMethod(this.voidType, FuId.PRIORITY_QUEUE_ENQUEUE, "Enqueue", true, FuVar.new(this.#typeParam0, "element"), FuVar.new(this.#typeParam1, "priority"));
 		priorityQueueClass.addMethod(this.#typeParam0, FuId.PRIORITY_QUEUE_PEEK, "Peek", false);
 		this.#addSet(FuId.HASH_SET_CLASS, "HashSet", FuId.HASH_SET_ADD, FuId.HASH_SET_CLEAR, FuId.HASH_SET_CONTAINS, FuId.HASH_SET_COUNT, FuId.HASH_SET_REMOVE);
 		this.#addSet(FuId.SORTED_SET_CLASS, "SortedSet", FuId.SORTED_SET_ADD, FuId.SORTED_SET_CLEAR, FuId.SORTED_SET_CONTAINS, FuId.SORTED_SET_COUNT, FuId.SORTED_SET_REMOVE);
@@ -3669,6 +3670,7 @@ export class FuSystem extends FuScope
 	voidType = Object.assign(new FuType(), { id: FuId.VOID_TYPE, name: "void" });
 	nullType = Object.assign(new FuType(), { id: FuId.NULL_TYPE, name: "null", nullable: true });
 	#typeParam0 = Object.assign(new FuType(), { id: FuId.TYPE_PARAM0, name: "T" });
+	#typeParam1 = Object.assign(new FuType(), { id: FuId.TYPE_PARAM1, name: "T" });
 	intType = Object.assign(new FuIntegerType(), { id: FuId.INT_TYPE, name: "int" });
 	#uIntType = FuRangeType.new(0, 2147483647);
 	nIntType = Object.assign(new FuIntegerType(), { id: FuId.N_INT_TYPE, name: "nint" });
@@ -4876,8 +4878,6 @@ export class FuParser extends FuLexer
 					this.#foundName = method;
 				continue;
 			}
-			if (visibility == FuVisibility.PUBLIC)
-				this.#reportFormerError(line, column, 6, "Field cannot be public");
 			if (callType != FuCallType.NORMAL)
 				this.#reportCallTypeError(callTypeLine, callTypeColumn, "Field", callType);
 			if (type == this.host.program.system.voidType)
@@ -6282,10 +6282,16 @@ export class FuSema
 
 	#evalType(generic, type)
 	{
-		if (type.id == FuId.TYPE_PARAM0)
+		switch (type.id) {
+		case FuId.TYPE_PARAM0:
 			return generic.typeArg0;
-		if (type.id == FuId.TYPE_PARAM0_NOT_FINAL)
+		case FuId.TYPE_PARAM0_NOT_FINAL:
 			return generic.typeArg0.isFinal() ? null : generic.typeArg0;
+		case FuId.TYPE_PARAM1:
+			return generic.typeArg1;
+		default:
+			break;
+		}
 		let collection;
 		if ((collection = type) instanceof FuClassType && collection.class.typeParameterCount == 1 && collection.typeArg0.id == FuId.TYPE_PARAM0) {
 			let result = type instanceof FuReadWriteClassType ? new FuReadWriteClassType() : new FuClassType();
@@ -7481,7 +7487,7 @@ export class GenBase extends FuVisitor
 	inHeaderFile = false;
 	#includes = {};
 	currentMethod = null;
-	writtenClasses = new Set();
+	writtenTypes = new Set();
 	switchesWithGoto = [];
 	currentTemporaries = [];
 
@@ -9618,9 +9624,9 @@ export class GenBase extends FuVisitor
 	{
 		if (klass.name == "Exception")
 			return false;
-		if (this.writtenClasses.has(klass))
+		if (this.writtenTypes.has(klass))
 			return false;
-		this.writtenClasses.add(klass);
+		this.writtenTypes.add(klass);
 		let baseClass;
 		if ((baseClass = klass.parent) instanceof FuClass)
 			this.writeClass(baseClass, program);
@@ -11501,9 +11507,8 @@ export class GenC extends GenCCpp
 	{
 		if (def.isAssignableStorage())
 			return false;
-		let klass;
 		let storage;
-		return (def instanceof FuField && (def.value != null || GenC.#isHeapAllocated(def.type.getStorageType()) || ((klass = def.type) instanceof FuClassType && (klass.class.id == FuId.LIST_CLASS || klass.class.id == FuId.STACK_CLASS || klass.class.id == FuId.DICTIONARY_CLASS || klass.class.id == FuId.SORTED_DICTIONARY_CLASS)))) || (def.value != null && GenC.#getThrowingMethod(def.value) != null) || ((storage = def.type.getStorageType()) instanceof FuStorageType && (storage.class.id == FuId.LOCK_CLASS || this.needsConstructor(storage.class))) || GenC.#hasListDestroy(def.type) || super.hasInitCode(def);
+		return (def instanceof FuField && (def.value != null || GenC.#isHeapAllocated(def.type.getStorageType()))) || (def.value != null && GenC.#getThrowingMethod(def.value) != null) || ((storage = def.type.getStorageType()) instanceof FuStorageType && (GenC.#isCollection(storage.class) || storage.class.id == FuId.LOCK_CLASS || this.needsConstructor(storage.class))) || GenC.#hasListDestroy(def.type) || super.hasInitCode(def);
 	}
 
 	#startForwardThrow(throwingMethod)
@@ -13333,7 +13338,7 @@ export class GenC extends GenCCpp
 			}
 			else if (type instanceof FuEnum) {
 				const enu = type;
-				if (enu.isPublic == pub)
+				if ((enu.isPublic || this.writtenTypes.has(enu)) == pub)
 					this.writeEnum(enu);
 			}
 			else
@@ -13513,6 +13518,9 @@ export class GenC extends GenCCpp
 			for (let symbol = klass.first; symbol != null; symbol = symbol.next) {
 				if (symbol instanceof FuField) {
 					const field = symbol;
+					let enu;
+					if (this.inHeaderFile && (enu = field.type) instanceof FuEnum)
+						this.writtenTypes.add(enu);
 					this.writeDoc(field.documentation);
 					this.writeTypeAndName(field);
 					this.writeCharLine(59);
@@ -14161,9 +14169,20 @@ export class GenC extends GenCCpp
 	writeProgram(program, outputFile, namespace)
 	{
 		this.namespace = namespace;
-		this.writtenClasses.clear();
+		this.writtenTypes.clear();
 		this.inHeaderFile = true;
 		this.openStringWriter();
+		for (const klass of program.classes) {
+			if (!klass.isPublic)
+				continue;
+			for (let member = klass.first; member != null; member = member.next) {
+				let field;
+				if ((field = member) instanceof FuField && field.visibility == FuVisibility.PUBLIC) {
+					this.writeClass(klass, program);
+					break;
+				}
+			}
+		}
 		for (const klass of program.classes) {
 			this.#writeNewDelete(klass, false);
 			this.writeSignatures(klass, true);
@@ -14568,7 +14587,7 @@ export class GenCl extends GenC
 	writeProgram(program, outputFile, namespace)
 	{
 		this.namespace = namespace;
-		this.writtenClasses.clear();
+		this.writtenTypes.clear();
 		this.#stringLength = false;
 		this.#stringEquals = false;
 		this.#stringStartsWith = false;
@@ -14598,6 +14617,7 @@ export class GenCl extends GenC
 
 export class GenCpp extends GenCCpp
 {
+	#hasPriorityQueue;
 	#usingStringViewLiterals;
 	#hasEnumFlags;
 	#numberTryParse;
@@ -14810,13 +14830,12 @@ export class GenCpp extends GenCCpp
 			cppType = "stack";
 			break;
 		case FuId.PRIORITY_QUEUE_CLASS:
+			this.#hasPriorityQueue = true;
 			this.include("queue");
-			this.write("std::priority_queue<");
+			this.write("std::priority_queue<FuPriorityQueueEntry<");
 			this.writeType(elementType, false);
-			this.write(", std::vector<");
-			this.writeType(elementType, false);
-			this.write(">, std::greater<");
-			this.writeType(elementType, false);
+			this.write(", ");
+			this.writeType(klass.typeArg1, false);
 			this.write(">>");
 			return;
 		case FuId.HASH_SET_CLASS:
@@ -15128,7 +15147,7 @@ export class GenCpp extends GenCCpp
 			obj.accept(this, priority);
 	}
 
-	#writePop(obj, parent, p, front)
+	#writePop(obj, parent, p, front, frontSuffix = "")
 	{
 		if (parent == FuPriority.STATEMENT) {
 			this.#startMethodCall(obj);
@@ -15148,6 +15167,7 @@ export class GenCpp extends GenCCpp
 			this.writeChar(p);
 			this.writeChar(46);
 			this.write(front);
+			this.write(frontSuffix);
 			this.write("(); ");
 			this.writeChar(p);
 			this.write(".pop(); return ");
@@ -15590,7 +15610,6 @@ export class GenCpp extends GenCCpp
 			this.#writePop(obj, parent, 113, "front");
 			break;
 		case FuId.QUEUE_ENQUEUE:
-		case FuId.PRIORITY_QUEUE_ENQUEUE:
 			this.writeMethodCall(obj, "push", args[0]);
 			break;
 		case FuId.QUEUE_PEEK:
@@ -15598,7 +15617,6 @@ export class GenCpp extends GenCCpp
 			this.write("front()");
 			break;
 		case FuId.STACK_PEEK:
-		case FuId.PRIORITY_QUEUE_PEEK:
 			this.#startMethodCall(obj);
 			this.write("top()");
 			break;
@@ -15609,7 +15627,14 @@ export class GenCpp extends GenCCpp
 			this.#writeCollectionMethod(obj, "push", args);
 			break;
 		case FuId.PRIORITY_QUEUE_DEQUEUE:
-			this.#writePop(obj, parent, 113, "top");
+			this.#writePop(obj, parent, 113, "top", "().get");
+			break;
+		case FuId.PRIORITY_QUEUE_ENQUEUE:
+			this.writeMethodCall(obj, "emplace", args[0], args[1]);
+			break;
+		case FuId.PRIORITY_QUEUE_PEEK:
+			this.#startMethodCall(obj);
+			this.write("top().get()");
 			break;
 		case FuId.HASH_SET_ADD:
 		case FuId.SORTED_SET_ADD:
@@ -16630,8 +16655,9 @@ export class GenCpp extends GenCCpp
 
 	writeProgram(program, outputFile, namespace)
 	{
-		this.writtenClasses.clear();
+		this.writtenTypes.clear();
 		this.inHeaderFile = true;
+		this.#hasPriorityQueue = false;
 		this.#usingStringViewLiterals = false;
 		this.#hasEnumFlags = false;
 		this.#numberTryParse = false;
@@ -16767,6 +16793,21 @@ export class GenCpp extends GenCCpp
 			}
 			this.writeNewLine();
 			this.writeLine("#endif");
+		}
+		if (this.#hasPriorityQueue) {
+			this.writeLine("template <class TElement, class TPriority>");
+			this.writeLine("class FuPriorityQueueEntry");
+			this.openBlock();
+			this.writeLine("TPriority priority;");
+			this.writeLine("TElement element;");
+			this.indent--;
+			this.writeLine("public:");
+			this.indent++;
+			this.writeLine("FuPriorityQueueEntry(const TElement &element, const TPriority &priority) : priority(priority), element(element) {}");
+			this.writeLine("const TElement &get() const { return element; }");
+			this.writeLine("bool operator<(const FuPriorityQueueEntry &that) const { return that.priority < priority; }");
+			this.indent--;
+			this.writeLine("};");
 		}
 		this.closeStringWriter();
 		this.closeFile();
@@ -17014,13 +17055,6 @@ export class GenCs extends GenTyped
 				this.#writeElementType(klass.getElementType());
 				break;
 			case FuId.PRIORITY_QUEUE_CLASS:
-				this.include("System.Collections.Generic");
-				this.write("PriorityQueue<");
-				this.writeType(klass.getElementType(), false);
-				this.write(", ");
-				this.writeType(klass.getElementType(), false);
-				this.writeChar(62);
-				break;
 			case FuId.DICTIONARY_CLASS:
 			case FuId.SORTED_DICTIONARY_CLASS:
 				this.include("System.Collections.Generic");
@@ -17338,6 +17372,8 @@ export class GenCs extends GenTyped
 			this.writeCall("Array.Sort", obj, args[0], args[1]);
 			break;
 		case FuId.LIST_ADD:
+		case FuId.HASH_SET_ADD:
+		case FuId.SORTED_SET_ADD:
 			this.writeListAdd(obj, "Add", args);
 			break;
 		case FuId.LIST_ALL:
@@ -17352,13 +17388,16 @@ export class GenCs extends GenTyped
 		case FuId.LIST_LAST:
 			this.writePostfix(obj, "[^1]");
 			break;
+		case FuId.QUEUE_ENQUEUE:
+			this.writeListAdd(obj, "Enqueue", args);
+			break;
+		case FuId.STACK_PUSH:
+			this.writeListAdd(obj, "Push", args);
+			break;
 		case FuId.LIST_SORT_PART:
 			this.writePostfix(obj, ".Sort(");
 			this.writeCoercedArgs(method, args);
 			this.write(", null)");
-			break;
-		case FuId.PRIORITY_QUEUE_ENQUEUE:
-			this.writeMethodCall(obj, "Enqueue", args[0], args[0]);
 			break;
 		case FuId.DICTIONARY_ADD:
 			this.writePostfix(obj, ".Add(");
@@ -18797,7 +18836,7 @@ export class GenD extends GenCCppD
 		case FuId.STACK_PUSH:
 			this.#writeClassReference(obj);
 			this.write(" ~= ");
-			args[0].accept(this, FuPriority.ASSIGN);
+			this.writeCoercedExpr(obj.type.asClassType().getElementType(), args[0]);
 			break;
 		case FuId.STACK_POP:
 			this.#hasStackPop = true;
@@ -18806,7 +18845,7 @@ export class GenD extends GenCCppD
 			break;
 		case FuId.HASH_SET_ADD:
 			this.writePostfix(obj, ".require(");
-			args[0].accept(this, FuPriority.ARGUMENT);
+			this.writeCoercedExpr(obj.type.asClassType().getElementType(), args[0]);
 			this.write(", true)");
 			break;
 		case FuId.HASH_SET_CLEAR:
@@ -19487,6 +19526,7 @@ export class GenJava extends GenTyped
 {
 	#outputFile;
 	#namespace;
+	#hasPriorityQueue;
 
 	getTargetName()
 	{
@@ -19779,7 +19819,13 @@ export class GenJava extends GenTyped
 				this.#writeCollectionType("Stack", klass.getElementType());
 				break;
 			case FuId.PRIORITY_QUEUE_CLASS:
-				this.#writeCollectionType("PriorityQueue", klass.getElementType());
+				this.#hasPriorityQueue = true;
+				this.include("java.util.PriorityQueue");
+				this.write("PriorityQueue<FuPriorityQueueEntry<");
+				this.#writeJavaType(klass.typeArg0, false, true);
+				this.write(", ");
+				this.#writeJavaType(klass.typeArg1, false, true);
+				this.write(">>");
 				break;
 			case FuId.HASH_SET_CLASS:
 				this.#writeCollectionType("HashSet", klass.getElementType());
@@ -20067,6 +20113,28 @@ export class GenJava extends GenTyped
 		this.writeChar(41);
 	}
 
+	#writeMethodCallNoArgs(obj, method)
+	{
+		obj.accept(this, FuPriority.PRIMARY);
+		this.writeChar(46);
+		this.write(method);
+		this.write("()");
+	}
+
+	#writeCollectionGet(obj, method, parent)
+	{
+		if (GenJava.#isUnsignedByte(obj.type.asClassType().getElementType())) {
+			if (parent > FuPriority.AND)
+				this.writeChar(40);
+			this.#writeMethodCallNoArgs(obj, method);
+			this.write(" & 0xff");
+			if (parent > FuPriority.AND)
+				this.writeChar(41);
+		}
+		else
+			this.#writeMethodCallNoArgs(obj, method);
+	}
+
 	#writeWrite(method, args, newLine)
 	{
 		let interpolated;
@@ -20107,17 +20175,10 @@ export class GenJava extends GenTyped
 		case FuId.LIST_INDEX_OF:
 		case FuId.QUEUE_CLEAR:
 		case FuId.STACK_CLEAR:
-		case FuId.STACK_PEEK:
-		case FuId.STACK_PUSH:
-		case FuId.STACK_POP:
 		case FuId.PRIORITY_QUEUE_CLEAR:
-		case FuId.HASH_SET_ADD:
 		case FuId.HASH_SET_CLEAR:
-		case FuId.HASH_SET_CONTAINS:
 		case FuId.HASH_SET_REMOVE:
-		case FuId.SORTED_SET_ADD:
 		case FuId.SORTED_SET_CLEAR:
-		case FuId.SORTED_SET_CONTAINS:
 		case FuId.SORTED_SET_REMOVE:
 		case FuId.DICTIONARY_CLEAR:
 		case FuId.DICTIONARY_CONTAINS_KEY:
@@ -20207,6 +20268,9 @@ export class GenJava extends GenTyped
 			this.writeChar(41);
 			break;
 		case FuId.LIST_ADD:
+		case FuId.QUEUE_ENQUEUE:
+		case FuId.HASH_SET_ADD:
+		case FuId.SORTED_SET_ADD:
 			this.writeListAdd(obj, "add", args);
 			break;
 		case FuId.LIST_ADD_RANGE:
@@ -20255,16 +20319,36 @@ export class GenJava extends GenTyped
 			this.write(").sort(null)");
 			break;
 		case FuId.QUEUE_DEQUEUE:
-		case FuId.PRIORITY_QUEUE_DEQUEUE:
-			this.writePostfix(obj, ".remove()");
-			break;
-		case FuId.QUEUE_ENQUEUE:
-		case FuId.PRIORITY_QUEUE_ENQUEUE:
-			this.writeMethodCall(obj, "add", args[0]);
+			this.#writeCollectionGet(obj, "remove", parent);
 			break;
 		case FuId.QUEUE_PEEK:
+			this.#writeCollectionGet(obj, "element", parent);
+			break;
+		case FuId.STACK_PEEK:
+			this.#writeCollectionGet(obj, "peek", parent);
+			break;
+		case FuId.STACK_POP:
+			this.#writeCollectionGet(obj, "pop", parent);
+			break;
+		case FuId.STACK_PUSH:
+			this.writeListAdd(obj, "push", args);
+			break;
+		case FuId.PRIORITY_QUEUE_DEQUEUE:
+			this.#writeCollectionGet(obj, "remove().get", parent);
+			break;
+		case FuId.PRIORITY_QUEUE_ENQUEUE:
+			this.writePostfix(obj, ".add(new FuPriorityQueueEntry(");
+			this.writeNotPromoted(obj.type.asClassType().getElementType(), args[0]);
+			this.write(", ");
+			args[1].accept(this, FuPriority.ARGUMENT);
+			this.write("))");
+			break;
 		case FuId.PRIORITY_QUEUE_PEEK:
-			this.writePostfix(obj, ".element()");
+			this.#writeCollectionGet(obj, "element().get", parent);
+			break;
+		case FuId.HASH_SET_CONTAINS:
+		case FuId.SORTED_SET_CONTAINS:
+			this.writeListAdd(obj, "contains", args);
 			break;
 		case FuId.DICTIONARY_ADD:
 			this.writePostfix(obj, ".put(");
@@ -20951,14 +21035,41 @@ export class GenJava extends GenTyped
 		this.closeFile();
 	}
 
+	#writePriorityQueue()
+	{
+		this.#createJavaFile("FuPriorityQueueEntry");
+		this.writeLine("class FuPriorityQueueEntry<TElement, TPriority extends Comparable<TPriority>>");
+		this.writeLine("\timplements Comparable<FuPriorityQueueEntry<TElement, TPriority>>");
+		this.openBlock();
+		this.writeLine("private final TElement element;");
+		this.writeLine("private final TPriority priority;");
+		this.writeNewLine();
+		this.writeLine("public FuPriorityQueueEntry(TElement element, TPriority priority)");
+		this.openBlock();
+		this.writeLine("this.element = element;");
+		this.writeLine("this.priority = priority;");
+		this.closeBlock();
+		this.writeNewLine();
+		this.writeLine("public TElement get()");
+		this.openBlock();
+		this.writeLine("return element;");
+		this.closeBlock();
+		this.writeNewLine();
+		this.writeLine("public int compareTo(FuPriorityQueueEntry<TElement, TPriority> o)");
+		this.openBlock();
+		this.writeLine("return priority.compareTo(o.priority);");
+		this.closeBlock();
+		this.closeBlock();
+		this.closeFile();
+	}
+
 	#writeResources()
 	{
 		this.#createJavaFile("FuResource");
 		this.writeLine("import java.io.DataInputStream;");
 		this.writeLine("import java.io.IOException;");
 		this.writeNewLine();
-		this.write("class FuResource");
-		this.writeNewLine();
+		this.writeLine("class FuResource");
 		this.openBlock();
 		this.writeLine("static byte[] getByteArray(String name, int length)");
 		this.openBlock();
@@ -20990,7 +21101,10 @@ export class GenJava extends GenTyped
 	{
 		this.#outputFile = outputFile;
 		this.#namespace = namespace;
+		this.#hasPriorityQueue = false;
 		this.writeTypes(program);
+		if (this.#hasPriorityQueue)
+			this.#writePriorityQueue();
 		if (Object.keys(program.resources).length > 0)
 			this.#writeResources();
 	}
@@ -25082,7 +25196,6 @@ export class GenSwift extends GenPySwift
 
 export class GenPy extends GenPySwift
 {
-	#writtenTypes = new Set();
 	#childPass;
 	#switchBreak;
 
@@ -25312,7 +25425,7 @@ export class GenPy extends GenPySwift
 
 	#writePyClassAnnotation(type)
 	{
-		if (this.#writtenTypes.has(type))
+		if (this.writtenTypes.has(type))
 			this.writeName(type);
 		else {
 			this.writeChar(34);
@@ -25351,7 +25464,7 @@ export class GenPy extends GenPySwift
 			nullable = nullable ? !(klass instanceof FuStorageType) : klass.nullable;
 			switch (klass.class.id) {
 			case FuId.NONE:
-				if (nullable && !this.#writtenTypes.has(klass.class)) {
+				if (nullable && !this.writtenTypes.has(klass.class)) {
 					this.writeChar(34);
 					this.writeName(klass.class);
 					this.write(" | None\"");
@@ -25385,7 +25498,11 @@ export class GenPy extends GenPySwift
 				this.#writeCollectionTypeAnnotation("collections.deque", klass);
 				break;
 			case FuId.PRIORITY_QUEUE_CLASS:
-				this.#writeCollectionTypeAnnotation("list", klass);
+				this.write("list[tuple[");
+				this.#writeTypeAnnotation(klass.typeArg1);
+				this.write(", ");
+				this.#writeTypeAnnotation(klass.typeArg0);
+				this.write("]]");
 				break;
 			case FuId.HASH_SET_CLASS:
 			case FuId.SORTED_SET_CLASS:
@@ -26049,19 +26166,29 @@ export class GenPy extends GenPySwift
 			this.writeListAppend(obj, args);
 			break;
 		case FuId.QUEUE_PEEK:
-		case FuId.PRIORITY_QUEUE_PEEK:
 			this.writePostfix(obj, "[0]");
 			break;
 		case FuId.PRIORITY_QUEUE_CLEAR:
 			this.writePostfix(obj, ".clear()");
 			break;
-		case FuId.PRIORITY_QUEUE_ENQUEUE:
-			this.include("heapq");
-			this.writeCall("heapq.heappush", obj, args[0]);
-			break;
 		case FuId.PRIORITY_QUEUE_DEQUEUE:
 			this.include("heapq");
-			this.writeCall("heapq.heappop", obj);
+			this.write("heapq.heappop(");
+			obj.accept(this, FuPriority.ARGUMENT);
+			this.write(")[1]");
+			break;
+		case FuId.PRIORITY_QUEUE_ENQUEUE:
+			this.include("heapq");
+			this.write("heapq.heappush(");
+			obj.accept(this, FuPriority.ARGUMENT);
+			this.write(", (");
+			args[1].accept(this, FuPriority.ARGUMENT);
+			this.write(", ");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write("))");
+			break;
+		case FuId.PRIORITY_QUEUE_PEEK:
+			this.writePostfix(obj, "[0][1]");
 			break;
 		case FuId.DICTIONARY_ADD:
 			this.writeDictionaryAdd(obj, args);
@@ -26561,7 +26688,7 @@ export class GenPy extends GenPySwift
 		this.writeDoc(enu.documentation);
 		enu.acceptValues(this);
 		this.closeChild();
-		this.#writtenTypes.add(enu);
+		this.writtenTypes.add(enu);
 	}
 
 	writeConst(konst)
@@ -26644,6 +26771,7 @@ export class GenPy extends GenPySwift
 	{
 		if (!this.writeBaseClass(klass, program))
 			return;
+		this.writtenTypes.delete(klass);
 		this.#writePyClass(klass);
 		let baseClass;
 		if ((baseClass = klass.parent) instanceof FuClass) {
@@ -26672,7 +26800,7 @@ export class GenPy extends GenPySwift
 		}
 		this.writeMembers(klass, true);
 		this.closeChild();
-		this.#writtenTypes.add(klass);
+		this.writtenTypes.add(klass);
 	}
 
 	#writeResourceByte(b)
@@ -26725,7 +26853,7 @@ export class GenPy extends GenPySwift
 
 	writeProgram(program, outputFile, namespace)
 	{
-		this.#writtenTypes.clear();
+		this.writtenTypes.clear();
 		this.#switchBreak = false;
 		this.openStringWriter();
 		this.writeTypes(program);
