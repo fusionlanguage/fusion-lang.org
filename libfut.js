@@ -2875,7 +2875,7 @@ export class FuNamedValue extends FuSymbol
 
 	isAssignableStorage()
 	{
-		return this.type instanceof FuStorageType && !(this.type instanceof FuArrayStorageType) && this.value instanceof FuLiteralNull;
+		return this.type instanceof FuStorageType && !(this.type instanceof FuArrayStorageType) && this.value != null && !(this.value instanceof FuSymbolReference) && !(this.value instanceof FuAggregateInitializer);
 	}
 }
 
@@ -5659,6 +5659,20 @@ export class FuSema
 		this.#currentScope = this.#currentScope.parent;
 	}
 
+	#checkInstantiable(klass, location)
+	{
+		switch (klass.callType) {
+		case FuCallType.STATIC:
+			this.#reportError(location, "Cannot instantiate static class");
+			break;
+		case FuCallType.ABSTRACT:
+			this.#reportError(location, "Cannot instantiate abstract class");
+			break;
+		default:
+			break;
+		}
+	}
+
 	#resolveNew(expr)
 	{
 		if (expr.type != null)
@@ -5670,6 +5684,7 @@ export class FuSema
 			let klass;
 			if (!((klass = type) instanceof FuClassType) || klass instanceof FuReadWriteClassType)
 				return this.#poisonError(expr, "Invalid argument to new");
+			this.#checkInstantiable(klass.class, expr);
 			let init = binaryNew.right;
 			this.#resolveObjectLiteral(klass, init);
 			expr.type = Object.assign(new FuDynamicPtrType(), { loc: expr.loc, class: klass.class });
@@ -6703,6 +6718,7 @@ export class FuSema
 				return this.#host.program.system.stringStorageType;
 			let klass2;
 			if ((klass2 = this.#host.program.tryLookup(call.method.name, true)) instanceof FuClass) {
+				this.#checkInstantiable(klass2, expr);
 				call.method.symbol = klass2;
 				return Object.assign(new FuStorageType(), { class: klass2 });
 			}
@@ -8253,19 +8269,17 @@ export class GenBase extends FuVisitor
 
 	writeVarInit(def)
 	{
-		if (def.isAssignableStorage()) {
+		let array;
+		if ((array = def.type) instanceof FuArrayStorageType)
+			this.writeArrayStorageInit(array, def.value);
+		else if (def.type.isFinal() && def.value instanceof FuLiteralNull) {
 		}
-		else {
-			let array;
-			if ((array = def.type) instanceof FuArrayStorageType)
-				this.writeArrayStorageInit(array, def.value);
-			else if (def.value != null && !(def.value instanceof FuAggregateInitializer)) {
-				this.write(" = ");
-				this.writeCoercedExpr(def.type, def.value);
-			}
-			else if (def.type.isFinal() && !(def.parent instanceof FuParameters))
-				this.writeStorageInit(def);
+		else if (def.value != null && !(def.value instanceof FuAggregateInitializer)) {
+			this.write(" = ");
+			this.writeCoercedExpr(def.type, def.value);
 		}
+		else if (def.type.isFinal() && !(def.parent instanceof FuParameters))
+			this.writeStorageInit(def);
 	}
 
 	writeVar(def)
@@ -23567,7 +23581,7 @@ export class GenSwift extends GenPySwift
 	{
 		this.writeName(value);
 		if (!value.type.isFinal() || value.isAssignableStorage()) {
-			this.write(" : ");
+			this.write(": ");
 			this.#writePromotedType(value.type);
 		}
 	}
@@ -24706,7 +24720,7 @@ export class GenSwift extends GenPySwift
 
 	writeResultVar()
 	{
-		this.write("let result : ");
+		this.write("let result: ");
 		this.#writePromotedType(this.currentMethod.type);
 	}
 
@@ -24804,7 +24818,7 @@ export class GenSwift extends GenPySwift
 			this.#writeReadOnlyParameter(param);
 		else
 			this.writeName(param);
-		this.write(" : ");
+		this.write(": ");
 		this.#writePromotedType(param.type);
 	}
 
@@ -24834,16 +24848,16 @@ export class GenSwift extends GenPySwift
 		if (enu instanceof FuEnumFlags) {
 			this.write("struct ");
 			this.write(enu.name);
-			this.writeLine(" : OptionSet");
+			this.writeLine(": OptionSet");
 			this.openBlock();
-			this.writeLine("let rawValue : Int");
+			this.writeLine("let rawValue: Int");
 			enu.acceptValues(this);
 		}
 		else {
 			this.write("enum ");
 			this.write(enu.name);
 			if (enu.hasExplicitValue)
-				this.write(" : Int");
+				this.write(": Int");
 			this.writeNewLine();
 			this.openBlock();
 			const valueToConst = {};
@@ -24977,7 +24991,7 @@ export class GenSwift extends GenPySwift
 			break;
 		}
 		if (method.id == FuId.CLASS_TO_STRING)
-			this.write("var description : String");
+			this.write("var description: String");
 		else {
 			this.write("func ");
 			this.writeName(method);
@@ -25018,10 +25032,10 @@ export class GenSwift extends GenPySwift
 		this.writePublic(klass);
 		if (klass.callType == FuCallType.SEALED)
 			this.write("final ");
-		this.startClass(klass, "", " : ");
+		this.startClass(klass, "", ": ");
 		if (klass.addsToString()) {
-			this.write(klass.hasBaseClass() ? ", " : " : ");
-			this.write("CustomStringConvertible");
+			this.writeChar(klass.hasBaseClass() ? 44 : 58);
+			this.write(" CustomStringConvertible");
 		}
 		this.writeNewLine();
 		this.openBlock();
@@ -25048,18 +25062,18 @@ export class GenSwift extends GenPySwift
 	{
 		if (this.#throwException) {
 			this.writeNewLine();
-			this.writeLine("public enum FuError : Error");
+			this.writeLine("public enum FuError: Error");
 			this.openBlock();
 			this.writeLine("case error(String)");
 			this.closeBlock();
 		}
 		if (this.#arrayRef) {
 			this.writeNewLine();
-			this.writeLine("public class ArrayRef<T> : Sequence");
+			this.writeLine("public class ArrayRef<T>: Sequence");
 			this.openBlock();
-			this.writeLine("var array : [T]");
+			this.writeLine("var array: [T]");
 			this.writeNewLine();
-			this.writeLine("init(_ array : [T])");
+			this.writeLine("init(_ array: [T])");
 			this.openBlock();
 			this.writeLine("self.array = array");
 			this.closeBlock();
@@ -25102,7 +25116,7 @@ export class GenSwift extends GenPySwift
 			this.writeLine("array = [T](repeating: value, count: array.count)");
 			this.closeBlock();
 			this.writeNewLine();
-			this.writeLine("func fill(_ value: T, _ startIndex : Int, _ count : Int)");
+			this.writeLine("func fill(_ value: T, _ startIndex: Int, _ count: Int)");
 			this.openBlock();
 			this.writeLine("array[startIndex ..< startIndex + count] = ArraySlice(repeating: value, count: count)");
 			this.closeBlock();
@@ -25122,7 +25136,7 @@ export class GenSwift extends GenPySwift
 		}
 		if (this.#stringIndexOf) {
 			this.writeNewLine();
-			this.writeLine("fileprivate func fuStringIndexOf<S1 : StringProtocol, S2 : StringProtocol>(_ haystack: S1, _ needle: S2, _ options: String.CompareOptions = .literal) -> Int");
+			this.writeLine("fileprivate func fuStringIndexOf<S1: StringProtocol, S2: StringProtocol>(_ haystack: S1, _ needle: S2, _ options: String.CompareOptions = .literal) -> Int");
 			this.openBlock();
 			this.writeLine("guard let index = haystack.range(of: needle, options: options) else { return -1 }");
 			this.writeLine("return haystack.distance(from: haystack.startIndex, to: index.lowerBound)");
@@ -26435,7 +26449,7 @@ export class GenPy extends GenPySwift
 
 	hasInitCode(def)
 	{
-		return (def.value != null || def.type.isFinal()) && !def.isAssignableStorage();
+		return def.type instanceof FuArrayStorageType || (def.type.isFinal() ? !(def.value instanceof FuLiteralNull) : def.value != null);
 	}
 
 	visitExpr(statement)
