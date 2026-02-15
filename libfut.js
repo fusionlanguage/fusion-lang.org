@@ -9204,6 +9204,24 @@ export class GenBase extends FuVisitor
 		this.writeChild(statement.body);
 	}
 
+	static isNotTryParse(statement)
+	{
+		let not;
+		let call;
+		if (statement.onFalse == null && (not = statement.cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK && (call = not.inner) instanceof FuCallExpr) {
+			switch (call.method.symbol.id) {
+			case FuId.INT_TRY_PARSE:
+			case FuId.N_INT_TRY_PARSE:
+			case FuId.LONG_TRY_PARSE:
+			case FuId.DOUBLE_TRY_PARSE:
+				return call;
+			default:
+				break;
+			}
+		}
+		return null;
+	}
+
 	embedIfWhileIsVar(expr, write)
 	{
 		return false;
@@ -9951,6 +9969,14 @@ export class GenCCppD extends GenTyped
 		this.writeCoerced(coercedType, right, FuPriority.EQUALITY);
 		if (parent > FuPriority.EQUALITY)
 			this.writeChar(41);
+	}
+
+	writeCoercedInternal(type, expr, parent)
+	{
+		if ((type.id == FuId.INT_TYPE || type instanceof FuRangeType) && expr.type.id == FuId.N_INT_TYPE)
+			this.writeStaticCast(type, expr);
+		else
+			super.writeCoercedInternal(type, expr, parent);
 	}
 
 	visitConst(statement)
@@ -11366,8 +11392,17 @@ export class GenC extends GenCCpp
 
 	#writeGPointerCast(type, expr)
 	{
-		if (type instanceof FuNumericType || type instanceof FuEnum)
+		if (type.id == FuId.N_INT_TYPE)
+			this.writeCall("GSIZE_TO_POINTER", expr);
+		else if ((type instanceof FuIntegerType && type.id != FuId.LONG_TYPE) || type instanceof FuEnum)
 			this.writeCall("GINT_TO_POINTER", expr);
+		else if (type instanceof FuFloatingType) {
+			this.write("(union { ");
+			this.write(type.name);
+			this.write(" f; gpointer p; }) { ");
+			expr.accept(this, FuPriority.ARGUMENT);
+			this.write(" }.p");
+		}
 		else if (type.id == FuId.STRING_PTR_TYPE && expr.type.id == FuId.STRING_PTR_TYPE) {
 			this.write("(gpointer) ");
 			expr.accept(this, FuPriority.PRIMARY);
@@ -12814,6 +12849,13 @@ export class GenC extends GenCCpp
 			this.#writeDictionaryLookup(expr.left, function_, expr.right);
 			this.writeChar(41);
 		}
+		else if (valueType instanceof FuFloatingType) {
+			this.write("(union { gpointer p; ");
+			this.write(valueType.name);
+			this.write(" f; }) { ");
+			this.#writeDictionaryLookup(expr.left, function_, expr.right);
+			this.write(" }.f");
+		}
 		else {
 			if (parent > FuPriority.MUL)
 				this.writeChar(40);
@@ -13036,6 +13078,12 @@ export class GenC extends GenCCpp
 			this.#writeGPointerToInt(iter.type);
 			this.write(value);
 			this.writeChar(41);
+		}
+		else if (iter.type instanceof FuFloatingType) {
+			this.write("*(const ");
+			this.write(iter.type.name);
+			this.write(" *) &");
+			this.write(value);
 		}
 		else {
 			this.writeStaticCastType(iter.type);
@@ -13869,7 +13917,7 @@ export class GenC extends GenCCpp
 			this.writeNewLine();
 			this.writeLine("static char *FuString_Substring(const char *str, size_t len)");
 			this.openBlock();
-			this.writeLine("char *p = malloc(len + 1);");
+			this.writeLine("char *p = (char *) malloc(len + 1);");
 			this.writeLine("memcpy(p, str, len);");
 			this.writeLine("p[len] = '\\0';");
 			this.writeLine("return p;");
@@ -13951,7 +13999,7 @@ export class GenC extends GenCCpp
 			this.writeLine("size_t len = vsnprintf(NULL, 0, format, args) + 1;");
 			this.writeLine("va_end(args);");
 			this.writeLine("va_start(args, format);");
-			this.writeLine("char *str = malloc(len);");
+			this.writeLine("char *str = (char *) malloc(len);");
 			this.writeLine("vsnprintf(str, len, format, args);");
 			this.writeLine("va_end(args);");
 			this.writeLine("return str;");
@@ -15267,6 +15315,15 @@ export class GenCpp extends GenCCpp
 		this.writeChar(41);
 	}
 
+	#writeWriteArgument(expr)
+	{
+		this.write(" << ");
+		if ((expr.isIndexing() && (expr.type.id == FuId.BYTE_RANGE || expr.type.id == FuId.S_BYTE_RANGE)) || expr instanceof FuLiteralChar)
+			this.writeCall("static_cast<int>", expr);
+		else
+			expr.accept(this, FuPriority.MUL);
+	}
+
 	#writeWrite(args, newLine)
 	{
 		this.include("iostream");
@@ -15334,8 +15391,7 @@ export class GenCpp extends GenCCpp
 						this.write(" << ");
 						this.visitLiteralString(part.prefix);
 					}
-					this.write(" << ");
-					part.argument.accept(this, FuPriority.MUL);
+					this.#writeWriteArgument(part.argument);
 				}
 				if (uppercase)
 					this.write(" << std::nouppercase");
@@ -15353,16 +15409,14 @@ export class GenCpp extends GenCCpp
 				}
 			}
 			else {
-				this.write(" << ");
 				let literal;
 				if (newLine && (literal = args[0]) instanceof FuLiteralString) {
+					this.write(" << ");
 					this.writeStringLiteralWithNewLine(literal.value);
 					return;
 				}
-				else if (args[0] instanceof FuLiteralChar)
-					this.writeCall("static_cast<int>", args[0]);
 				else
-					args[0].accept(this, FuPriority.MUL);
+					this.#writeWriteArgument(args[0]);
 			}
 		}
 		if (newLine)
@@ -15419,6 +15473,10 @@ export class GenCpp extends GenCCpp
 					else
 						this.writeMemberOp(obj, null);
 				}
+			}
+			else if (this.currentMethod.id == FuId.MAIN) {
+				this.write(method.parent.name);
+				this.write("::");
 			}
 			this.writeName(method);
 			this.writeCoercedArgsInParentheses(method, args);
@@ -17597,6 +17655,11 @@ export class GenCs extends GenTyped
 		}
 	}
 
+	writeOpAssignRight(expr)
+	{
+		this.writeAssignRight(expr);
+	}
+
 	#writeOrderedDictionaryIndexing(expr)
 	{
 		if (expr.right.type.id == FuId.INT_TYPE || expr.right.type instanceof FuRangeType) {
@@ -19390,35 +19453,18 @@ export class GenD extends GenCCppD
 		this.closeBlock();
 	}
 
-	static #isLong(expr)
-	{
-		switch (expr.symbol.id) {
-		case FuId.ARRAY_LENGTH:
-		case FuId.STRING_LENGTH:
-		case FuId.LIST_COUNT:
-			return true;
-		default:
-			return false;
-		}
-	}
-
 	writeCoercedInternal(type, expr, parent)
 	{
 		if (type instanceof FuRangeType)
 			this.writeStaticCast(type, expr);
-		else {
-			let symref;
-			if (type instanceof FuIntegerType && (symref = expr) instanceof FuSymbolReference && GenD.#isLong(symref))
-				this.writeStaticCast(type, expr);
-			else if (type instanceof FuFloatingType && !(expr.type instanceof FuFloatingType))
-				this.writeStaticCast(type, expr);
-			else if (type instanceof FuClassType && !(type instanceof FuArrayStorageType) && expr.type instanceof FuArrayStorageType) {
-				super.writeCoercedInternal(type, expr, FuPriority.PRIMARY);
-				this.write("[]");
-			}
-			else
-				super.writeCoercedInternal(type, expr, parent);
+		else if (type instanceof FuFloatingType && !(expr.type instanceof FuFloatingType))
+			this.writeStaticCast(type, expr);
+		else if (type instanceof FuClassType && !(type instanceof FuArrayStorageType) && expr.type instanceof FuArrayStorageType) {
+			super.writeCoercedInternal(type, expr, FuPriority.PRIMARY);
+			this.write("[]");
 		}
+		else
+			super.writeCoercedInternal(type, expr, parent);
 	}
 
 	#writeResources(resources)
@@ -20721,16 +20767,10 @@ export class GenJava extends GenTyped
 		this.writeChild(statement.body);
 	}
 
-	static #isTryParse(id)
-	{
-		return id == FuId.INT_TRY_PARSE || id == FuId.N_INT_TRY_PARSE || id == FuId.LONG_TRY_PARSE || id == FuId.DOUBLE_TRY_PARSE;
-	}
-
 	visitIf(statement)
 	{
-		let not;
-		let call;
-		if (statement.onFalse == null && (not = statement.cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK && (call = not.inner) instanceof FuCallExpr && GenJava.#isTryParse(call.method.symbol.id)) {
+		let call = GenJava.isNotTryParse(statement);
+		if (call != null) {
 			this.write("try ");
 			this.openBlock();
 			call.method.left.accept(this, FuPriority.ASSIGN);
@@ -20749,13 +20789,8 @@ export class GenJava extends GenTyped
 			default:
 				throw new Error();
 			}
-			this.writeChar(40);
-			call.arguments_[0].accept(this, FuPriority.ARGUMENT);
-			if (call.arguments_.length == 2) {
-				this.write(", ");
-				call.arguments_[1].accept(this, FuPriority.ARGUMENT);
-			}
-			this.writeLine(");");
+			this.writeInParentheses(call.arguments_);
+			this.writeCharLine(59);
 			this.closeBlock();
 			this.write("catch (NumberFormatException e) ");
 			this.openBlock();
@@ -26514,6 +26549,27 @@ export class GenPy extends GenPySwift
 	getIfNot()
 	{
 		return "if not ";
+	}
+
+	visitIf(statement)
+	{
+		let call = GenPy.isNotTryParse(statement);
+		if (call != null) {
+			this.write("try");
+			this.openChild();
+			call.method.left.accept(this, FuPriority.ASSIGN);
+			this.write(" = ");
+			this.write(call.method.symbol.id == FuId.DOUBLE_TRY_PARSE ? "float" : "int");
+			this.writeInParentheses(call.arguments_);
+			this.writeNewLine();
+			this.closeChild();
+			this.write("except ValueError");
+			this.openChild();
+			statement.onTrue.acceptStatement(this);
+			this.closeChild();
+		}
+		else
+			super.visitIf(statement);
 	}
 
 	#writeInclusiveLimit(limit, increment, incrementString)
