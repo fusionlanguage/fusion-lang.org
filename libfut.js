@@ -1352,123 +1352,130 @@ export const FuId = {
 	INT_TRY_PARSE : 59,
 	N_INT_TRY_PARSE : 60,
 	LONG_TRY_PARSE : 61,
-	DOUBLE_TRY_PARSE : 62,
-	STRING_CONTAINS : 63,
-	STRING_ENDS_WITH : 64,
-	STRING_INDEX_OF : 65,
-	STRING_LAST_INDEX_OF : 66,
-	STRING_REPLACE : 67,
-	STRING_STARTS_WITH : 68,
-	STRING_SUBSTRING : 69,
-	STRING_TO_LOWER : 70,
-	STRING_TO_UPPER : 71,
-	ARRAY_BINARY_SEARCH_ALL : 72,
-	ARRAY_BINARY_SEARCH_PART : 73,
-	ARRAY_CONTAINS : 74,
-	ARRAY_COPY_TO : 75,
-	ARRAY_FILL_ALL : 76,
-	ARRAY_FILL_PART : 77,
-	ARRAY_SORT_ALL : 78,
-	ARRAY_SORT_PART : 79,
-	LIST_ADD : 80,
-	LIST_ADD_RANGE : 81,
-	LIST_ALL : 82,
-	LIST_ANY : 83,
-	LIST_CLEAR : 84,
-	LIST_CONTAINS : 85,
-	LIST_COPY_TO : 86,
-	LIST_COUNT : 87,
-	LIST_INDEX_OF : 88,
-	LIST_INSERT : 89,
-	LIST_LAST : 90,
-	LIST_REMOVE_AT : 91,
-	LIST_REMOVE_RANGE : 92,
-	LIST_SORT_ALL : 93,
-	LIST_SORT_PART : 94,
-	QUEUE_CLEAR : 95,
-	QUEUE_COUNT : 96,
-	QUEUE_DEQUEUE : 97,
-	QUEUE_ENQUEUE : 98,
-	QUEUE_PEEK : 99,
-	STACK_CLEAR : 100,
-	STACK_COUNT : 101,
-	STACK_PEEK : 102,
-	STACK_PUSH : 103,
-	STACK_POP : 104,
-	PRIORITY_QUEUE_CLEAR : 105,
-	PRIORITY_QUEUE_COUNT : 106,
-	PRIORITY_QUEUE_DEQUEUE : 107,
-	PRIORITY_QUEUE_ENQUEUE : 108,
-	PRIORITY_QUEUE_PEEK : 109,
-	HASH_SET_ADD : 110,
-	HASH_SET_CLEAR : 111,
-	HASH_SET_CONTAINS : 112,
-	HASH_SET_COUNT : 113,
-	HASH_SET_REMOVE : 114,
-	SORTED_SET_ADD : 115,
-	SORTED_SET_CLEAR : 116,
-	SORTED_SET_CONTAINS : 117,
-	SORTED_SET_COUNT : 118,
-	SORTED_SET_REMOVE : 119,
-	DICTIONARY_ADD : 120,
-	DICTIONARY_CLEAR : 121,
-	DICTIONARY_CONTAINS_KEY : 122,
-	DICTIONARY_COUNT : 123,
-	DICTIONARY_REMOVE : 124,
-	SORTED_DICTIONARY_CLEAR : 125,
-	SORTED_DICTIONARY_CONTAINS_KEY : 126,
-	SORTED_DICTIONARY_COUNT : 127,
-	SORTED_DICTIONARY_REMOVE : 128,
-	ORDERED_DICTIONARY_CLEAR : 129,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 130,
-	ORDERED_DICTIONARY_COUNT : 131,
-	ORDERED_DICTIONARY_REMOVE : 132,
-	TEXT_WRITER_WRITE : 133,
-	TEXT_WRITER_WRITE_CHAR : 134,
-	TEXT_WRITER_WRITE_CODE_POINT : 135,
-	TEXT_WRITER_WRITE_LINE : 136,
-	CONSOLE_READ_LINE : 137,
-	CONSOLE_WRITE : 138,
-	CONSOLE_WRITE_LINE : 139,
-	STRING_WRITER_CLEAR : 140,
-	STRING_WRITER_TO_STRING : 141,
-	CONVERT_TO_BASE64_STRING : 142,
-	U_T_F8_GET_BYTE_COUNT : 143,
-	U_T_F8_GET_BYTES : 144,
-	U_T_F8_GET_STRING : 145,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 146,
-	REGEX_COMPILE : 147,
-	REGEX_ESCAPE : 148,
-	REGEX_IS_MATCH_STR : 149,
-	REGEX_IS_MATCH_REGEX : 150,
-	MATCH_FIND_STR : 151,
-	MATCH_FIND_REGEX : 152,
-	MATCH_GET_CAPTURE : 153,
-	JSON_ELEMENT_PARSE : 154,
-	JSON_ELEMENT_IS_OBJECT : 155,
-	JSON_ELEMENT_IS_ARRAY : 156,
-	JSON_ELEMENT_IS_STRING : 157,
-	JSON_ELEMENT_IS_NUMBER : 158,
-	JSON_ELEMENT_IS_BOOLEAN : 159,
-	JSON_ELEMENT_IS_NULL : 160,
-	JSON_ELEMENT_GET_OBJECT : 161,
-	JSON_ELEMENT_GET_ARRAY : 162,
-	JSON_ELEMENT_GET_STRING : 163,
-	JSON_ELEMENT_GET_DOUBLE : 164,
-	JSON_ELEMENT_GET_BOOLEAN : 165,
-	MATH_METHOD : 166,
-	MATH_ABS : 167,
-	MATH_CEILING : 168,
-	MATH_CLAMP : 169,
-	MATH_FUSED_MULTIPLY_ADD : 170,
-	MATH_IS_FINITE : 171,
-	MATH_IS_INFINITY : 172,
-	MATH_IS_NA_N : 173,
-	MATH_LOG2 : 174,
-	MATH_MAX : 175,
-	MATH_MIN : 176,
-	MATH_ROUND : 177,
-	MATH_TRUNCATE : 178
+	FLOAT_TRY_PARSE : 62,
+	DOUBLE_TRY_PARSE : 63,
+	STRING_CONTAINS : 64,
+	STRING_ENDS_WITH : 65,
+	STRING_INDEX_OF : 66,
+	STRING_LAST_INDEX_OF : 67,
+	STRING_REPLACE : 68,
+	STRING_STARTS_WITH : 69,
+	STRING_SUBSTRING : 70,
+	STRING_TO_LOWER : 71,
+	STRING_TO_UPPER : 72,
+	ARRAY_BINARY_SEARCH_ALL : 73,
+	ARRAY_BINARY_SEARCH_PART : 74,
+	ARRAY_CONTAINS : 75,
+	ARRAY_COPY_TO : 76,
+	ARRAY_FILL_ALL : 77,
+	ARRAY_FILL_PART : 78,
+	ARRAY_SORT_ALL : 79,
+	ARRAY_SORT_PART : 80,
+	LIST_ADD : 81,
+	LIST_ADD_RANGE : 82,
+	LIST_ALL : 83,
+	LIST_ANY : 84,
+	LIST_CLEAR : 85,
+	LIST_CONTAINS : 86,
+	LIST_COPY_TO : 87,
+	LIST_COUNT : 88,
+	LIST_INDEX_OF : 89,
+	LIST_INSERT : 90,
+	LIST_LAST : 91,
+	LIST_REMOVE_AT : 92,
+	LIST_REMOVE_RANGE : 93,
+	LIST_SORT_ALL : 94,
+	LIST_SORT_PART : 95,
+	QUEUE_CLEAR : 96,
+	QUEUE_COUNT : 97,
+	QUEUE_DEQUEUE : 98,
+	QUEUE_ENQUEUE : 99,
+	QUEUE_PEEK : 100,
+	STACK_CLEAR : 101,
+	STACK_COUNT : 102,
+	STACK_PEEK : 103,
+	STACK_PUSH : 104,
+	STACK_POP : 105,
+	PRIORITY_QUEUE_CLEAR : 106,
+	PRIORITY_QUEUE_COUNT : 107,
+	PRIORITY_QUEUE_DEQUEUE : 108,
+	PRIORITY_QUEUE_ENQUEUE : 109,
+	PRIORITY_QUEUE_PEEK : 110,
+	HASH_SET_ADD : 111,
+	HASH_SET_CLEAR : 112,
+	HASH_SET_CONTAINS : 113,
+	HASH_SET_COUNT : 114,
+	HASH_SET_REMOVE : 115,
+	SORTED_SET_ADD : 116,
+	SORTED_SET_CLEAR : 117,
+	SORTED_SET_CONTAINS : 118,
+	SORTED_SET_COUNT : 119,
+	SORTED_SET_REMOVE : 120,
+	DICTIONARY_ADD : 121,
+	DICTIONARY_CLEAR : 122,
+	DICTIONARY_CONTAINS_KEY : 123,
+	DICTIONARY_COUNT : 124,
+	DICTIONARY_REMOVE : 125,
+	SORTED_DICTIONARY_CLEAR : 126,
+	SORTED_DICTIONARY_CONTAINS_KEY : 127,
+	SORTED_DICTIONARY_COUNT : 128,
+	SORTED_DICTIONARY_REMOVE : 129,
+	ORDERED_DICTIONARY_CLEAR : 130,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 131,
+	ORDERED_DICTIONARY_COUNT : 132,
+	ORDERED_DICTIONARY_REMOVE : 133,
+	TEXT_WRITER_WRITE : 134,
+	TEXT_WRITER_WRITE_CHAR : 135,
+	TEXT_WRITER_WRITE_CODE_POINT : 136,
+	TEXT_WRITER_WRITE_LINE : 137,
+	CONSOLE_READ_LINE : 138,
+	CONSOLE_WRITE : 139,
+	CONSOLE_WRITE_LINE : 140,
+	STRING_WRITER_CLEAR : 141,
+	STRING_WRITER_TO_STRING : 142,
+	BIT_CONVERTER_INT32_BITS_TO_SINGLE : 143,
+	BIT_CONVERTER_INT64_BITS_TO_DOUBLE : 144,
+	BIT_CONVERTER_SINGLE_TO_INT32_BITS : 145,
+	BIT_CONVERTER_DOUBLE_TO_INT64_BITS : 146,
+	CONVERT_TO_BASE64_STRING : 147,
+	U_T_F8_GET_BYTE_COUNT : 148,
+	U_T_F8_GET_BYTES : 149,
+	U_T_F8_GET_STRING : 150,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 151,
+	DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS : 152,
+	REGEX_COMPILE : 153,
+	REGEX_ESCAPE : 154,
+	REGEX_IS_MATCH_STR : 155,
+	REGEX_IS_MATCH_REGEX : 156,
+	MATCH_FIND_STR : 157,
+	MATCH_FIND_REGEX : 158,
+	MATCH_GET_CAPTURE : 159,
+	JSON_ELEMENT_PARSE : 160,
+	JSON_ELEMENT_IS_OBJECT : 161,
+	JSON_ELEMENT_IS_ARRAY : 162,
+	JSON_ELEMENT_IS_STRING : 163,
+	JSON_ELEMENT_IS_NUMBER : 164,
+	JSON_ELEMENT_IS_BOOLEAN : 165,
+	JSON_ELEMENT_IS_NULL : 166,
+	JSON_ELEMENT_GET_OBJECT : 167,
+	JSON_ELEMENT_GET_ARRAY : 168,
+	JSON_ELEMENT_GET_STRING : 169,
+	JSON_ELEMENT_GET_DOUBLE : 170,
+	JSON_ELEMENT_GET_BOOLEAN : 171,
+	MATH_METHOD : 172,
+	MATH_ABS : 173,
+	MATH_CEILING : 174,
+	MATH_CLAMP : 175,
+	MATH_FUSED_MULTIPLY_ADD : 176,
+	MATH_IS_FINITE : 177,
+	MATH_IS_INFINITY : 178,
+	MATH_IS_NA_N : 179,
+	MATH_LOG2 : 180,
+	MATH_MAX : 181,
+	MATH_MIN : 182,
+	MATH_ROUND : 183,
+	MATH_SQRT : 184,
+	MATH_TRUNCATE : 185
 }
 
 export class FuDocInline
@@ -3199,6 +3206,19 @@ export class FuClass extends FuContainerType
 		return true;
 	}
 
+	getLowestCommonAncestor(other)
+	{
+		for (;;) {
+			if (other.isSameOrBaseOf(this))
+				return other;
+			let parent;
+			if ((parent = other.parent) instanceof FuClass)
+				other = parent;
+			else
+				return null;
+		}
+	}
+
 	hasToString()
 	{
 		let method;
@@ -3496,6 +3516,7 @@ export class FuSystem extends FuScope
 		let ushortType = FuRangeType.new(0, 65535);
 		ushortType.name = "ushort";
 		this.add(ushortType);
+		this.floatType.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.FLOAT_TRY_PARSE, "TryParse", true, FuVar.new(this.stringPtrType, "value")));
 		this.add(this.floatType);
 		this.doubleType.add(FuMethod.new(null, FuVisibility.PUBLIC, FuCallType.NORMAL, this.boolType, FuId.DOUBLE_TRY_PARSE, "TryParse", true, FuVar.new(this.stringPtrType, "value")));
 		this.add(this.doubleType);
@@ -3579,6 +3600,12 @@ export class FuSystem extends FuScope
 		stringWriterClass.addMethod(this.stringPtrType, FuId.STRING_WRITER_TO_STRING, "ToString", false);
 		this.add(stringWriterClass);
 		stringWriterClass.parent = textWriterClass;
+		let bitConverterClass = FuClass.new(FuCallType.STATIC, FuId.NONE, "BitConverter");
+		bitConverterClass.addStaticMethod(this.floatType, FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE, "Int32BitsToSingle", FuVar.new(this.intType, "value"));
+		bitConverterClass.addStaticMethod(this.doubleType, FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE, "Int64BitsToDouble", FuVar.new(this.longType, "value"));
+		bitConverterClass.addStaticMethod(this.intType, FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS, "SingleToInt32Bits", FuVar.new(this.floatType, "value"));
+		bitConverterClass.addStaticMethod(this.longType, FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS, "DoubleToInt64Bits", FuVar.new(this.doubleType, "value"));
+		this.add(bitConverterClass);
 		let convertClass = FuClass.new(FuCallType.STATIC, FuId.NONE, "Convert");
 		convertClass.addStaticMethod(this.stringStorageType, FuId.CONVERT_TO_BASE64_STRING, "ToBase64String", FuVar.new(Object.assign(new FuClassType(), { class: this.arrayPtrClass, typeArg0: this.byteType }), "bytes"), FuVar.new(this.nIntType, "offset"), FuVar.new(this.nIntType, "length"));
 		this.add(convertClass);
@@ -3592,6 +3619,10 @@ export class FuSystem extends FuScope
 		let environmentClass = FuClass.new(FuCallType.STATIC, FuId.NONE, "Environment");
 		environmentClass.addStaticMethod(this.stringNullablePtrType, FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE, "GetEnvironmentVariable", FuVar.new(this.stringPtrType, "name"));
 		this.add(environmentClass);
+		let dateTimeOffsetClass = FuClass.new(FuCallType.ABSTRACT, FuId.NONE, "DateTimeOffset");
+		dateTimeOffsetClass.add(FuStaticProperty.new(Object.assign(new FuClassType(), { class: dateTimeOffsetClass }), FuId.NONE, "UtcNow"));
+		dateTimeOffsetClass.addMethod(this.longType, FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS, "ToUnixTimeMilliseconds", false);
+		this.add(dateTimeOffsetClass);
 		this.regexOptionsEnum = this.newEnum(true);
 		this.regexOptionsEnum.isPublic = true;
 		this.regexOptionsEnum.id = FuId.REGEX_OPTIONS_ENUM;
@@ -3664,7 +3695,7 @@ export class FuSystem extends FuScope
 		mathClass.addStaticMethod(floatIntType, FuId.MATH_ROUND, "Round", FuVar.new(this.doubleType, "a"));
 		mathClass.addStaticMethod(floatingType, FuId.MATH_METHOD, "Sin", FuVar.new(this.doubleType, "a"));
 		mathClass.addStaticMethod(floatingType, FuId.MATH_METHOD, "Sinh", FuVar.new(this.doubleType, "a"));
-		mathClass.addStaticMethod(floatingType, FuId.MATH_METHOD, "Sqrt", FuVar.new(this.doubleType, "a"));
+		mathClass.addStaticMethod(floatingType, FuId.MATH_SQRT, "Sqrt", FuVar.new(this.doubleType, "a"));
 		mathClass.addStaticMethod(floatingType, FuId.MATH_METHOD, "Tan", FuVar.new(this.doubleType, "a"));
 		mathClass.addStaticMethod(floatingType, FuId.MATH_METHOD, "Tanh", FuVar.new(this.doubleType, "a"));
 		mathClass.addStaticMethod(floatIntType, FuId.MATH_TRUNCATE, "Truncate", FuVar.new(this.doubleType, "a"));
@@ -6159,6 +6190,8 @@ export class FuSema
 			this.#checkLValue(left);
 			if (left.type.id == FuId.STRING_STORAGE_TYPE)
 				this.#coerce(right, this.#host.program.system.stringPtrType);
+			else if (left.type.id == FuId.STRING_PTR_TYPE)
+				this.#reportError(left, `'${left}' is 'string', concatenation requires 'string()'`);
 			else {
 				this.#coerce(left, this.#host.program.system.doubleType);
 				this.#coerce(right, left.type);
@@ -6235,19 +6268,6 @@ export class FuSema
 		return type;
 	}
 
-	static #getLowestCommonAncestor(left, right)
-	{
-		for (;;) {
-			if (left.isSameOrBaseOf(right))
-				return left;
-			let parent;
-			if ((parent = left.parent) instanceof FuClass)
-				left = parent;
-			else
-				return null;
-		}
-	}
-
 	#getCommonType(left, right)
 	{
 		let leftRange;
@@ -6264,7 +6284,7 @@ export class FuSema
 		let leftClass;
 		let rightClass;
 		if ((leftClass = left.type) instanceof FuClassType && (rightClass = right.type) instanceof FuClassType && leftClass.equalTypeArguments(rightClass)) {
-			let klass = FuSema.#getLowestCommonAncestor(leftClass.class, rightClass.class);
+			let klass = leftClass.class.getLowestCommonAncestor(rightClass.class);
 			if (klass != null) {
 				let result;
 				if (!(leftClass instanceof FuReadWriteClassType) || !(rightClass instanceof FuReadWriteClassType))
@@ -6384,6 +6404,7 @@ export class FuSema
 					case FuId.INT_TRY_PARSE:
 					case FuId.N_INT_TRY_PARSE:
 					case FuId.LONG_TRY_PARSE:
+					case FuId.FLOAT_TRY_PARSE:
 					case FuId.DOUBLE_TRY_PARSE:
 						let varRef;
 						let def;
@@ -6538,7 +6559,7 @@ export class FuSema
 				this.#resolveObjectLiteral(storage, init);
 			else {
 				expr.value = this.#visitExpr(expr.value);
-				if (!expr.isAssignableStorage()) {
+				if (type instanceof FuStorageType) {
 					let array;
 					if ((array = type) instanceof FuArrayStorageType) {
 						type = array.getElementType();
@@ -6546,10 +6567,14 @@ export class FuSema
 						if (!((literal = expr.value) instanceof FuLiteral) || !literal.isDefaultValue())
 							this.#reportError(expr.value, "Only null, zero and false supported as an array initializer");
 					}
-					else if (type instanceof FuStorageType && expr.value instanceof FuSymbolReference)
+					else if (expr.value instanceof FuLiteralNull) {
+						this.#currentScope.add(expr);
+						return;
+					}
+					else if (expr.value instanceof FuSymbolReference)
 						this.#reportError(expr.value, "Cannot copy object storage");
-					this.#coercePermanent(expr.value, type);
 				}
+				this.#coercePermanent(expr.value, type);
 			}
 		}
 		FuSema.#initUnique(expr);
@@ -9211,15 +9236,19 @@ export class GenBase extends FuVisitor
 		this.writeChild(statement.body);
 	}
 
-	static isNotTryParse(statement)
+	static isIfTryParse(statement)
 	{
+		let cond = statement.cond;
 		let not;
+		if ((not = cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK)
+			cond = not.inner;
 		let call;
-		if (statement.onFalse == null && (not = statement.cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK && (call = not.inner) instanceof FuCallExpr) {
+		if ((call = cond) instanceof FuCallExpr) {
 			switch (call.method.symbol.id) {
 			case FuId.INT_TRY_PARSE:
 			case FuId.N_INT_TRY_PARSE:
 			case FuId.LONG_TRY_PARSE:
+			case FuId.FLOAT_TRY_PARSE:
 			case FuId.DOUBLE_TRY_PARSE:
 				return call;
 			default:
@@ -9227,6 +9256,14 @@ export class GenBase extends FuVisitor
 			}
 		}
 		return null;
+	}
+
+	flattenBranch(statement, cond)
+	{
+		if (cond)
+			this.flattenBlock(statement.onTrue);
+		else if (statement.onFalse != null)
+			this.flattenBlock(statement.onFalse);
 	}
 
 	embedIfWhileIsVar(expr, write)
@@ -9918,6 +9955,25 @@ export class GenTyped extends GenBase
 		this.writeIndexing(expr.left, expr.right);
 	}
 
+	writeMathFloating(type, method, args)
+	{
+		this.writeLowercase(method.name);
+		this.writeChar(40);
+		let param = method.firstParameter();
+		let first = true;
+		for (const arg of args) {
+			if (!first)
+				this.write(", ");
+			first = false;
+			if (type.id == FuId.FLOAT_TYPE && arg.type instanceof FuIntegerType)
+				this.writeStaticCast(type, arg);
+			else
+				arg.accept(this, FuPriority.ARGUMENT);
+			param = param.nextVar();
+		}
+		this.writeChar(41);
+	}
+
 	startTemporaryVar(type)
 	{
 		this.writeType(type, true);
@@ -9950,32 +10006,6 @@ export class GenCCppD extends GenTyped
 			this.write("(-9223372036854775807 - 1)");
 		else
 			super.visitLiteralLong(i);
-	}
-
-	static #isPtrTo(ptr, other)
-	{
-		let klass;
-		return (klass = ptr.type) instanceof FuClassType && klass.class.id != FuId.STRING_CLASS && klass.isAssignableFrom(other.type);
-	}
-
-	writeEqual(left, right, parent, not)
-	{
-		let coercedType;
-		if (GenCCppD.#isPtrTo(left, right))
-			coercedType = left.type;
-		else if (GenCCppD.#isPtrTo(right, left))
-			coercedType = right.type;
-		else {
-			super.writeEqual(left, right, parent, not);
-			return;
-		}
-		if (parent > FuPriority.EQUALITY)
-			this.writeChar(40);
-		this.writeCoerced(coercedType, left, FuPriority.EQUALITY);
-		this.write(GenCCppD.getEqOp(not));
-		this.writeCoerced(coercedType, right, FuPriority.EQUALITY);
-		if (parent > FuPriority.EQUALITY)
-			this.writeChar(41);
 	}
 
 	writeCoercedInternal(type, expr, parent)
@@ -10118,6 +10148,30 @@ export class GenCCpp extends GenCCppD
 		if ((symbol = expr.left) instanceof FuSymbolReference && symbol.symbol.id == FuId.STRING_LENGTH && expr.right.isLiteralZero())
 			return symbol.left;
 		return null;
+	}
+
+	writeEqual(left, right, parent, not)
+	{
+		let leftClass;
+		let rightClass;
+		if ((leftClass = left.type) instanceof FuClassType && (rightClass = right.type) instanceof FuClassType && leftClass.class.id != FuId.STRING_CLASS) {
+			let coercedType;
+			if (leftClass.isAssignableFrom(rightClass))
+				coercedType = left.type;
+			else if (rightClass.isAssignableFrom(leftClass))
+				coercedType = right.type;
+			else
+				coercedType = Object.assign(new FuClassType(), { class: leftClass.class.getLowestCommonAncestor(rightClass.class), nullable: true, typeArg0: leftClass.typeArg0, typeArg1: leftClass.typeArg1 });
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(40);
+			this.writeCoerced(coercedType, left, FuPriority.EQUALITY);
+			this.write(GenCCpp.getEqOp(not));
+			this.writeCoerced(coercedType, right, FuPriority.EQUALITY);
+			if (parent > FuPriority.EQUALITY)
+				this.writeChar(41);
+		}
+		else
+			super.writeEqual(left, right, parent, not);
 	}
 
 	writeArrayPtrAdd(array, index)
@@ -10282,6 +10336,7 @@ export class GenC extends GenCCpp
 	#intFunctions = new Set();
 	#nIntFunctions = new Set();
 	#longFunctions = new Set();
+	#floatTryParse;
 	#doubleTryParse;
 	#stringAssign;
 	#stringSubstring;
@@ -10305,6 +10360,7 @@ export class GenC extends GenCCpp
 	#treeCompareString;
 	#compares = new Set();
 	#contains = new Set();
+	#dateTimeOffsetUtcNowToUnixTimeMilliseconds;
 	#varsToDestruct = [];
 	#conditionVarInScope;
 	currentClass;
@@ -12276,7 +12332,7 @@ export class GenC extends GenCCpp
 		this.write(", ");
 	}
 
-	#writeMathFloating(function_, args)
+	#writeCMathFloating(function_, args)
 	{
 		this.includeMath();
 		this.writeLowercase(function_);
@@ -12337,6 +12393,10 @@ export class GenC extends GenCCpp
 		case FuId.LONG_TRY_PARSE:
 			this.#longFunctions.add(FuId.INT_TRY_PARSE);
 			this.#writeTryParse("FuLong", obj, args);
+			break;
+		case FuId.FLOAT_TRY_PARSE:
+			this.#floatTryParse = true;
+			this.#writeTryParse("FuFloat", obj, args);
 			break;
 		case FuId.DOUBLE_TRY_PARSE:
 			this.#doubleTryParse = true;
@@ -12713,6 +12773,18 @@ export class GenC extends GenCCpp
 		case FuId.STRING_WRITER_TO_STRING:
 			this.writePostfix(obj, "->str");
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.write("(union { ");
+			this.writeType(method.firstParameter().type, false);
+			this.write(" from; ");
+			this.writeType(type, false);
+			this.write(" to; }){ ");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write(" }.to");
+			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.#writeGlib("g_base64_encode(");
 			this.writeArrayPtrAdd(args[0], args[1]);
@@ -12744,6 +12816,12 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.writeCall("getenv", args[0]);
+			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.includeStdInt();
+			this.include("sys/time.h");
+			this.#dateTimeOffsetUtcNowToUnixTimeMilliseconds = true;
+			this.write("FuDateTimeOffset_UtcNow_ToUnixTimeMilliseconds()");
 			break;
 		case FuId.REGEX_COMPILE:
 			this.#writeGlib("g_regex_new(");
@@ -12799,7 +12877,8 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.MATH_METHOD:
 		case FuId.MATH_LOG2:
-			this.#writeMathFloating(method.name, args);
+		case FuId.MATH_SQRT:
+			this.#writeCMathFloating(method.name, args);
 			break;
 		case FuId.MATH_ABS:
 			switch (args[0].type.id) {
@@ -12824,7 +12903,7 @@ export class GenC extends GenCCpp
 			}
 			break;
 		case FuId.MATH_CEILING:
-			this.#writeMathFloating("ceil", args);
+			this.#writeCMathFloating("ceil", args);
 			break;
 		case FuId.MATH_CLAMP:
 			if (this.#writeMathClampMaxMin(type, method, args)) {
@@ -12834,7 +12913,7 @@ export class GenC extends GenCCpp
 			}
 			break;
 		case FuId.MATH_FUSED_MULTIPLY_ADD:
-			this.#writeMathFloating("fma", args);
+			this.#writeCMathFloating("fma", args);
 			break;
 		case FuId.MATH_IS_FINITE:
 			this.includeMath();
@@ -12852,14 +12931,14 @@ export class GenC extends GenCCpp
 		case FuId.MATH_MIN:
 			if (this.#writeMathClampMaxMin(type, method, args)) {
 				this.writeChar(102);
-				this.#writeMathFloating(method.name, args);
+				this.#writeCMathFloating(method.name, args);
 			}
 			break;
 		case FuId.MATH_ROUND:
-			this.#writeMathFloating("round", args);
+			this.#writeCMathFloating("round", args);
 			break;
 		case FuId.MATH_TRUNCATE:
-			this.#writeMathFloating("trunc", args);
+			this.#writeCMathFloating("trunc", args);
 			break;
 		default:
 			this.notSupported(obj, method.name);
@@ -13931,6 +14010,12 @@ export class GenC extends GenCCpp
 		this.#writeIntLibrary("Int", "int", this.#intFunctions);
 		this.#writeIntLibrary("NInt", "ptrdiff_t", this.#nIntFunctions);
 		this.#writeIntLibrary("Long", "int64_t", this.#longFunctions);
+		if (this.#floatTryParse) {
+			this.#startTryParseLibrary("Float", "float", "");
+			this.writeLine("*result = strtof(str, &end);");
+			this.writeLine("return *end == '\\0' && errno == 0;");
+			this.closeBlock();
+		}
 		if (this.#doubleTryParse) {
 			this.#startTryParseLibrary("Double", "double", "");
 			this.writeLine("*result = strtod(str, &end);");
@@ -14275,6 +14360,15 @@ export class GenC extends GenCCpp
 			this.writeLine("return false;");
 			this.closeBlock();
 		}
+		if (this.#dateTimeOffsetUtcNowToUnixTimeMilliseconds) {
+			this.writeNewLine();
+			this.writeLine("static int64_t FuDateTimeOffset_UtcNow_ToUnixTimeMilliseconds()");
+			this.openBlock();
+			this.writeLine("struct timeval tv;");
+			this.writeLine("gettimeofday(&tv, NULL);");
+			this.writeLine("return (int64_t) tv.tv_sec * 1000 + tv.tv_usec / 1000;");
+			this.closeBlock();
+		}
 	}
 
 	writeResources(resources)
@@ -14332,6 +14426,7 @@ export class GenC extends GenCCpp
 		this.#intFunctions.clear();
 		this.#nIntFunctions.clear();
 		this.#longFunctions.clear();
+		this.#floatTryParse = false;
 		this.#doubleTryParse = false;
 		this.#stringAssign = false;
 		this.#stringSubstring = false;
@@ -14353,6 +14448,7 @@ export class GenC extends GenCCpp
 		this.#listFrees.clear();
 		this.#treeCompareInteger = false;
 		this.#treeCompareString = false;
+		this.#dateTimeOffsetUtcNowToUnixTimeMilliseconds = false;
 		this.#compares.clear();
 		this.#contains.clear();
 		this.openStringWriter();
@@ -14601,6 +14697,18 @@ export class GenCl extends GenC
 		case FuId.CONSOLE_WRITE_LINE:
 			this.#writeConsoleWrite(args, true);
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+			this.writeCall("as_float", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+			this.writeCall("as_double", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+			this.writeCall("as_int", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.writeCall("as_long", args[0]);
+			break;
 		case FuId.U_T_F8_GET_BYTE_COUNT:
 			this.writeStringLength(args[0]);
 			break;
@@ -14621,8 +14729,8 @@ export class GenCl extends GenC
 		case FuId.MATH_IS_NA_N:
 		case FuId.MATH_LOG2:
 		case FuId.MATH_ROUND:
-			this.writeLowercase(method.name);
-			this.writeInParentheses(args);
+		case FuId.MATH_SQRT:
+			this.writeMathFloating(type, method, args);
 			break;
 		case FuId.MATH_ABS:
 			if (args[0].type instanceof FuFloatingType)
@@ -15564,6 +15672,7 @@ export class GenCpp extends GenCCpp
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
+		case FuId.FLOAT_TRY_PARSE:
 		case FuId.DOUBLE_TRY_PARSE:
 			this.include("charconv");
 			this.include("string_view");
@@ -15791,7 +15900,10 @@ export class GenCpp extends GenCCpp
 		case FuId.SORTED_SET_REMOVE:
 		case FuId.DICTIONARY_REMOVE:
 		case FuId.SORTED_DICTIONARY_REMOVE:
-			this.writeMethodCall(obj, "erase", args[0]);
+			this.#startMethodCall(obj);
+			this.write("erase(");
+			this.writeStronglyCoerced(obj.type.asClassType().getKeyType(), args[0]);
+			this.writeChar(41);
 			break;
 		case FuId.DICTIONARY_ADD:
 			this.writeIndexing(obj, args[0]);
@@ -15898,6 +16010,17 @@ export class GenCpp extends GenCCpp
 			this.#startMethodCall(obj);
 			this.write("str()");
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.include("bit");
+			this.write("std::bit_cast<");
+			this.writeType(type, false);
+			this.write(">(");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.writeChar(41);
+			break;
 		case FuId.U_T_F8_GET_BYTE_COUNT:
 			if (args[0] instanceof FuLiteral) {
 				if (parent > FuPriority.ADD)
@@ -15952,6 +16075,14 @@ export class GenCpp extends GenCCpp
 			}
 			this.writeChar(41);
 			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.include("chrono");
+			if (parent > FuPriority.MUL)
+				this.writeChar(40);
+			this.write("std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1)");
+			if (parent > FuPriority.MUL)
+				this.writeChar(41);
+			break;
 		case FuId.REGEX_COMPILE:
 			this.#writeRegex(args, 0);
 			break;
@@ -15989,6 +16120,7 @@ export class GenCpp extends GenCCpp
 		case FuId.MATH_IS_NA_N:
 		case FuId.MATH_LOG2:
 		case FuId.MATH_ROUND:
+		case FuId.MATH_SQRT:
 			this.includeMath();
 			this.write("std::");
 			this.writeLowercase(method.name);
@@ -17451,6 +17583,10 @@ export class GenCs extends GenTyped
 		case FuId.ORDERED_DICTIONARY_REMOVE:
 		case FuId.CONSOLE_READ_LINE:
 		case FuId.STRING_WRITER_TO_STRING:
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
 		case FuId.CONVERT_TO_BASE64_STRING:
 		case FuId.JSON_ELEMENT_GET_STRING:
 		case FuId.JSON_ELEMENT_GET_DOUBLE:
@@ -17472,6 +17608,7 @@ export class GenCs extends GenTyped
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
+		case FuId.FLOAT_TRY_PARSE:
 		case FuId.DOUBLE_TRY_PARSE:
 			this.writeType(obj.type, false);
 			this.write(".TryParse(");
@@ -17670,6 +17807,10 @@ export class GenCs extends GenTyped
 			this.write(method.name);
 			this.writeInParentheses(args);
 			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.include("System");
+			this.write("DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()");
+			break;
 		case FuId.REGEX_COMPILE:
 			this.include("System.Text.RegularExpressions");
 			this.write("new Regex");
@@ -17746,6 +17887,7 @@ export class GenCs extends GenTyped
 		case FuId.MATH_FUSED_MULTIPLY_ADD:
 		case FuId.MATH_LOG2:
 		case FuId.MATH_ROUND:
+		case FuId.MATH_SQRT:
 		case FuId.MATH_TRUNCATE:
 			this.include("System");
 			this.write("Math");
@@ -18095,6 +18237,7 @@ export class GenD extends GenCCppD
 	#hasStackPop;
 	#hasSortedDictionaryInsert;
 	#hasSortedDictionaryFind;
+	#bitConverter;
 
 	getTargetName()
 	{
@@ -18917,6 +19060,7 @@ export class GenD extends GenCCppD
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
 		case FuId.LONG_TRY_PARSE:
+		case FuId.FLOAT_TRY_PARSE:
 		case FuId.DOUBLE_TRY_PARSE:
 			this.include("std.conv");
 			this.write("() { try { ");
@@ -19174,6 +19318,23 @@ export class GenD extends GenCCppD
 			this.include("std.process");
 			this.writeCall("environment.get", args[0]);
 			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.include("std.datetime");
+			this.write("(Clock.currTime() - SysTime(unixTimeToStdTime(0))).total!\"msecs\"");
+			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.#bitConverter = true;
+			this.write("fuBitCast!(");
+			this.writeType(type, false);
+			this.write(", ");
+			this.writeType(method.firstParameter().type, false);
+			this.write(")(");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.writeChar(41);
+			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.include("std.base64");
 			this.write("Base64.encode(");
@@ -19290,11 +19451,15 @@ export class GenD extends GenCCppD
 			this.writePostfix(obj, ".boolean");
 			break;
 		case FuId.MATH_METHOD:
+		case FuId.MATH_LOG2:
+		case FuId.MATH_SQRT:
+			this.include("std.math");
+			this.writeMathFloating(type, method, args);
+			break;
 		case FuId.MATH_ABS:
 		case FuId.MATH_IS_FINITE:
 		case FuId.MATH_IS_INFINITY:
 		case FuId.MATH_IS_NA_N:
-		case FuId.MATH_LOG2:
 		case FuId.MATH_ROUND:
 			this.include("std.math");
 			this.writeCamelCase(method.name);
@@ -19677,6 +19842,7 @@ export class GenD extends GenCCppD
 		this.#hasStackPop = false;
 		this.#hasSortedDictionaryInsert = false;
 		this.#hasSortedDictionaryFind = false;
+		this.#bitConverter = false;
 		this.openStringWriter();
 		if (namespace.length != 0) {
 			this.write("struct ");
@@ -19739,6 +19905,15 @@ export class GenD extends GenCCppD
 			this.openBlock();
 			this.writeLine("dict.removeKey(tuple(key, U.init));");
 			this.writeLine("dict.insert(tuple(key, value));");
+			this.closeBlock();
+		}
+		if (this.#bitConverter) {
+			this.writeNewLine();
+			this.writeLine("private T fuBitCast(T, S)(S value)");
+			this.openBlock();
+			this.writeLine("union U { S s; T t; };");
+			this.writeLine("U u = U(value);");
+			this.writeLine("return u.t;");
 			this.closeBlock();
 		}
 		this.closeStringWriter();
@@ -20213,15 +20388,6 @@ export class GenJava extends GenTyped
 			super.writeCoercedLiteral(type, expr);
 	}
 
-	writeCoercedInternal(type, expr, parent)
-	{
-		let call;
-		if (type.id == FuId.FLOAT_TYPE && (call = expr) instanceof FuCallExpr && call.method.symbol.type.id == FuId.FLOATING_TYPE)
-			this.writeStaticCast(type, expr);
-		else
-			super.writeCoercedInternal(type, expr, parent);
-	}
-
 	writeRel(expr, parent, op)
 	{
 		let enu;
@@ -20385,6 +20551,13 @@ export class GenJava extends GenTyped
 		this.writeChar(41);
 	}
 
+	#writeMathIs(name, arg)
+	{
+		this.#writeJavaType(arg.type, true, true);
+		this.write(".is");
+		this.writeCall(name, arg);
+	}
+
 	writeCallExpr(type, obj, method, args, parent)
 	{
 		switch (method.id) {
@@ -20416,7 +20589,6 @@ export class GenJava extends GenTyped
 		case FuId.ORDERED_DICTIONARY_CONTAINS_KEY:
 		case FuId.ORDERED_DICTIONARY_REMOVE:
 		case FuId.STRING_WRITER_TO_STRING:
-		case FuId.MATH_METHOD:
 		case FuId.MATH_ABS:
 		case FuId.MATH_MAX:
 		case FuId.MATH_MIN:
@@ -20669,6 +20841,18 @@ export class GenJava extends GenTyped
 			this.write("System.out");
 			this.#writeWrite(method, args, true);
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+			this.writeCall("Float.intBitsToFloat", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+			this.writeCall("Double.longBitsToDouble", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+			this.writeCall("Float.floatToIntBits", args[0]);
+			break;
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.writeCall("Double.doubleToLongBits", args[0]);
+			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.include("java.util.Base64");
 			if (this.isWholeArray(args[0], args[1], args[2]))
@@ -20710,6 +20894,9 @@ export class GenJava extends GenTyped
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.writeCall("System.getenv", args[0]);
 			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.write("System.currentTimeMillis()");
+			break;
 		case FuId.REGEX_COMPILE:
 			this.#writeCompileRegex(args, 0);
 			break;
@@ -20741,6 +20928,14 @@ export class GenJava extends GenTyped
 		case FuId.MATCH_GET_CAPTURE:
 			this.writeMethodCall(obj, "group", args[0]);
 			break;
+		case FuId.MATH_METHOD:
+		case FuId.MATH_SQRT:
+			if (type.id == FuId.FLOAT_TYPE)
+				this.write("(float) ");
+			this.write("Math.");
+			this.writeName(method);
+			this.writeCoercedArgsInParentheses(method, args);
+			break;
 		case FuId.MATH_CEILING:
 			this.writeCall("Math.ceil", args[0]);
 			break;
@@ -20752,15 +20947,19 @@ export class GenJava extends GenTyped
 			this.writeCall("Math.fma", args[0], args[1], args[2]);
 			break;
 		case FuId.MATH_IS_FINITE:
-			this.writeCall("Double.isFinite", args[0]);
+			this.#writeMathIs("Finite", args[0]);
 			break;
 		case FuId.MATH_IS_INFINITY:
-			this.writeCall("Double.isInfinite", args[0]);
+			this.#writeMathIs("Infinite", args[0]);
 			break;
 		case FuId.MATH_IS_NA_N:
-			this.writeCall("Double.isNaN", args[0]);
+			this.#writeMathIs("NaN", args[0]);
 			break;
 		case FuId.MATH_LOG2:
+			if (type.id == FuId.FLOAT_TYPE) {
+				this.write("(float) ");
+				parent = FuPriority.PRIMARY;
+			}
 			if (parent > FuPriority.MUL)
 				this.writeChar(40);
 			this.writeCall("Math.log", args[0]);
@@ -20939,7 +21138,7 @@ export class GenJava extends GenTyped
 
 	visitIf(statement)
 	{
-		let call = GenJava.isNotTryParse(statement);
+		let call = GenJava.isIfTryParse(statement);
 		if (call != null) {
 			this.write("try ");
 			this.openBlock();
@@ -20953,6 +21152,9 @@ export class GenJava extends GenTyped
 			case FuId.LONG_TRY_PARSE:
 				this.write("Long.parseLong");
 				break;
+			case FuId.FLOAT_TRY_PARSE:
+				this.write("Float.parseFloat");
+				break;
 			case FuId.DOUBLE_TRY_PARSE:
 				this.write("Double.parseDouble");
 				break;
@@ -20961,14 +21163,18 @@ export class GenJava extends GenTyped
 			}
 			this.writeInParentheses(call.arguments_);
 			this.writeCharLine(59);
+			let not = statement.cond != call;
+			this.flattenBranch(statement, !not);
 			this.closeBlock();
-			this.write("catch (NumberFormatException e) ");
+			this.write("catch (NumberFormatException e_) ");
 			this.openBlock();
-			if (!(statement.onTrue instanceof FuReturn) && !(statement.onTrue instanceof FuThrow)) {
+			if ((not ? statement.onTrue : statement.onFalse) instanceof FuReturn || (not ? statement.onTrue : statement.onFalse) instanceof FuThrow) {
+			}
+			else {
 				call.method.left.accept(this, FuPriority.ASSIGN);
 				this.writeLine(" = 0;");
 			}
-			statement.onTrue.acceptStatement(this);
+			this.flattenBranch(statement, not);
 			this.closeBlock();
 		}
 		else
@@ -21765,6 +21971,28 @@ export class GenJsNoModule extends GenBase
 	{
 	}
 
+	#endWrite(arg)
+	{
+		if (arg.type instanceof FuStringType)
+			arg.accept(this, FuPriority.ARGUMENT);
+		else
+			this.writeCall("String", arg);
+		this.writeChar(41);
+	}
+
+	#writeWriteLine(method, args)
+	{
+		this.write(method);
+		this.writeChar(40);
+		if (args.length == 0)
+			this.write("\"\"");
+		else if (args[0].type.id == FuId.LONG_TYPE)
+			this.writeCall("String", args[0]);
+		else
+			args[0].accept(this, FuPriority.ARGUMENT);
+		this.writeChar(41);
+	}
+
 	static #isIdentifier(s)
 	{
 		if (s.length == 0 || s.charCodeAt(0) < 65)
@@ -21872,6 +22100,7 @@ export class GenJsNoModule extends GenBase
 		case FuId.MATH_METHOD:
 		case FuId.MATH_LOG2:
 		case FuId.MATH_ROUND:
+		case FuId.MATH_SQRT:
 			if (obj == null)
 				this.writeLocalName(method, FuPriority.PRIMARY);
 			else {
@@ -21911,6 +22140,7 @@ export class GenJsNoModule extends GenBase
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write("); return true; } catch { return false; }})()");
 			break;
+		case FuId.FLOAT_TRY_PARSE:
 		case FuId.DOUBLE_TRY_PARSE:
 			this.write("!isNaN(");
 			obj.accept(this, FuPriority.ASSIGN);
@@ -22066,11 +22296,7 @@ export class GenJsNoModule extends GenBase
 			break;
 		case FuId.TEXT_WRITER_WRITE:
 			this.writePostfix(obj, ".write(");
-			if (args[0].type instanceof FuStringType)
-				args[0].accept(this, FuPriority.ARGUMENT);
-			else
-				this.writeCall("String", args[0]);
-			this.writeChar(41);
+			this.#endWrite(args[0]);
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
 			this.writeMethodCall(obj, "write(String.fromCharCode", args[0]);
@@ -22081,14 +22307,8 @@ export class GenJsNoModule extends GenBase
 			this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
-			if (GenJsNoModule.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.write("console.error(");
-				if (args.length == 0)
-					this.write("\"\"");
-				else
-					args[0].accept(this, FuPriority.ARGUMENT);
-				this.writeChar(41);
-			}
+			if (GenJsNoModule.isReferenceTo(obj, FuId.CONSOLE_ERROR))
+				this.#writeWriteLine("console.error", args);
 			else {
 				this.writePostfix(obj, ".write(");
 				if (args.length != 0) {
@@ -22100,19 +22320,22 @@ export class GenJsNoModule extends GenBase
 			break;
 		case FuId.CONSOLE_WRITE:
 			this.write("process.stdout.write(");
-			if (args[0].type instanceof FuStringType)
-				args[0].accept(this, FuPriority.ARGUMENT);
-			else
-				this.writeCall("String", args[0]);
-			this.writeChar(41);
+			this.#endWrite(args[0]);
 			break;
 		case FuId.CONSOLE_WRITE_LINE:
-			this.write("console.log(");
-			if (args.length == 0)
-				this.write("\"\"");
-			else
-				args[0].accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
+			this.#writeWriteLine("console.log", args);
+			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.write("new ");
+			this.writeArrayElementType(type);
+			this.write("Array(new ");
+			this.writeArrayElementType(method.firstParameter().type);
+			this.write("Array([ ");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write(" ]).buffer)[0]");
 			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.write("btoa(String.fromCodePoint(...");
@@ -22150,6 +22373,9 @@ export class GenJsNoModule extends GenBase
 				args[0].accept(this, FuPriority.ARGUMENT);
 				this.writeChar(93);
 			}
+			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.write("BigInt(Date.now())");
 			break;
 		case FuId.REGEX_COMPILE:
 			this.#writeNewRegex(args, 0);
@@ -23948,11 +24174,8 @@ export class GenSwift extends GenPySwift
 
 	writeElementCoerced(type, value)
 	{
-		if (type.id == FuId.INT_TYPE && !GenSwift.#isIntIndexing(value)) {
-			this.write("Int32(");
-			value.accept(this, FuPriority.ARGUMENT);
-			this.writeChar(41);
-		}
+		if (type.id == FuId.INT_TYPE && !GenSwift.#isIntIndexing(value))
+			this.writeCall("Int32", value);
 		else
 			this.writeCoerced(type, value, FuPriority.ARGUMENT);
 	}
@@ -24028,11 +24251,11 @@ export class GenSwift extends GenPySwift
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.writeChar(41);
 			break;
-		case FuId.ENUM_TO_INT:
-			this.writePostfix(obj, ".rawValue");
-			break;
 		case FuId.ENUM_HAS_FLAG:
 			this.writeMethodCall(obj, "contains", args[0]);
+			break;
+		case FuId.ENUM_TO_INT:
+			this.writePostfix(obj, ".rawValue");
 			break;
 		case FuId.STRING_CONTAINS:
 			this.#writeStringContains(obj, "contains", args);
@@ -24331,6 +24554,29 @@ export class GenSwift extends GenPySwift
 		case FuId.STRING_WRITER_TO_STRING:
 			obj.accept(this, parent);
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+			this.write("Float(bitPattern: UInt32(bitPattern: ");
+			if (GenSwift.#isIntIndexing(args[0]))
+				args[0].accept(this, FuPriority.ARGUMENT);
+			else
+				this.writeCall("Int32", args[0]);
+			this.write("))");
+			break;
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+			this.write("Double(bitPattern: UInt64(bitPattern: ");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write("))");
+			break;
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+			this.write("Int(Int32(bitPattern: (");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write(").bitPattern))");
+			break;
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.write("Int64(bitPattern: (");
+			args[0].accept(this, FuPriority.ARGUMENT);
+			this.write(").bitPattern)");
+			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.write("Data(");
 			this.#openIndexing(args[0]);
@@ -24369,6 +24615,10 @@ export class GenSwift extends GenPySwift
 			this.write("ProcessInfo.processInfo.environment[");
 			this.#writeUnwrapped(args[0], FuPriority.ARGUMENT, false);
 			this.writeChar(93);
+			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.include("Foundation");
+			this.write("Int64(Date.now.timeIntervalSince1970 * 1000)");
 			break;
 		case FuId.JSON_ELEMENT_PARSE:
 			this.include("Foundation");
@@ -24441,6 +24691,13 @@ export class GenSwift extends GenPySwift
 			break;
 		case FuId.MATH_ROUND:
 			this.writePostfix(args[0], ".rounded()");
+			break;
+		case FuId.MATH_SQRT:
+			if (args[0].type instanceof FuIntegerType)
+				this.writeCall("Float", args[0]);
+			else
+				args[0].accept(this, FuPriority.PRIMARY);
+			this.write(".squareRoot()");
 			break;
 		case FuId.MATH_TRUNCATE:
 			this.include("Foundation");
@@ -25022,6 +25279,36 @@ export class GenSwift extends GenPySwift
 		this.writeChild(statement.body);
 	}
 
+	visitIf(statement)
+	{
+		let call = GenSwift.isIfTryParse(statement);
+		if (call != null) {
+			this.write("if let fuparsed = ");
+			this.#writePromotedType(call.method.left.type);
+			this.writeChar(40);
+			this.#writeUnwrapped(call.arguments_[0], FuPriority.ARGUMENT, true);
+			if (call.arguments_.length == 2) {
+				this.write(", radix: ");
+				call.arguments_[1].accept(this, FuPriority.ARGUMENT);
+			}
+			this.write(") ");
+			this.openBlock();
+			call.method.left.accept(this, FuPriority.ASSIGN);
+			this.writeLine(" = fuparsed");
+			let not = statement.cond != call;
+			this.flattenBranch(statement, !not);
+			this.closeBlock();
+			if (not || statement.onFalse != null) {
+				this.write("else ");
+				this.openBlock();
+				this.flattenBranch(statement, not);
+				this.closeBlock();
+			}
+		}
+		else
+			super.visitIf(statement);
+	}
+
 	visitLock(statement)
 	{
 		statement.lock.accept(this, FuPriority.PRIMARY);
@@ -25528,6 +25815,7 @@ export class GenSwift extends GenPySwift
 export class GenPy extends GenPySwift
 {
 	#childPass;
+	#timeNs;
 	#switchBreak;
 
 	getTargetName()
@@ -26318,6 +26606,18 @@ export class GenPy extends GenPySwift
 		this.writeChar(41);
 	}
 
+	#writeBitConverterIntFloat(from, to, arg)
+	{
+		this.include("struct");
+		this.write("struct.unpack(\"");
+		this.writeChar(to);
+		this.write("\", struct.pack(\"");
+		this.writeChar(from);
+		this.write("\", ");
+		arg.accept(this, FuPriority.ARGUMENT);
+		this.write("))[0]");
+	}
+
 	#writePyRegexOptions(args)
 	{
 		this.include("re");
@@ -26615,6 +26915,18 @@ export class GenPy extends GenPySwift
 		case FuId.STRING_WRITER_TO_STRING:
 			this.writePostfix(obj, ".getvalue()");
 			break;
+		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
+			this.#writeBitConverterIntFloat(105, 102, args[0]);
+			break;
+		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
+			this.#writeBitConverterIntFloat(113, 100, args[0]);
+			break;
+		case FuId.BIT_CONVERTER_SINGLE_TO_INT32_BITS:
+			this.#writeBitConverterIntFloat(102, 105, args[0]);
+			break;
+		case FuId.BIT_CONVERTER_DOUBLE_TO_INT64_BITS:
+			this.#writeBitConverterIntFloat(100, 113, args[0]);
+			break;
 		case FuId.CONVERT_TO_BASE64_STRING:
 			this.include("base64");
 			this.write("base64.b64encode(");
@@ -26645,6 +26957,14 @@ export class GenPy extends GenPySwift
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.include("os");
 			this.writeCall("os.getenv", args[0]);
+			break;
+		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
+			this.#timeNs = true;
+			if (parent > FuPriority.MUL)
+				this.writeChar(40);
+			this.write("time_ns() // 1000000");
+			if (parent > FuPriority.MUL)
+				this.writeChar(41);
 			break;
 		case FuId.REGEX_COMPILE:
 			this.write("re.compile(");
@@ -26722,6 +27042,7 @@ export class GenPy extends GenPySwift
 		case FuId.MATH_IS_FINITE:
 		case FuId.MATH_IS_NA_N:
 		case FuId.MATH_LOG2:
+		case FuId.MATH_SQRT:
 			this.include("math");
 			this.write("math.");
 			this.writeLowercase(method.name);
@@ -26866,19 +27187,21 @@ export class GenPy extends GenPySwift
 
 	visitIf(statement)
 	{
-		let call = GenPy.isNotTryParse(statement);
+		let call = GenPy.isIfTryParse(statement);
 		if (call != null) {
 			this.write("try");
 			this.openChild();
 			call.method.left.accept(this, FuPriority.ASSIGN);
 			this.write(" = ");
-			this.write(call.method.symbol.id == FuId.DOUBLE_TRY_PARSE ? "float" : "int");
+			this.write(call.method.symbol.id == FuId.FLOAT_TRY_PARSE || call.method.symbol.id == FuId.DOUBLE_TRY_PARSE ? "float" : "int");
 			this.writeInParentheses(call.arguments_);
 			this.writeNewLine();
+			let not = statement.cond != call;
+			this.flattenBranch(statement, !not);
 			this.closeChild();
 			this.write("except ValueError");
 			this.openChild();
-			statement.onTrue.acceptStatement(this);
+			this.flattenBranch(statement, not);
 			this.closeChild();
 		}
 		else
@@ -27237,6 +27560,7 @@ export class GenPy extends GenPySwift
 	writeProgram(program, outputFile, namespace)
 	{
 		this.writtenTypes.clear();
+		this.#timeNs = false;
 		this.#switchBreak = false;
 		this.openStringWriter();
 		this.writeTypes(program);
@@ -27245,6 +27569,8 @@ export class GenPy extends GenPySwift
 		if (program.main != null && (program.main.type.id == FuId.INT_TYPE || program.main.parameters.count() == 1))
 			this.include("sys");
 		this.writeIncludes("import ", "");
+		if (this.#timeNs)
+			this.writeLine("from time import time_ns");
 		if (this.#switchBreak) {
 			this.writeNewLine();
 			this.writeLine("class _CiBreak(Exception): pass");
