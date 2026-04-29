@@ -63,6 +63,7 @@
 	<option value="qoa">Quite OK Audio</option>
 	<option value="datamatrix">Data Matrix Encoder</option>
 	<option value="ray">Toy Ray Tracer</option>
+	<option value="llama2">Llama 2</option>
 </select>
 </div>
 <div id="goldenLayout"></div>

@@ -5,7 +5,8 @@ const example2file = {
 	qoi: "QOI.fu",
 	qoa: "QOA.fu",
 	datamatrix: "DataMatrixEncoder.fu",
-	ray: "RayTracer.fu"
+	ray: "RayTracer.fu",
+	llama2: "llama2.fu"
 };
 
 function getOutputRow(lang1, lang2, lang3)
