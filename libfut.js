@@ -1337,145 +1337,147 @@ export const FuId = {
 	STRING_LENGTH : 44,
 	ARRAY_LENGTH : 45,
 	CONSOLE_ERROR : 46,
-	MAIN : 47,
-	CLASS_TO_STRING : 48,
-	MATCH_START : 49,
-	MATCH_END : 50,
-	MATCH_LENGTH : 51,
-	MATCH_VALUE : 52,
-	MATH_NA_N : 53,
-	MATH_NEGATIVE_INFINITY : 54,
-	MATH_POSITIVE_INFINITY : 55,
-	ENUM_FROM_INT : 56,
-	ENUM_HAS_FLAG : 57,
-	ENUM_TO_INT : 58,
-	INT_TRY_PARSE : 59,
-	N_INT_TRY_PARSE : 60,
-	LONG_TRY_PARSE : 61,
-	FLOAT_TRY_PARSE : 62,
-	DOUBLE_TRY_PARSE : 63,
-	STRING_CONTAINS : 64,
-	STRING_ENDS_WITH : 65,
-	STRING_INDEX_OF : 66,
-	STRING_LAST_INDEX_OF : 67,
-	STRING_REPLACE : 68,
-	STRING_STARTS_WITH : 69,
-	STRING_SUBSTRING : 70,
-	STRING_TO_LOWER : 71,
-	STRING_TO_UPPER : 72,
-	ARRAY_BINARY_SEARCH_ALL : 73,
-	ARRAY_BINARY_SEARCH_PART : 74,
-	ARRAY_CONTAINS : 75,
-	ARRAY_COPY_TO : 76,
-	ARRAY_FILL_ALL : 77,
-	ARRAY_FILL_PART : 78,
-	ARRAY_SORT_ALL : 79,
-	ARRAY_SORT_PART : 80,
-	LIST_ADD : 81,
-	LIST_ADD_RANGE : 82,
-	LIST_ALL : 83,
-	LIST_ANY : 84,
-	LIST_CLEAR : 85,
-	LIST_CONTAINS : 86,
-	LIST_COPY_TO : 87,
-	LIST_COUNT : 88,
-	LIST_INDEX_OF : 89,
-	LIST_INSERT : 90,
-	LIST_LAST : 91,
-	LIST_REMOVE_AT : 92,
-	LIST_REMOVE_RANGE : 93,
-	LIST_SORT_ALL : 94,
-	LIST_SORT_PART : 95,
-	QUEUE_CLEAR : 96,
-	QUEUE_COUNT : 97,
-	QUEUE_DEQUEUE : 98,
-	QUEUE_ENQUEUE : 99,
-	QUEUE_PEEK : 100,
-	STACK_CLEAR : 101,
-	STACK_COUNT : 102,
-	STACK_PEEK : 103,
-	STACK_PUSH : 104,
-	STACK_POP : 105,
-	PRIORITY_QUEUE_CLEAR : 106,
-	PRIORITY_QUEUE_COUNT : 107,
-	PRIORITY_QUEUE_DEQUEUE : 108,
-	PRIORITY_QUEUE_ENQUEUE : 109,
-	PRIORITY_QUEUE_PEEK : 110,
-	HASH_SET_ADD : 111,
-	HASH_SET_CLEAR : 112,
-	HASH_SET_CONTAINS : 113,
-	HASH_SET_COUNT : 114,
-	HASH_SET_REMOVE : 115,
-	SORTED_SET_ADD : 116,
-	SORTED_SET_CLEAR : 117,
-	SORTED_SET_CONTAINS : 118,
-	SORTED_SET_COUNT : 119,
-	SORTED_SET_REMOVE : 120,
-	DICTIONARY_ADD : 121,
-	DICTIONARY_CLEAR : 122,
-	DICTIONARY_CONTAINS_KEY : 123,
-	DICTIONARY_COUNT : 124,
-	DICTIONARY_REMOVE : 125,
-	SORTED_DICTIONARY_CLEAR : 126,
-	SORTED_DICTIONARY_CONTAINS_KEY : 127,
-	SORTED_DICTIONARY_COUNT : 128,
-	SORTED_DICTIONARY_REMOVE : 129,
-	ORDERED_DICTIONARY_CLEAR : 130,
-	ORDERED_DICTIONARY_CONTAINS_KEY : 131,
-	ORDERED_DICTIONARY_COUNT : 132,
-	ORDERED_DICTIONARY_REMOVE : 133,
-	TEXT_WRITER_WRITE : 134,
-	TEXT_WRITER_WRITE_CHAR : 135,
-	TEXT_WRITER_WRITE_CODE_POINT : 136,
-	TEXT_WRITER_WRITE_LINE : 137,
-	CONSOLE_READ_LINE : 138,
-	CONSOLE_WRITE : 139,
-	CONSOLE_WRITE_LINE : 140,
-	STRING_WRITER_CLEAR : 141,
-	STRING_WRITER_TO_STRING : 142,
-	BIT_CONVERTER_INT32_BITS_TO_SINGLE : 143,
-	BIT_CONVERTER_INT64_BITS_TO_DOUBLE : 144,
-	BIT_CONVERTER_SINGLE_TO_INT32_BITS : 145,
-	BIT_CONVERTER_DOUBLE_TO_INT64_BITS : 146,
-	CONVERT_TO_BASE64_STRING : 147,
-	U_T_F8_GET_BYTE_COUNT : 148,
-	U_T_F8_GET_BYTES : 149,
-	U_T_F8_GET_STRING : 150,
-	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 151,
-	DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS : 152,
-	REGEX_COMPILE : 153,
-	REGEX_ESCAPE : 154,
-	REGEX_IS_MATCH_STR : 155,
-	REGEX_IS_MATCH_REGEX : 156,
-	MATCH_FIND_STR : 157,
-	MATCH_FIND_REGEX : 158,
-	MATCH_GET_CAPTURE : 159,
-	JSON_ELEMENT_PARSE : 160,
-	JSON_ELEMENT_IS_OBJECT : 161,
-	JSON_ELEMENT_IS_ARRAY : 162,
-	JSON_ELEMENT_IS_STRING : 163,
-	JSON_ELEMENT_IS_NUMBER : 164,
-	JSON_ELEMENT_IS_BOOLEAN : 165,
-	JSON_ELEMENT_IS_NULL : 166,
-	JSON_ELEMENT_GET_OBJECT : 167,
-	JSON_ELEMENT_GET_ARRAY : 168,
-	JSON_ELEMENT_GET_STRING : 169,
-	JSON_ELEMENT_GET_DOUBLE : 170,
-	JSON_ELEMENT_GET_BOOLEAN : 171,
-	MATH_METHOD : 172,
-	MATH_ABS : 173,
-	MATH_CEILING : 174,
-	MATH_CLAMP : 175,
-	MATH_FUSED_MULTIPLY_ADD : 176,
-	MATH_IS_FINITE : 177,
-	MATH_IS_INFINITY : 178,
-	MATH_IS_NA_N : 179,
-	MATH_LOG2 : 180,
-	MATH_MAX : 181,
-	MATH_MIN : 182,
-	MATH_ROUND : 183,
-	MATH_SQRT : 184,
-	MATH_TRUNCATE : 185
+	CONSOLE_OUT : 47,
+	MAIN : 48,
+	CLASS_TO_STRING : 49,
+	MATCH_START : 50,
+	MATCH_END : 51,
+	MATCH_LENGTH : 52,
+	MATCH_VALUE : 53,
+	MATH_NA_N : 54,
+	MATH_NEGATIVE_INFINITY : 55,
+	MATH_POSITIVE_INFINITY : 56,
+	ENUM_FROM_INT : 57,
+	ENUM_HAS_FLAG : 58,
+	ENUM_TO_INT : 59,
+	INT_TRY_PARSE : 60,
+	N_INT_TRY_PARSE : 61,
+	LONG_TRY_PARSE : 62,
+	FLOAT_TRY_PARSE : 63,
+	DOUBLE_TRY_PARSE : 64,
+	STRING_CONTAINS : 65,
+	STRING_ENDS_WITH : 66,
+	STRING_INDEX_OF : 67,
+	STRING_LAST_INDEX_OF : 68,
+	STRING_REPLACE : 69,
+	STRING_STARTS_WITH : 70,
+	STRING_SUBSTRING : 71,
+	STRING_TO_LOWER : 72,
+	STRING_TO_UPPER : 73,
+	ARRAY_BINARY_SEARCH_ALL : 74,
+	ARRAY_BINARY_SEARCH_PART : 75,
+	ARRAY_CONTAINS : 76,
+	ARRAY_COPY_TO : 77,
+	ARRAY_FILL_ALL : 78,
+	ARRAY_FILL_PART : 79,
+	ARRAY_SORT_ALL : 80,
+	ARRAY_SORT_PART : 81,
+	LIST_ADD : 82,
+	LIST_ADD_RANGE : 83,
+	LIST_ALL : 84,
+	LIST_ANY : 85,
+	LIST_CLEAR : 86,
+	LIST_CONTAINS : 87,
+	LIST_COPY_TO : 88,
+	LIST_COUNT : 89,
+	LIST_INDEX_OF : 90,
+	LIST_INSERT : 91,
+	LIST_LAST : 92,
+	LIST_REMOVE_AT : 93,
+	LIST_REMOVE_RANGE : 94,
+	LIST_SORT_ALL : 95,
+	LIST_SORT_PART : 96,
+	QUEUE_CLEAR : 97,
+	QUEUE_COUNT : 98,
+	QUEUE_DEQUEUE : 99,
+	QUEUE_ENQUEUE : 100,
+	QUEUE_PEEK : 101,
+	STACK_CLEAR : 102,
+	STACK_COUNT : 103,
+	STACK_PEEK : 104,
+	STACK_PUSH : 105,
+	STACK_POP : 106,
+	PRIORITY_QUEUE_CLEAR : 107,
+	PRIORITY_QUEUE_COUNT : 108,
+	PRIORITY_QUEUE_DEQUEUE : 109,
+	PRIORITY_QUEUE_ENQUEUE : 110,
+	PRIORITY_QUEUE_PEEK : 111,
+	HASH_SET_ADD : 112,
+	HASH_SET_CLEAR : 113,
+	HASH_SET_CONTAINS : 114,
+	HASH_SET_COUNT : 115,
+	HASH_SET_REMOVE : 116,
+	SORTED_SET_ADD : 117,
+	SORTED_SET_CLEAR : 118,
+	SORTED_SET_CONTAINS : 119,
+	SORTED_SET_COUNT : 120,
+	SORTED_SET_REMOVE : 121,
+	DICTIONARY_ADD : 122,
+	DICTIONARY_CLEAR : 123,
+	DICTIONARY_CONTAINS_KEY : 124,
+	DICTIONARY_COUNT : 125,
+	DICTIONARY_REMOVE : 126,
+	SORTED_DICTIONARY_CLEAR : 127,
+	SORTED_DICTIONARY_CONTAINS_KEY : 128,
+	SORTED_DICTIONARY_COUNT : 129,
+	SORTED_DICTIONARY_REMOVE : 130,
+	ORDERED_DICTIONARY_CLEAR : 131,
+	ORDERED_DICTIONARY_CONTAINS_KEY : 132,
+	ORDERED_DICTIONARY_COUNT : 133,
+	ORDERED_DICTIONARY_REMOVE : 134,
+	TEXT_WRITER_FLUSH : 135,
+	TEXT_WRITER_WRITE : 136,
+	TEXT_WRITER_WRITE_CHAR : 137,
+	TEXT_WRITER_WRITE_CODE_POINT : 138,
+	TEXT_WRITER_WRITE_LINE : 139,
+	CONSOLE_READ_LINE : 140,
+	CONSOLE_WRITE : 141,
+	CONSOLE_WRITE_LINE : 142,
+	STRING_WRITER_CLEAR : 143,
+	STRING_WRITER_TO_STRING : 144,
+	BIT_CONVERTER_INT32_BITS_TO_SINGLE : 145,
+	BIT_CONVERTER_INT64_BITS_TO_DOUBLE : 146,
+	BIT_CONVERTER_SINGLE_TO_INT32_BITS : 147,
+	BIT_CONVERTER_DOUBLE_TO_INT64_BITS : 148,
+	CONVERT_TO_BASE64_STRING : 149,
+	U_T_F8_GET_BYTE_COUNT : 150,
+	U_T_F8_GET_BYTES : 151,
+	U_T_F8_GET_STRING : 152,
+	ENVIRONMENT_GET_ENVIRONMENT_VARIABLE : 153,
+	DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS : 154,
+	REGEX_COMPILE : 155,
+	REGEX_ESCAPE : 156,
+	REGEX_IS_MATCH_STR : 157,
+	REGEX_IS_MATCH_REGEX : 158,
+	MATCH_FIND_STR : 159,
+	MATCH_FIND_REGEX : 160,
+	MATCH_GET_CAPTURE : 161,
+	JSON_ELEMENT_PARSE : 162,
+	JSON_ELEMENT_IS_OBJECT : 163,
+	JSON_ELEMENT_IS_ARRAY : 164,
+	JSON_ELEMENT_IS_STRING : 165,
+	JSON_ELEMENT_IS_NUMBER : 166,
+	JSON_ELEMENT_IS_BOOLEAN : 167,
+	JSON_ELEMENT_IS_NULL : 168,
+	JSON_ELEMENT_GET_OBJECT : 169,
+	JSON_ELEMENT_GET_ARRAY : 170,
+	JSON_ELEMENT_GET_STRING : 171,
+	JSON_ELEMENT_GET_DOUBLE : 172,
+	JSON_ELEMENT_GET_BOOLEAN : 173,
+	MATH_METHOD : 174,
+	MATH_ABS : 175,
+	MATH_CEILING : 176,
+	MATH_CLAMP : 177,
+	MATH_FUSED_MULTIPLY_ADD : 178,
+	MATH_IS_FINITE : 179,
+	MATH_IS_INFINITY : 180,
+	MATH_IS_NA_N : 181,
+	MATH_LOG2 : 182,
+	MATH_MAX : 183,
+	MATH_MIN : 184,
+	MATH_ROUND : 185,
+	MATH_SQRT : 186,
+	MATH_TRUNCATE : 187
 }
 
 export class FuDocInline
@@ -3548,9 +3550,8 @@ export class FuSystem extends FuScope
 		this.arrayStorageClass.add(FuMethodGroup.new(FuMethod.new(this.arrayStorageClass, FuVisibility.PUBLIC, FuCallType.NORMAL, this.voidType, FuId.ARRAY_FILL_ALL, "Fill", true, FuVar.new(this.#typeParam0, "value")), arrayFillPart));
 		this.arrayStorageClass.add(FuProperty.new(this.nIntType, FuId.ARRAY_LENGTH, "Length"));
 		this.arrayStorageClass.add(FuMethodGroup.new(FuMethod.new(this.arrayStorageClass, FuVisibility.NUMERIC_ELEMENT_TYPE, FuCallType.NORMAL, this.voidType, FuId.ARRAY_SORT_ALL, "Sort", true), arraySortPart));
-		let exceptionClass = FuClass.new(FuCallType.NORMAL, FuId.EXCEPTION_CLASS, "Exception");
-		exceptionClass.isPublic = true;
-		this.add(exceptionClass);
+		this.exceptionClass.isPublic = true;
+		this.add(this.exceptionClass);
 		let typeParam0NotFinal = Object.assign(new FuType(), { id: FuId.TYPE_PARAM0_NOT_FINAL, name: "T" });
 		let typeParam0Predicate = Object.assign(new FuType(), { id: FuId.TYPE_PARAM0_PREDICATE, name: "Predicate<T>" });
 		let listClass = this.#addCollection(FuId.LIST_CLASS, "List", 1, FuId.LIST_CLEAR, FuId.LIST_COUNT);
@@ -3584,6 +3585,7 @@ export class FuSystem extends FuScope
 		this.#addDictionary(FuId.SORTED_DICTIONARY_CLASS, "SortedDictionary", FuId.SORTED_DICTIONARY_CLEAR, FuId.SORTED_DICTIONARY_CONTAINS_KEY, FuId.SORTED_DICTIONARY_COUNT, FuId.SORTED_DICTIONARY_REMOVE);
 		this.#addDictionary(FuId.ORDERED_DICTIONARY_CLASS, "OrderedDictionary", FuId.ORDERED_DICTIONARY_CLEAR, FuId.ORDERED_DICTIONARY_CONTAINS_KEY, FuId.ORDERED_DICTIONARY_COUNT, FuId.ORDERED_DICTIONARY_REMOVE);
 		let textWriterClass = FuClass.new(FuCallType.NORMAL, FuId.TEXT_WRITER_CLASS, "TextWriter");
+		textWriterClass.addMethod(this.voidType, FuId.TEXT_WRITER_FLUSH, "Flush", true);
 		textWriterClass.addMethod(this.voidType, FuId.TEXT_WRITER_WRITE, "Write", true, FuVar.new(this.printableType, "value"));
 		textWriterClass.addMethod(this.voidType, FuId.TEXT_WRITER_WRITE_CHAR, "WriteChar", true, FuVar.new(this.intType, "c"));
 		textWriterClass.addMethod(this.voidType, FuId.TEXT_WRITER_WRITE_CODE_POINT, "WriteCodePoint", true, FuVar.new(this.intType, "c"));
@@ -3593,7 +3595,9 @@ export class FuSystem extends FuScope
 		consoleClass.addStaticMethod(this.stringStorageType, FuId.CONSOLE_READ_LINE, "ReadLine");
 		consoleClass.addStaticMethod(this.voidType, FuId.CONSOLE_WRITE, "Write", FuVar.new(this.printableType, "value"));
 		consoleClass.addStaticMethod(this.voidType, FuId.CONSOLE_WRITE_LINE, "WriteLine", FuVar.new(this.printableType, "value", this.newLiteralString("")));
-		consoleClass.add(FuStaticProperty.new(Object.assign(new FuStorageType(), { class: textWriterClass }), FuId.CONSOLE_ERROR, "Error"));
+		let textWriterStorage = Object.assign(new FuStorageType(), { class: textWriterClass });
+		consoleClass.add(FuStaticProperty.new(textWriterStorage, FuId.CONSOLE_ERROR, "Error"));
+		consoleClass.add(FuStaticProperty.new(textWriterStorage, FuId.CONSOLE_OUT, "Out"));
 		this.add(consoleClass);
 		let stringWriterClass = FuClass.new(FuCallType.SEALED, FuId.STRING_WRITER_CLASS, "StringWriter");
 		stringWriterClass.addMethod(this.voidType, FuId.STRING_WRITER_CLEAR, "Clear", true);
@@ -3724,6 +3728,7 @@ export class FuSystem extends FuScope
 	printableType = Object.assign(new FuPrintableType(), { name: "printable" });
 	arrayPtrClass = FuClass.new(FuCallType.NORMAL, FuId.ARRAY_PTR_CLASS, "ArrayPtr", 1);
 	arrayStorageClass = FuClass.new(FuCallType.NORMAL, FuId.ARRAY_STORAGE_CLASS, "ArrayStorage", 1);
+	exceptionClass = FuClass.new(FuCallType.NORMAL, FuId.EXCEPTION_CLASS, "Exception");
 	regexOptionsEnum;
 	lockPtrType = new FuReadWriteClassType();
 
@@ -4000,7 +4005,7 @@ export class FuParser extends FuLexer
 	#parseDouble()
 	{
 		let d;
-		if (!!isNaN(d = parseFloat(this.getLexeme().replaceAll("_", ""))))
+		if (!(() => { const fuparsed = parseFloat(this.getLexeme().replaceAll("_", "")); d = isNaN(fuparsed) ? 0 : fuparsed; return !isNaN(fuparsed); })())
 			this.reportError("Invalid floating-point number");
 		let result = Object.assign(new FuLiteralDouble(), { loc: this.tokenLoc, type: this.host.program.system.doubleType, value: d });
 		this.nextToken();
@@ -9236,34 +9241,58 @@ export class GenBase extends FuVisitor
 		this.writeChild(statement.body);
 	}
 
-	static isIfTryParse(statement)
+	writeTryParseFailure(call, onFailure)
 	{
-		let cond = statement.cond;
-		let not;
-		if ((not = cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK)
-			cond = not.inner;
+		if (!(onFailure instanceof FuReturn || onFailure instanceof FuThrow)) {
+			call.method.left.accept(this, FuPriority.ASSIGN);
+			this.write(" = 0");
+			this.endStatement();
+		}
+		if (onFailure != null)
+			this.flattenBlock(onFailure);
+	}
+
+	endTryParse(call, onParsed, statement, onFailure)
+	{
+		if (onParsed != null)
+			this.flattenBlock(onParsed);
+		this.closeBlock();
+		this.write(statement);
+		this.openBlock();
+		this.writeTryParseFailure(call, onFailure);
+		this.closeBlock();
+	}
+
+	writeTryParseStatement(call, onParsed, onFailure)
+	{
+		throw new Error();
+	}
+
+	tryWriteTryParse(expr, onParsed, onFailure)
+	{
 		let call;
-		if ((call = cond) instanceof FuCallExpr) {
+		if ((call = expr) instanceof FuCallExpr) {
 			switch (call.method.symbol.id) {
 			case FuId.INT_TRY_PARSE:
 			case FuId.N_INT_TRY_PARSE:
 			case FuId.LONG_TRY_PARSE:
 			case FuId.FLOAT_TRY_PARSE:
 			case FuId.DOUBLE_TRY_PARSE:
-				return call;
+				this.writeTryParseStatement(call, onParsed, onFailure);
+				return true;
 			default:
 				break;
 			}
 		}
-		return null;
+		return false;
 	}
 
-	flattenBranch(statement, cond)
+	tryWriteIfTryParse(statement)
 	{
-		if (cond)
-			this.flattenBlock(statement.onTrue);
-		else if (statement.onFalse != null)
-			this.flattenBlock(statement.onFalse);
+		let not;
+		if ((not = statement.cond) instanceof FuPrefixExpr && not.op == FuToken.EXCLAMATION_MARK)
+			return this.tryWriteTryParse(not.inner, statement.onFalse, statement.onTrue);
+		return this.tryWriteTryParse(statement.cond, statement.onTrue, statement.onFalse);
 	}
 
 	embedIfWhileIsVar(expr, write)
@@ -10705,6 +10734,10 @@ export class GenC extends GenCCpp
 		case FuId.CONSOLE_ERROR:
 			this.include("stdio.h");
 			this.write("stderr");
+			break;
+		case FuId.CONSOLE_OUT:
+			this.include("stdio.h");
+			this.write("stdout");
 			break;
 		case FuId.LIST_COUNT:
 		case FuId.STACK_COUNT:
@@ -12732,6 +12765,10 @@ export class GenC extends GenCCpp
 		case FuId.SORTED_DICTIONARY_REMOVE:
 			this.#writeDictionaryLookup(obj, "g_tree_remove", args[0]);
 			break;
+		case FuId.TEXT_WRITER_FLUSH:
+			this.include("stdio.h");
+			this.writeCall("fflush", obj);
+			break;
 		case FuId.TEXT_WRITER_WRITE:
 			this.#writeTextWriterWrite(obj, args, false);
 			break;
@@ -13982,10 +14019,9 @@ export class GenC extends GenCCpp
 			this.#startTryParseLibrary(klassName, type, ", int base");
 			if (klassName == "Int") {
 				this.writeLine("long l = strtol(str, &end, base);");
-				this.writeLine("if (l < INT_MIN || l > INT_MAX || *end != '\\0' || errno != 0)");
-				this.writeLine("\treturn false;");
-				this.writeLine("*result = (int) l;");
-				this.writeLine("return true;");
+				this.writeLine("bool ok = l >= INT_MIN && l <= INT_MAX && *end == '\\0' && errno == 0;");
+				this.writeLine("*result = ok ? (int) l : 0;");
+				this.writeLine("return ok;");
 			}
 			else if (klassName == "NInt") {
 				this.writeLine("*result =");
@@ -15118,6 +15154,9 @@ export class GenCpp extends GenCCpp
 			this.write("const ");
 		if (klass.class.typeParameterCount == 0) {
 			switch (klass.class.id) {
+			case FuId.EXCEPTION_CLASS:
+				this.writeExceptionClass(klass.class);
+				break;
 			case FuId.TEXT_WRITER_CLASS:
 				this.include("iostream");
 				this.write("std::ostream");
@@ -15640,6 +15679,7 @@ export class GenCpp extends GenCCpp
 		case FuId.SORTED_SET_CLEAR:
 		case FuId.DICTIONARY_CLEAR:
 		case FuId.SORTED_DICTIONARY_CLEAR:
+		case FuId.TEXT_WRITER_FLUSH:
 			if (obj != null) {
 				if (GenCpp.isReferenceTo(obj, FuId.BASE_PTR)) {
 					this.writeName(method.parent);
@@ -16265,7 +16305,12 @@ export class GenCpp extends GenCCpp
 	{
 		switch (expr.symbol.id) {
 		case FuId.CONSOLE_ERROR:
+			this.include("iostream");
 			this.write("std::cerr");
+			break;
+		case FuId.CONSOLE_OUT:
+			this.include("iostream");
+			this.write("std::cout");
 			break;
 		case FuId.LIST_COUNT:
 		case FuId.QUEUE_COUNT:
@@ -16995,7 +17040,10 @@ export class GenCpp extends GenCCpp
 			this.openBlock();
 			this.writeLine("const char *end = s.data() + s.size();");
 			this.writeLine("auto result = std::from_chars(s.data(), end, number, args...);");
-			this.writeLine("return result.ec == std::errc{} && result.ptr == end;");
+			this.writeLine("if (result.ec == std::errc{} && result.ptr == end)");
+			this.writeLine("\treturn true;");
+			this.writeLine("number = 0;");
+			this.writeLine("return false;");
 			this.closeBlock();
 		}
 		if (this.#stringReplace) {
@@ -17484,6 +17532,10 @@ export class GenCs extends GenTyped
 			this.include("System");
 			this.write("Console.Error");
 			break;
+		case FuId.CONSOLE_OUT:
+			this.include("System");
+			this.write("Console.Out");
+			break;
 		case FuId.MATCH_START:
 			this.writePostfix(expr.left, ".Index");
 			break;
@@ -17581,6 +17633,7 @@ export class GenCs extends GenTyped
 		case FuId.SORTED_DICTIONARY_REMOVE:
 		case FuId.ORDERED_DICTIONARY_CLEAR:
 		case FuId.ORDERED_DICTIONARY_REMOVE:
+		case FuId.TEXT_WRITER_FLUSH:
 		case FuId.CONSOLE_READ_LINE:
 		case FuId.STRING_WRITER_TO_STRING:
 		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
@@ -18926,6 +18979,9 @@ export class GenD extends GenCCppD
 		case FuId.CONSOLE_ERROR:
 			this.write("stderr");
 			break;
+		case FuId.CONSOLE_OUT:
+			this.write("stdout");
+			break;
 		case FuId.LIST_COUNT:
 		case FuId.STACK_COUNT:
 		case FuId.HASH_SET_COUNT:
@@ -18969,6 +19025,29 @@ export class GenD extends GenCCppD
 			super.visitSymbolReference(expr, parent);
 			break;
 		}
+	}
+
+	#writeTryParseAssign(obj, args)
+	{
+		obj.accept(this, FuPriority.ASSIGN);
+		this.write(" = ");
+		this.include("std.conv");
+		this.writePostfix(args[0], ".to!");
+		this.writeType(obj.type, false);
+		if (args.length == 2) {
+			this.writeChar(40);
+			args[1].accept(this, FuPriority.ARGUMENT);
+			this.writeChar(41);
+		}
+	}
+
+	writeTryParseStatement(call, onParsed, onFailure)
+	{
+		this.write("try ");
+		this.openBlock();
+		this.#writeTryParseAssign(call.method.left, call.arguments_);
+		this.endStatement();
+		this.endTryParse(call, onParsed, "catch (ConvException e_) ", onFailure);
 	}
 
 	#writeWrite(args, newLine)
@@ -19037,6 +19116,7 @@ export class GenD extends GenCCppD
 		case FuId.STACK_CLEAR:
 		case FuId.HASH_SET_REMOVE:
 		case FuId.DICTIONARY_REMOVE:
+		case FuId.TEXT_WRITER_FLUSH:
 			if (obj != null) {
 				if (GenD.isReferenceTo(obj, FuId.BASE_PTR))
 					this.write("super.");
@@ -19064,15 +19144,10 @@ export class GenD extends GenCCppD
 		case FuId.DOUBLE_TRY_PARSE:
 			this.include("std.conv");
 			this.write("() { try { ");
-			this.writePostfix(obj, " = ");
-			this.writePostfix(args[0], ".to!");
-			this.writeType(obj.type, false);
-			if (args.length == 2) {
-				this.writeChar(40);
-				args[1].accept(this, FuPriority.ARGUMENT);
-				this.writeChar(41);
-			}
-			this.write("; return true; } catch (ConvException e) return false; }()");
+			this.#writeTryParseAssign(obj, args);
+			this.write("; return true; } catch (ConvException e_) { ");
+			obj.accept(this, FuPriority.ASSIGN);
+			this.write(" = 0; return false; } }()");
 			break;
 		case FuId.STRING_CONTAINS:
 			this.include("std.algorithm");
@@ -19312,6 +19387,7 @@ export class GenD extends GenCCppD
 			break;
 		case FuId.CONSOLE_WRITE:
 		case FuId.CONSOLE_WRITE_LINE:
+			this.write("stdout.");
 			this.#writeWrite(args, method.id == FuId.CONSOLE_WRITE_LINE);
 			break;
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
@@ -19357,6 +19433,7 @@ export class GenD extends GenCCppD
 		case FuId.U_T_F8_GET_STRING:
 			this.write("cast(string) ");
 			this.#writeSlice(args[0], args[1], args[2]);
+			this.write(".idup");
 			break;
 		case FuId.REGEX_COMPILE:
 			this.include("std.regex");
@@ -19619,6 +19696,12 @@ export class GenD extends GenCCppD
 		expr.body.accept(this, FuPriority.STATEMENT);
 	}
 
+	visitExpr(statement)
+	{
+		if (!this.tryWriteTryParse(statement, null, null))
+			super.visitExpr(statement);
+	}
+
 	writeAssert(statement)
 	{
 		this.write("assert(");
@@ -19648,6 +19731,12 @@ export class GenD extends GenCCppD
 			this.write(".byKey");
 		this.writeChar(41);
 		this.writeChild(statement.body);
+	}
+
+	visitIf(statement)
+	{
+		if (!this.tryWriteIfTryParse(statement))
+			super.visitIf(statement);
 	}
 
 	visitLock(statement)
@@ -20450,6 +20539,9 @@ export class GenJava extends GenTyped
 		case FuId.CONSOLE_ERROR:
 			this.write("System.err");
 			break;
+		case FuId.CONSOLE_OUT:
+			this.write("System.out");
+			break;
 		case FuId.LIST_COUNT:
 		case FuId.QUEUE_COUNT:
 		case FuId.STACK_COUNT:
@@ -20588,6 +20680,7 @@ export class GenJava extends GenTyped
 		case FuId.ORDERED_DICTIONARY_CLEAR:
 		case FuId.ORDERED_DICTIONARY_CONTAINS_KEY:
 		case FuId.ORDERED_DICTIONARY_REMOVE:
+		case FuId.TEXT_WRITER_FLUSH:
 		case FuId.STRING_WRITER_TO_STRING:
 		case FuId.MATH_ABS:
 		case FuId.MATH_MAX:
@@ -20756,8 +20849,8 @@ export class GenJava extends GenTyped
 			this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_WRITE:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.write("System.err");
+			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+				obj.accept(this, FuPriority.PRIMARY);
 				this.#writeWrite(method, args, false);
 			}
 			else if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
@@ -20774,7 +20867,7 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR))
+			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT))
 				this.writeCharMethodCall(obj, "print", args[0]);
 			else if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS)
 				this.writeCharMethodCall(obj, "append", args[0]);
@@ -20786,8 +20879,8 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_CODE_POINT:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.writeCall("System.err.print(Character.toChars", args[0]);
+			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+				this.writeMethodCall(obj, "print(Character.toChars", args[0]);
 				this.writeChar(41);
 			}
 			else if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS) {
@@ -20802,8 +20895,8 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.write("System.err");
+			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+				obj.accept(this, FuPriority.PRIMARY);
 				this.#writeWrite(method, args, true);
 			}
 			else {
@@ -21071,6 +21164,40 @@ export class GenJava extends GenTyped
 		expr.body.accept(this, FuPriority.STATEMENT);
 	}
 
+	writeTryParseStatement(call, onParsed, onFailure)
+	{
+		this.write("try ");
+		this.openBlock();
+		call.method.left.accept(this, FuPriority.ASSIGN);
+		this.write(" = ");
+		switch (call.method.symbol.id) {
+		case FuId.INT_TRY_PARSE:
+		case FuId.N_INT_TRY_PARSE:
+			this.write("Integer.parseInt");
+			break;
+		case FuId.LONG_TRY_PARSE:
+			this.write("Long.parseLong");
+			break;
+		case FuId.FLOAT_TRY_PARSE:
+			this.write("Float.parseFloat");
+			break;
+		case FuId.DOUBLE_TRY_PARSE:
+			this.write("Double.parseDouble");
+			break;
+		default:
+			throw new Error();
+		}
+		this.writeInParentheses(call.arguments_);
+		this.endStatement();
+		this.endTryParse(call, onParsed, "catch (NumberFormatException e_) ", onFailure);
+	}
+
+	visitExpr(statement)
+	{
+		if (!this.tryWriteTryParse(statement, null, null))
+			super.visitExpr(statement);
+	}
+
 	defineIsVar(binary)
 	{
 	}
@@ -21138,46 +21265,7 @@ export class GenJava extends GenTyped
 
 	visitIf(statement)
 	{
-		let call = GenJava.isIfTryParse(statement);
-		if (call != null) {
-			this.write("try ");
-			this.openBlock();
-			call.method.left.accept(this, FuPriority.ASSIGN);
-			this.write(" = ");
-			switch (call.method.symbol.id) {
-			case FuId.INT_TRY_PARSE:
-			case FuId.N_INT_TRY_PARSE:
-				this.write("Integer.parseInt");
-				break;
-			case FuId.LONG_TRY_PARSE:
-				this.write("Long.parseLong");
-				break;
-			case FuId.FLOAT_TRY_PARSE:
-				this.write("Float.parseFloat");
-				break;
-			case FuId.DOUBLE_TRY_PARSE:
-				this.write("Double.parseDouble");
-				break;
-			default:
-				throw new Error();
-			}
-			this.writeInParentheses(call.arguments_);
-			this.writeCharLine(59);
-			let not = statement.cond != call;
-			this.flattenBranch(statement, !not);
-			this.closeBlock();
-			this.write("catch (NumberFormatException e_) ");
-			this.openBlock();
-			if ((not ? statement.onTrue : statement.onFalse) instanceof FuReturn || (not ? statement.onTrue : statement.onFalse) instanceof FuThrow) {
-			}
-			else {
-				call.method.left.accept(this, FuPriority.ASSIGN);
-				this.writeLine(" = 0;");
-			}
-			this.flattenBranch(statement, not);
-			this.closeBlock();
-		}
-		else
+		if (!this.tryWriteIfTryParse(statement))
 			super.visitIf(statement);
 	}
 
@@ -21541,6 +21629,7 @@ export class GenJava extends GenTyped
 export class GenJsNoModule extends GenBase
 {
 	#stringWriter = false;
+	#consoleReadLine = false;
 
 	getTargetName()
 	{
@@ -21891,6 +21980,9 @@ export class GenJsNoModule extends GenBase
 		case FuId.CONSOLE_ERROR:
 			this.write("process.stderr");
 			break;
+		case FuId.CONSOLE_OUT:
+			this.write("process.stdout");
+			break;
 		case FuId.LIST_COUNT:
 		case FuId.QUEUE_COUNT:
 		case FuId.STACK_COUNT:
@@ -22124,12 +22216,12 @@ export class GenJsNoModule extends GenBase
 			break;
 		case FuId.INT_TRY_PARSE:
 		case FuId.N_INT_TRY_PARSE:
-			this.write("!isNaN(");
-			obj.accept(this, FuPriority.ASSIGN);
-			this.write(" = parseInt(");
+			this.write("(() => { const fuparsed = parseInt(");
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.writeTryParseRadix(args);
-			this.write("))");
+			this.write("); ");
+			obj.accept(this, FuPriority.ASSIGN);
+			this.write(" = isNaN(fuparsed) ? 0 : fuparsed; return !isNaN(fuparsed); })()");
 			break;
 		case FuId.LONG_TRY_PARSE:
 			if (args.length != 1)
@@ -22138,15 +22230,17 @@ export class GenJsNoModule extends GenBase
 			obj.accept(this, FuPriority.ASSIGN);
 			this.write(" = BigInt(");
 			args[0].accept(this, FuPriority.ARGUMENT);
-			this.write("); return true; } catch { return false; }})()");
+			this.write("); return true; } catch { ");
+			obj.accept(this, FuPriority.ASSIGN);
+			this.write(" = 0n; return false; }})()");
 			break;
 		case FuId.FLOAT_TRY_PARSE:
 		case FuId.DOUBLE_TRY_PARSE:
-			this.write("!isNaN(");
-			obj.accept(this, FuPriority.ASSIGN);
-			this.write(" = parseFloat(");
+			this.write("(() => { const fuparsed = parseFloat(");
 			args[0].accept(this, FuPriority.ARGUMENT);
-			this.write("))");
+			this.write("); ");
+			obj.accept(this, FuPriority.ASSIGN);
+			this.write(" = isNaN(fuparsed) ? 0 : fuparsed; return !isNaN(fuparsed); })()");
 			break;
 		case FuId.STRING_CONTAINS:
 		case FuId.ARRAY_CONTAINS:
@@ -22294,6 +22388,8 @@ export class GenJsNoModule extends GenBase
 			this.write("delete ");
 			this.writeIndexing(obj, args[0]);
 			break;
+		case FuId.TEXT_WRITER_FLUSH:
+			break;
 		case FuId.TEXT_WRITER_WRITE:
 			this.writePostfix(obj, ".write(");
 			this.#endWrite(args[0]);
@@ -22309,6 +22405,8 @@ export class GenJsNoModule extends GenBase
 		case FuId.TEXT_WRITER_WRITE_LINE:
 			if (GenJsNoModule.isReferenceTo(obj, FuId.CONSOLE_ERROR))
 				this.#writeWriteLine("console.error", args);
+			else if (GenJsNoModule.isReferenceTo(obj, FuId.CONSOLE_OUT))
+				this.#writeWriteLine("console.log", args);
 			else {
 				this.writePostfix(obj, ".write(");
 				if (args.length != 0) {
@@ -22317,6 +22415,10 @@ export class GenJsNoModule extends GenBase
 				}
 				this.write("\"\\n\")");
 			}
+			break;
+		case FuId.CONSOLE_READ_LINE:
+			this.#consoleReadLine = true;
+			this.write("readLineSync()");
 			break;
 		case FuId.CONSOLE_WRITE:
 			this.write("process.stdout.write(");
@@ -22945,6 +23047,23 @@ export class GenJsNoModule extends GenBase
 			this.closeBlock();
 			this.closeBlock();
 		}
+		if (this.#consoleReadLine) {
+			this.writeNewLine();
+			this.writeLine("import fs from \"node:fs\";");
+			this.writeNewLine();
+			this.write("function readLineSync()");
+			this.writeNamedType("string");
+			this.writeNewLine();
+			this.openBlock();
+			this.writeLine("const buf = Buffer.alloc(1);");
+			this.writeLine("const result = [];");
+			this.writeLine("while (fs.readSync(0, buf) == 1 && buf[0] != 10)");
+			this.writeLine("\tresult.push(buf[0]);");
+			this.writeLine("if (result.length > 0 && result.at(-1) == 13)");
+			this.writeLine("\tresult.pop();");
+			this.writeLine("return new TextDecoder().decode(new Uint8Array(result));");
+			this.closeBlock();
+		}
 		if (Object.keys(program.resources).length > 0) {
 			this.writeNewLine();
 			this.writeLine("class Fu");
@@ -23068,6 +23187,9 @@ export class GenTs extends GenJs
 				case FuId.ARRAY_STORAGE_CLASS:
 					this.writeArrayElementType(klass.getElementType());
 					this.write("Array");
+					break;
+				case FuId.EXCEPTION_CLASS:
+					this.writeExceptionClass(klass.class);
 					break;
 				case FuId.HASH_SET_CLASS:
 				case FuId.SORTED_SET_CLASS:
@@ -23661,6 +23783,8 @@ export class GenPySwift extends GenBase
 
 	visitIf(statement)
 	{
+		if (this.tryWriteIfTryParse(statement))
+			return;
 		let condPostXcrement = this.#openCond("if ", statement.cond, FuPriority.ARGUMENT);
 		statement.onTrue.acceptStatement(this);
 		this.closeChild();
@@ -23939,6 +24063,9 @@ export class GenSwift extends GenPySwift
 			this.#writeType(klass.getElementType());
 			this.writeChar(93);
 			break;
+		case FuId.EXCEPTION_CLASS:
+			this.writeExceptionClass(klass.class);
+			break;
 		case FuId.HASH_SET_CLASS:
 		case FuId.SORTED_SET_CLASS:
 			this.write("Set<");
@@ -24178,6 +24305,21 @@ export class GenSwift extends GenPySwift
 			this.writeCall("Int32", value);
 		else
 			this.writeCoerced(type, value, FuPriority.ARGUMENT);
+	}
+
+	#isConsoleStreamWrite(obj)
+	{
+		if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
+			this.include("Foundation");
+			this.write("FileHandle.standardError.write(Data(");
+			return true;
+		}
+		if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+			this.include("Foundation");
+			this.write("FileHandle.standardOutput.write(Data(");
+			return true;
+		}
+		return false;
 	}
 
 	#writeToTextWriter(obj)
@@ -24472,9 +24614,7 @@ export class GenSwift extends GenPySwift
 			this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_WRITE:
-			if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.include("Foundation");
-				this.write("FileHandle.standardError.write(Data(");
+			if (this.#isConsoleStreamWrite(obj)) {
 				if (args[0].type instanceof FuStringType)
 					this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
 				else
@@ -24497,9 +24637,7 @@ export class GenSwift extends GenPySwift
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
 		case FuId.TEXT_WRITER_WRITE_CODE_POINT:
-			if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.include("Foundation");
-				this.write("FileHandle.standardError.write(Data(");
+			if (this.#isConsoleStreamWrite(obj)) {
 				this.#writeUnicodeScalar(args[0]);
 				this.write(".utf8))");
 			}
@@ -24510,9 +24648,7 @@ export class GenSwift extends GenPySwift
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
-			if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-				this.include("Foundation");
-				this.write("FileHandle.standardError.write(Data(");
+			if (this.#isConsoleStreamWrite(obj)) {
 				if (args.length == 0)
 					this.write("[ 10 ]");
 				else {
@@ -25050,12 +25186,31 @@ export class GenSwift extends GenPySwift
 		this.write("var ");
 	}
 
+	writeTryParseStatement(call, onParsed, onFailure)
+	{
+		this.write("if let fuparsed = ");
+		this.#writePromotedType(call.method.left.type);
+		this.writeChar(40);
+		this.#writeUnwrapped(call.arguments_[0], FuPriority.ARGUMENT, true);
+		if (call.arguments_.length == 2) {
+			this.write(", radix: ");
+			call.arguments_[1].accept(this, FuPriority.ARGUMENT);
+		}
+		this.write(") ");
+		this.openBlock();
+		call.method.left.accept(this, FuPriority.ASSIGN);
+		this.writeLine(" = fuparsed");
+		this.endTryParse(call, onParsed, "else ", onFailure);
+	}
+
 	visitExpr(statement)
 	{
 		this.writeTemporaries(statement);
-		let call;
-		if ((call = statement) instanceof FuCallExpr && statement.type.id != FuId.VOID_TYPE)
+		if (statement instanceof FuCallExpr && statement.type.id != FuId.VOID_TYPE) {
+			if (this.tryWriteTryParse(statement, null, null))
+				return;
 			this.write("_ = ");
+		}
 		super.visitExpr(statement);
 	}
 
@@ -25277,36 +25432,6 @@ export class GenSwift extends GenPySwift
 			break;
 		}
 		this.writeChild(statement.body);
-	}
-
-	visitIf(statement)
-	{
-		let call = GenSwift.isIfTryParse(statement);
-		if (call != null) {
-			this.write("if let fuparsed = ");
-			this.#writePromotedType(call.method.left.type);
-			this.writeChar(40);
-			this.#writeUnwrapped(call.arguments_[0], FuPriority.ARGUMENT, true);
-			if (call.arguments_.length == 2) {
-				this.write(", radix: ");
-				call.arguments_[1].accept(this, FuPriority.ARGUMENT);
-			}
-			this.write(") ");
-			this.openBlock();
-			call.method.left.accept(this, FuPriority.ASSIGN);
-			this.writeLine(" = fuparsed");
-			let not = statement.cond != call;
-			this.flattenBranch(statement, !not);
-			this.closeBlock();
-			if (not || statement.onFalse != null) {
-				this.write("else ");
-				this.openBlock();
-				this.flattenBranch(statement, not);
-				this.closeBlock();
-			}
-		}
-		else
-			super.visitIf(statement);
 	}
 
 	visitLock(statement)
@@ -26083,6 +26208,7 @@ export class GenPy extends GenPySwift
 			nullable = nullable ? !(klass instanceof FuStorageType) : klass.nullable;
 			switch (klass.class.id) {
 			case FuId.NONE:
+			case FuId.EXCEPTION_CLASS:
 				if (nullable && !this.writtenTypes.has(klass.class)) {
 					this.writeChar(34);
 					this.writeName(klass.class);
@@ -26285,6 +26411,10 @@ export class GenPy extends GenPySwift
 		case FuId.CONSOLE_ERROR:
 			this.include("sys");
 			this.write("sys.stderr");
+			break;
+		case FuId.CONSOLE_OUT:
+			this.include("sys");
+			this.write("sys.stdout");
 			break;
 		case FuId.LIST_COUNT:
 		case FuId.QUEUE_COUNT:
@@ -26654,6 +26784,7 @@ export class GenPy extends GenPySwift
 		case FuId.DICTIONARY_CLEAR:
 		case FuId.SORTED_DICTIONARY_CLEAR:
 		case FuId.ORDERED_DICTIONARY_CLEAR:
+		case FuId.TEXT_WRITER_FLUSH:
 			if (obj == null)
 				this.writeLocalName(method, FuPriority.PRIMARY);
 			else if (GenPy.isReferenceTo(obj, FuId.BASE_PTR)) {
@@ -27110,6 +27241,24 @@ export class GenPy extends GenPySwift
 	{
 	}
 
+	writeTryParseStatement(call, onParsed, onFailure)
+	{
+		this.write("try");
+		this.openChild();
+		call.method.left.accept(this, FuPriority.ASSIGN);
+		this.write(" = ");
+		this.write(call.method.symbol.id == FuId.FLOAT_TRY_PARSE || call.method.symbol.id == FuId.DOUBLE_TRY_PARSE ? "float" : "int");
+		this.writeInParentheses(call.arguments_);
+		this.writeNewLine();
+		if (onParsed != null)
+			this.flattenBlock(onParsed);
+		this.closeChild();
+		this.write("except ValueError");
+		this.openChild();
+		this.writeTryParseFailure(call, onFailure);
+		this.closeChild();
+	}
+
 	hasInitCode(def)
 	{
 		return def.type instanceof FuArrayStorageType || (def.type.isFinal() ? !(def.value instanceof FuLiteralNull) : def.value != null);
@@ -27117,6 +27266,8 @@ export class GenPy extends GenPySwift
 
 	visitExpr(statement)
 	{
+		if (this.tryWriteTryParse(statement, null, null))
+			return;
 		let def;
 		if (!((def = statement) instanceof FuVar) || this.hasInitCode(def)) {
 			this.writeTemporaries(statement);
@@ -27177,29 +27328,6 @@ export class GenPy extends GenPySwift
 	getIfNot()
 	{
 		return "if not ";
-	}
-
-	visitIf(statement)
-	{
-		let call = GenPy.isIfTryParse(statement);
-		if (call != null) {
-			this.write("try");
-			this.openChild();
-			call.method.left.accept(this, FuPriority.ASSIGN);
-			this.write(" = ");
-			this.write(call.method.symbol.id == FuId.FLOAT_TRY_PARSE || call.method.symbol.id == FuId.DOUBLE_TRY_PARSE ? "float" : "int");
-			this.writeInParentheses(call.arguments_);
-			this.writeNewLine();
-			let not = statement.cond != call;
-			this.flattenBranch(statement, !not);
-			this.closeChild();
-			this.write("except ValueError");
-			this.openChild();
-			this.flattenBranch(statement, not);
-			this.closeChild();
-		}
-		else
-			super.visitIf(statement);
 	}
 
 	#writeInclusiveLimit(limit, increment, incrementString)
@@ -27538,7 +27666,7 @@ export class GenPy extends GenPySwift
 	#writeMain(main)
 	{
 		this.writeNewLine();
-		this.writeLine("if __name__ == '__main__':");
+		this.writeLine("if __name__ == \"__main__\":");
 		this.writeChar(9);
 		if (main.type.id == FuId.INT_TYPE)
 			this.write("sys.exit(");
@@ -27554,6 +27682,7 @@ export class GenPy extends GenPySwift
 	writeProgram(program, outputFile, namespace)
 	{
 		this.writtenTypes.clear();
+		this.writtenTypes.add(program.system.exceptionClass);
 		this.#timeNs = false;
 		this.#switchBreak = false;
 		this.openStringWriter();

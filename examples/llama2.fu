@@ -8,9 +8,8 @@ public abstract class Loader
 	public abstract void Open!(string path);
 	public abstract int ReadInt!();
 	public abstract float ReadFloat!();
-	public abstract void ReadWeights!(short[]! a, nint n);
-	public abstract void SkipBytes!(nint n);
-	internal short[]# AllocateAndReadWeights!(nint n)
+	protected abstract void ReadWeights!(short[]! a, nint n);
+	public short[]# AllocateAndReadWeights!(nint n)
 	{
 		short[]# a = new short[n];
 		ReadWeights(a, n);
@@ -88,7 +87,7 @@ class Transformer
 		HB = new float[HiddenDim];
 		HB2 = new float[HiddenDim];
 		Q = new float[Dim];
-		Att = new float[Heads * SeqLen];
+		Att = new float[SeqLen];
 		Logits = new float[VocabSize];
 		int cacheSize = Dim * KVHeads / Heads * Layers * SeqLen;
 		KeyCache = new float[cacheSize];
@@ -111,18 +110,18 @@ class Transformer
 			o[i] = ss * x[i] * ExpandWeight(weight[weightOffset + i]);
 	}
 
-	internal static void SoftMax(float[]! x, int xOffset, int size)
+	internal static void SoftMax(float[]! x, int size)
 	{
 		float max = x[0];
 		for (int i = 1; i < size; i++) {
-			if (max < x[xOffset + i])
-				max = x[xOffset + i];
+			if (max < x[i])
+				max = x[i];
 		}
 		float sum = 0;
 		for (int i = 0; i < size; i++)
-			sum += x[xOffset + i] = Math.Exp(x[xOffset + i] - max);
+			sum += x[i] = Math.Exp(x[i] - max);
 		for (int i = 0; i < size; i++)
-			x[xOffset + i] /= sum;
+			x[i] /= sum;
 	}
 
 	static void MatMul(float[]! o, int oOffset, float[] x, short[] w, int wOffset, int n, int d)
@@ -141,13 +140,15 @@ class Transformer
 		}
 	}
 
-	public float[]! Forward!(int token, int pos)
+	public void Forward!(int token, int pos)
 	{
+		for (int i = 0; i < Dim; i++)
+			X[i] = ExpandWeight(TokenEmbeddingTable[token * Dim + i]);
+
 		int kvDim = Dim * KVHeads / Heads;
 		int kvMul = Heads / KVHeads;
 		int headSize = Dim / Heads;
-		for (int i = 0; i < Dim; i++)
-			X[i] = ExpandWeight(TokenEmbeddingTable[token * Dim + i]);
+
 		for (int l = 0; l < Layers; l++) {
 			RmsNorm(XB, X, RmsAttWeight, l * Dim, Dim);
 
@@ -177,21 +178,18 @@ class Transformer
 
 			for (int h = 0; h < Heads; h++) {
 				int q = h * headSize;
-				int att = h * SeqLen;
 				for (int t = 0; t <= pos; t++) {
 					k = loff + t * kvDim + h / kvMul * headSize;
 					float score = 0;
 					for (int i = 0; i < headSize; i++)
 						score += Q[q + i] * KeyCache[k + i];
-					Att[att + t] = score / Math.Sqrt(headSize);
+					Att[t] = score / Math.Sqrt(headSize);
 				}
-
-				SoftMax(Att, att, pos + 1);
-
+				SoftMax(Att, pos + 1);
 				XB.Fill(0, q, headSize);
 				for (int t = 0; t <= pos; t++) {
 					int v = loff + t * kvDim + h / kvMul * headSize;
-					float a = Att[att + t];
+					float a = Att[t];
 					for (int i = 0; i < headSize; i++)
 						XB[q + i] += a * ValueCache[v + i];
 				}
@@ -218,6 +216,10 @@ class Transformer
 			for (int i = 0; i < Dim; i++)
 				X[i] += XB[i];
 		}
+	}
+
+	public float[]! GetLogits!()
+	{
 		RmsNorm(X, X, RmsFinalWeight, 0, Dim);
 		MatMul(Logits, 0, X, WCls, 0, Dim, VocabSize);
 		return Logits;
@@ -239,7 +241,7 @@ class Tokenizer
 		VocabScores = new float[vocabSize];
 		VocabToToken.Clear();
 		VocabSize = vocabSize;
-		loader.SkipBytes(4); // MaxTokenLength
+		loader.ReadInt(); // MaxTokenLength
 		for (int i = 0; i < vocabSize; i++) {
 			VocabScores[i] = loader.ReadFloat();
 			Vocab[i] = loader.ReadString();
@@ -266,13 +268,21 @@ class Tokenizer
 		PromptIndex = 0;
 		Prompt.Clear();
 		Prompt.Add(1); // bos
-		if (text.Length > 0)
-			Prompt.Add(VocabToToken[" "]);
-		foreach (int c in text) {
-			byte[1] b;
-			b[0] = c;
-			string() s = Encoding.UTF8.GetString(b, 0, 1);
-			Prompt.Add(VocabToToken.ContainsKey(s) ? VocabToToken[s] : 3 + (c & 0xff));
+		nint length = text.Length;
+		if (length == 0)
+			return;
+		Prompt.Add(VocabToToken[" "]);
+		for (nint i = 0; i < length; i++) {
+			string() s = text.Substring(i, 1);
+			if (VocabToToken.ContainsKey(s))
+				Prompt.Add(VocabToToken[s]);
+			else {
+				byte[6] bytes;
+				Encoding.UTF8.GetBytes(s, bytes, 0);
+				int nBytes = Encoding.UTF8.GetByteCount(s);
+				for (int j = 0; j < nBytes; j++)
+					Prompt.Add(3 + bytes[j]);
+			}
 		}
 		for (;;) {
 			float bestScore = Math.NegativeInfinity;
@@ -353,7 +363,7 @@ class Sampler
 			return ArgMax(logits, n);
 		for (int i = 0; i < n; i++)
 			logits[i] /= Temperature;
-		Transformer.SoftMax(logits, 0, n);
+		Transformer.SoftMax(logits, n);
 		float coin = NextRandom();
 		float cdf = 0;
 		for (int i = 0; i < n; i++) {
@@ -415,9 +425,9 @@ public class Llama2
 		if (pos != 0 && Token == 1)
 			return null;
 		string text = pos == 0 ? "" : Tok.Decode(Token);
-		float[]! logits = Trans.Forward(Token, pos);
+		Trans.Forward(Token, pos);
 		if (!Tok.HasPromptToken())
-			Token = Samp.Sample(logits, Trans.GetVocabSize());
+			Token = Samp.Sample(Trans.GetLogits(), Trans.GetVocabSize());
 		return text;
 	}
 
@@ -432,12 +442,12 @@ public class Llama2
 	public string? ForwardChat!(int pos)
 	{
 		FeedPrompt();
-		float[]! logits = Trans.Forward(Token, pos);
+		Trans.Forward(Token, pos);
 		if (Tok.HasPromptToken())
 			return "";
 		if (Token == 2)
 			return null;
-		Token = Samp.Sample(logits, Trans.GetVocabSize());
+		Token = Samp.Sample(Trans.GetLogits(), Trans.GetVocabSize());
 		return Token == 2 ? "\n" : Tok.Decode(Token);
 	}
 }
