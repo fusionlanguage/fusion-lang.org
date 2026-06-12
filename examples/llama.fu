@@ -289,7 +289,7 @@ class Tokenizer
 		for (nint i = 0; i < length; i++) {
 			string() s = text.Substring(i, 1);
 			if (VocabToToken.ContainsKey(s))
-				Prompt.Add(VocabToToken[s]);
+				AddPromptToken(s);
 			else {
 				byte[6] bytes;
 				Encoding.UTF8.GetBytes(s, bytes, 0);
@@ -318,6 +318,21 @@ class Tokenizer
 			Prompt.RemoveAt(bestIdx + 1);
 			Prompt[bestIdx] = bestId;
 		}
+	}
+
+	public void AddLlama3Header!(string role)
+	{
+		AddPromptToken("<|start_header_id|>");
+		AddPromptToken(role);
+		AddPromptToken("<|end_header_id|>");
+		AddPromptToken("\n\n");
+	}
+
+	public void AddLlama3Message!(string role, string message)
+	{
+		AddLlama3Header(role);
+		AddPrompt(message);
+		AddPromptToken("<|eot_id|>");
 	}
 
 	public bool HasPromptToken() => PromptIndex < Prompt.Count;
@@ -450,21 +465,6 @@ public class Llama
 		return text;
 	}
 
-	void AddLlama3Header!(string role)
-	{
-		Tok.AddPromptToken("<|start_header_id|>");
-		Tok.AddPromptToken(role);
-		Tok.AddPromptToken("<|end_header_id|>");
-		Tok.AddPromptToken("\n\n");
-	}
-
-	void AddLlama3Message!(string role, string message)
-	{
-		AddLlama3Header(role);
-		Tok.AddPrompt(message);
-		Tok.AddPromptToken("<|eot_id|>");
-	}
-
 	public void SetChatPrompt!(bool bos, string prompt, string systemPrompt)
 	{
 		if (IsLlama3()) {
@@ -472,9 +472,9 @@ public class Llama
 			if (bos)
 				Tok.AddPromptToken("<|begin_of_text|>");
 			if (systemPrompt.Length > 0)
-				AddLlama3Message("system", systemPrompt);
-			AddLlama3Message("user", prompt);
-			AddLlama3Header("assistant");
+				Tok.AddLlama3Message("system", systemPrompt);
+			Tok.AddLlama3Message("user", prompt);
+			Tok.AddLlama3Header("assistant");
 		}
 		else if (systemPrompt.Length > 0)
 			SetRawPrompt(bos, $"[INST] <<SYS>>\n{systemPrompt}\n<</SYS>>\n\n{prompt} [/INST]");

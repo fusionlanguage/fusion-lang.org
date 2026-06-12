@@ -1804,7 +1804,7 @@ class FuLiteralLong extends FuLiteral
 
 	accept(visitor, parent)
 	{
-		visitor.visitLiteralLong(this.value);
+		visitor.visitLiteralLong(this.value, parent);
 	}
 
 	getLiteralString()
@@ -7033,6 +7033,8 @@ export class FuSema
 			}
 			expr.type = type;
 		}
+		if (method.id == FuId.ENUM_TO_INT && symbol.left.isConst(false))
+			return this.#toLiteralLong(expr, BigInt(symbol.left.intValue()));
 		return expr;
 	}
 
@@ -7502,7 +7504,8 @@ export class FuSema
 		this.#openScope(statement);
 		let element = statement.getVar();
 		this.#resolveType(element);
-		if (this.#visitExpr(statement.collection) != this.#poison) {
+		statement.collection = this.#visitExpr(statement.collection);
+		if (statement.collection != this.#poison) {
 			let klass;
 			if ((klass = statement.collection.type) instanceof FuClassType) {
 				switch (klass.class.id) {
@@ -8122,7 +8125,7 @@ export class GenBase extends FuVisitor
 		this.write("true");
 	}
 
-	visitLiteralLong(i)
+	visitLiteralLong(i, parent)
 	{
 		this.#writer.write(String(i));
 	}
@@ -8287,7 +8290,7 @@ export class GenBase extends FuVisitor
 		this.writeUppercaseWithUnderscores(konst.name);
 		if (konst.inMethodIndex > 0) {
 			this.writeChar(95);
-			this.visitLiteralLong(BigInt(konst.inMethodIndex));
+			this.visitLiteralLong(BigInt(konst.inMethodIndex), FuPriority.PRIMARY);
 		}
 	}
 
@@ -8539,7 +8542,7 @@ export class GenBase extends FuVisitor
 		let i = 0;
 		for (const b of content) {
 			this.writeComma(i++);
-			this.visitLiteralLong(BigInt(b));
+			this.visitLiteralLong(BigInt(b), FuPriority.ARGUMENT);
 		}
 	}
 
@@ -8567,10 +8570,10 @@ export class GenBase extends FuVisitor
 	writePrintfWidth(part)
 	{
 		if (part.widthExpr != null)
-			this.visitLiteralLong(BigInt(part.width));
+			this.visitLiteralLong(BigInt(part.width), FuPriority.PRIMARY);
 		if (part.precision >= 0) {
 			this.writeChar(46);
-			this.visitLiteralLong(BigInt(part.precision));
+			this.visitLiteralLong(BigInt(part.precision), FuPriority.PRIMARY);
 		}
 	}
 
@@ -8626,16 +8629,16 @@ export class GenBase extends FuVisitor
 			if (part.width >= 0) {
 				if (!(part.argument.type instanceof FuNumericType))
 					this.writeChar(62);
-				this.visitLiteralLong(BigInt(part.width));
+				this.visitLiteralLong(BigInt(part.width), FuPriority.PRIMARY);
 			}
 			else {
 				this.writeChar(60);
-				this.visitLiteralLong(BigInt(-part.width));
+				this.visitLiteralLong(BigInt(-part.width), FuPriority.PRIMARY);
 			}
 		}
 		if (part.precision >= 0) {
 			this.writeChar(part.argument.type instanceof FuIntegerType ? 48 : 46);
-			this.visitLiteralLong(BigInt(part.precision));
+			this.visitLiteralLong(BigInt(part.precision), FuPriority.PRIMARY);
 		}
 		switch (part.format) {
 		case 32:
@@ -8928,7 +8931,7 @@ export class GenBase extends FuVisitor
 		this.writeLocalName(def, FuPriority.PRIMARY);
 		for (let i = 0; i < nesting; i++) {
 			this.write("[_i");
-			this.visitLiteralLong(BigInt(i));
+			this.visitLiteralLong(BigInt(i), FuPriority.PRIMARY);
 			this.writeChar(93);
 		}
 	}
@@ -8938,13 +8941,13 @@ export class GenBase extends FuVisitor
 		this.write("for (");
 		this.write(intString);
 		this.write(" _i");
-		this.visitLiteralLong(BigInt(nesting));
+		this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 		this.write(" = 0; _i");
-		this.visitLiteralLong(BigInt(nesting));
+		this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 		this.write(" < ");
-		this.visitLiteralLong(BigInt(count));
+		this.visitLiteralLong(BigInt(count), FuPriority.REL);
 		this.write("; _i");
-		this.visitLiteralLong(BigInt(nesting));
+		this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 		this.write("++) ");
 		this.openBlock();
 	}
@@ -8952,7 +8955,7 @@ export class GenBase extends FuVisitor
 	writeTemporaryName(id)
 	{
 		this.write("futemp");
-		this.visitLiteralLong(BigInt(id));
+		this.visitLiteralLong(BigInt(id), FuPriority.PRIMARY);
 	}
 
 	tryWriteTemporary(expr)
@@ -9057,7 +9060,7 @@ export class GenBase extends FuVisitor
 			}
 			let rightLiteral;
 			if ((rightLiteral = right) instanceof FuLiteralLong) {
-				this.visitLiteralLong(leftValue + rightLiteral.value);
+				this.visitLiteralLong(leftValue + rightLiteral.value, FuPriority.ARGUMENT);
 				return;
 			}
 		}
@@ -9077,7 +9080,7 @@ export class GenBase extends FuVisitor
 		this.writeAdd(startIndex, length);
 	}
 
-	static #isBitOp(parent)
+	static needAddParentheses(parent)
 	{
 		switch (parent) {
 		case FuPriority.OR:
@@ -9086,7 +9089,7 @@ export class GenBase extends FuVisitor
 		case FuPriority.SHIFT:
 			return true;
 		default:
-			return false;
+			return parent > FuPriority.ADD;
 		}
 	}
 
@@ -9168,9 +9171,14 @@ export class GenBase extends FuVisitor
 		expr.right.accept(this, FuPriority.ARGUMENT);
 	}
 
+	writeIndexingInfix(collection)
+	{
+	}
+
 	writeIndexing(collection, index)
 	{
 		collection.accept(this, FuPriority.PRIMARY);
+		this.writeIndexingInfix(collection);
 		this.writeChar(91);
 		index.accept(this, FuPriority.ARGUMENT);
 		this.writeChar(93);
@@ -9190,10 +9198,10 @@ export class GenBase extends FuVisitor
 	{
 		switch (expr.op) {
 		case FuToken.PLUS:
-			this.writeBinaryExpr(expr, parent > FuPriority.ADD || GenBase.#isBitOp(parent), FuPriority.ADD, " + ", FuPriority.ADD);
+			this.writeBinaryExpr(expr, GenBase.needAddParentheses(parent), FuPriority.ADD, " + ", FuPriority.ADD);
 			break;
 		case FuToken.MINUS:
-			this.writeBinaryExpr(expr, parent > FuPriority.ADD || GenBase.#isBitOp(parent), FuPriority.ADD, " - ", FuPriority.MUL);
+			this.writeBinaryExpr(expr, GenBase.needAddParentheses(parent), FuPriority.ADD, " - ", FuPriority.MUL);
 			break;
 		case FuToken.ASTERISK:
 			this.writeBinaryExpr(expr, parent > FuPriority.MUL, FuPriority.MUL, " * ", FuPriority.PRIMARY);
@@ -9304,6 +9312,12 @@ export class GenBase extends FuVisitor
 	{
 		let symbol;
 		return (symbol = expr) instanceof FuSymbolReference && symbol.symbol.id == id;
+	}
+
+	static isConsoleStream(expr)
+	{
+		let symbol;
+		return (symbol = expr) instanceof FuSymbolReference && (symbol.symbol.id == FuId.CONSOLE_ERROR || symbol.symbol.id == FuId.CONSOLE_OUT);
 	}
 
 	writeJavaMatchProperty(expr, parent)
@@ -9734,7 +9748,7 @@ export class GenBase extends FuVisitor
 			let gotoId = this.switchesWithGoto.indexOf(switchStatement);
 			if (gotoId >= 0) {
 				this.startBreakGoto();
-				this.visitLiteralLong(BigInt(gotoId));
+				this.visitLiteralLong(BigInt(gotoId), FuPriority.PRIMARY);
 				this.writeCharLine(59);
 				return;
 			}
@@ -10190,11 +10204,11 @@ export class GenBase extends FuVisitor
 			this.write("public ");
 	}
 
-	writeEnumValue(konst)
+	writeEnumValue(konst, withValue)
 	{
 		this.writeDoc(konst.documentation);
 		this.writeName(konst);
-		if (!(konst.value instanceof FuImplicitEnumValue)) {
+		if (withValue && !(konst.value instanceof FuImplicitEnumValue)) {
 			this.write(" = ");
 			konst.value.accept(this, FuPriority.ARGUMENT);
 		}
@@ -10204,7 +10218,7 @@ export class GenBase extends FuVisitor
 	{
 		if (previous != null)
 			this.writeCharLine(44);
-		this.writeEnumValue(konst);
+		this.writeEnumValue(konst, true);
 	}
 
 	writeRegexOptionsEnum(program)
@@ -10316,10 +10330,10 @@ export class GenTyped extends GenBase
 		this.write(" }");
 	}
 
-	writeArrayStorageLength(expr)
+	writeArrayStorageLength(expr, parent)
 	{
 		let array = expr.type;
-		this.visitLiteralLong(BigInt(array.length));
+		this.visitLiteralLong(BigInt(array.length), parent);
 	}
 
 	writeNewArray(elementType, lengthExpr, parent)
@@ -10368,6 +10382,7 @@ export class GenTyped extends GenBase
 			case FuId.INT_TYPE:
 			case FuId.N_INT_TYPE:
 			case FuId.LONG_TYPE:
+			case FuId.FLOAT_INT_TYPE:
 				return true;
 			default:
 				return false;
@@ -10380,6 +10395,7 @@ export class GenTyped extends GenBase
 			case FuId.INT_TYPE:
 			case FuId.N_INT_TYPE:
 			case FuId.LONG_TYPE:
+			case FuId.FLOAT_INT_TYPE:
 				return true;
 			default:
 				return false;
@@ -10390,6 +10406,7 @@ export class GenTyped extends GenBase
 			case FuId.INT_TYPE:
 			case FuId.N_INT_TYPE:
 			case FuId.LONG_TYPE:
+			case FuId.FLOAT_INT_TYPE:
 				return true;
 			default:
 				return false;
@@ -10400,12 +10417,15 @@ export class GenTyped extends GenBase
 			case FuId.INT_TYPE:
 			case FuId.N_INT_TYPE:
 			case FuId.LONG_TYPE:
+			case FuId.FLOAT_INT_TYPE:
 				return true;
 			default:
 				return false;
 			}
 		case FuId.INT_TYPE:
-			return right == FuId.LONG_TYPE;
+			return right == FuId.LONG_TYPE || right == FuId.FLOAT_INT_TYPE;
+		case FuId.LONG_TYPE:
+			return right == FuId.FLOAT_INT_TYPE;
 		default:
 			return false;
 		}
@@ -10505,7 +10525,7 @@ export class GenTyped extends GenBase
 				expr = call.arguments_[0];
 				let literal;
 				if ((literal = expr) instanceof FuLiteralDouble) {
-					this.visitLiteralLong(BigInt(Math.trunc(literal.value)));
+					this.visitLiteralLong(BigInt(Math.trunc(literal.value)), parent);
 					return;
 				}
 			}
@@ -10565,12 +10585,24 @@ export class GenTyped extends GenBase
 export class GenCCppD extends GenTyped
 {
 
-	visitLiteralLong(i)
+	visitLiteralLong(i, parent)
 	{
-		if (i == -9223372036854775808)
-			this.write("(-9223372036854775807 - 1)");
+		if (i == -2147483648) {
+			if (GenCCppD.needAddParentheses(parent))
+				this.writeChar(40);
+			this.write("-2147483647 - 1");
+			if (GenCCppD.needAddParentheses(parent))
+				this.writeChar(41);
+		}
+		else if (i == -9223372036854775808) {
+			if (GenCCppD.needAddParentheses(parent))
+				this.writeChar(40);
+			this.write("-9223372036854775807 - 1");
+			if (GenCCppD.needAddParentheses(parent))
+				this.writeChar(41);
+		}
 		else
-			super.visitLiteralLong(i);
+			super.visitLiteralLong(i, parent);
 	}
 
 	writeCoercedInternal(type, expr, parent)
@@ -10594,7 +10626,7 @@ export class GenCCppD extends GenTyped
 			this.switchesWithGoto.push(statement);
 			this.writeSwitchAsIfs(statement, false);
 			this.write("fuafterswitch");
-			this.visitLiteralLong(BigInt(gotoId));
+			this.visitLiteralLong(BigInt(gotoId), FuPriority.PRIMARY);
 			this.writeLine(": ;");
 		}
 		else
@@ -10679,7 +10711,7 @@ export class GenCCpp extends GenCCppD
 		this.write("argv[");
 		let literal;
 		if ((literal = index) instanceof FuLiteralLong)
-			this.visitLiteralLong(1n + literal.value);
+			this.visitLiteralLong(1n + literal.value, FuPriority.ARGUMENT);
 		else {
 			this.write("1 + ");
 			index.accept(this, FuPriority.ADD);
@@ -11229,7 +11261,8 @@ export class GenC extends GenCCpp
 		let forEach;
 		if ((forEach = symbol.parent) instanceof FuForeach) {
 			let klass = forEach.collection.type;
-			if (klass.class.id == FuId.STRING_CLASS || (klass.class.id == FuId.LIST_CLASS && !(klass.getElementType() instanceof FuStorageType))) {
+			let elementClass;
+			if (klass.class.id == FuId.STRING_CLASS || (klass.class.id == FuId.LIST_CLASS && (!(klass.getElementType() instanceof FuStorageType) || ((elementClass = klass.getElementType()) instanceof FuClassType && elementClass.class.id == FuId.LIST_CLASS)))) {
 				if (parent == FuPriority.PRIMARY)
 					this.writeChar(40);
 				this.writeChar(42);
@@ -11264,7 +11297,7 @@ export class GenC extends GenCCpp
 		this.write("FuMatch_GetPos(");
 		expr.left.accept(this, FuPriority.ARGUMENT);
 		this.write(", ");
-		this.visitLiteralLong(BigInt(which));
+		this.visitLiteralLong(BigInt(which), FuPriority.ARGUMENT);
 		this.writeChar(41);
 	}
 
@@ -11470,7 +11503,7 @@ export class GenC extends GenCCpp
 			let arrayStorage;
 			if ((arrayStorage = type) instanceof FuArrayStorageType) {
 				this.writeChar(91);
-				this.visitLiteralLong(BigInt(arrayStorage.length));
+				this.visitLiteralLong(BigInt(arrayStorage.length), FuPriority.ARGUMENT);
 				this.writeChar(93);
 			}
 			else if (elementType instanceof FuArrayStorageType)
@@ -12247,13 +12280,13 @@ export class GenC extends GenCCpp
 		while ((array = type) instanceof FuArrayStorageType) {
 			this.includeStdDef();
 			this.write("for (ptrdiff_t _i");
-			this.visitLiteralLong(BigInt(nesting));
+			this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 			this.write(" = ");
-			this.visitLiteralLong(BigInt(array.length - 1));
+			this.visitLiteralLong(BigInt(array.length - 1), FuPriority.ARGUMENT);
 			this.write("; _i");
-			this.visitLiteralLong(BigInt(nesting));
+			this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 			this.write(" >= 0; _i");
-			this.visitLiteralLong(BigInt(nesting));
+			this.visitLiteralLong(BigInt(nesting), FuPriority.PRIMARY);
 			this.writeLine("--)");
 			this.indent++;
 			nesting++;
@@ -12264,7 +12297,7 @@ export class GenC extends GenCCpp
 		this.writeLocalName(symbol, FuPriority.PRIMARY);
 		for (let i = 0; i < nesting; i++) {
 			this.write("[_i");
-			this.visitLiteralLong(BigInt(i));
+			this.visitLiteralLong(BigInt(i), FuPriority.PRIMARY);
 			this.writeChar(93);
 		}
 		if (klass.class.id == FuId.QUEUE_CLASS && GenC.#hasDictionaryDestroy(klass.getElementType())) {
@@ -12288,7 +12321,7 @@ export class GenC extends GenCCpp
 
 	#writeRangeThrowReturnValue(range)
 	{
-		this.visitLiteralLong(BigInt(range.min - 1));
+		this.visitLiteralLong(BigInt(range.min - 1), FuPriority.EQUALITY);
 	}
 
 	#writeThrowReturnValue(type, include)
@@ -12501,7 +12534,7 @@ export class GenC extends GenCCpp
 		this.write(", ");
 		this.visitLiteralString(literal);
 		this.write(", ");
-		this.visitLiteralLong(BigInt(literal.length));
+		this.visitLiteralLong(BigInt(literal.length), FuPriority.ARGUMENT);
 		this.writeChar(41);
 		this.write(GenC.getEqOp(not));
 		this.writeChar(48);
@@ -12542,7 +12575,7 @@ export class GenC extends GenCCpp
 							this.writeChar(40);
 						lengthExpr.accept(this, FuPriority.EQUALITY);
 						this.write(" != ");
-						this.visitLiteralLong(BigInt(rightLength));
+						this.visitLiteralLong(BigInt(rightLength), FuPriority.EQUALITY);
 						if (rightLength > 0) {
 							this.write(" || ");
 							this.writeSubstringEqual(call, rightValue, FuPriority.COND_OR, true);
@@ -12555,7 +12588,7 @@ export class GenC extends GenCCpp
 							this.writeChar(40);
 						lengthExpr.accept(this, FuPriority.EQUALITY);
 						this.write(" == ");
-						this.visitLiteralLong(BigInt(rightLength));
+						this.visitLiteralLong(BigInt(rightLength), FuPriority.EQUALITY);
 						if (rightLength > 0) {
 							this.write(" && ");
 							this.writeSubstringEqual(call, rightValue, FuPriority.COND_AND, false);
@@ -12603,7 +12636,7 @@ export class GenC extends GenCCpp
 		this.write(args.length != 1 && this.getTypeId(args[2].type, true) == FuId.INT_TYPE ? "int" : "size_t");
 		this.write(" _i = 0; _i < ");
 		if (args.length == 1)
-			this.writeArrayStorageLength(obj);
+			this.writeArrayStorageLength(obj, FuPriority.REL);
 		else
 			args[2].accept(this, FuPriority.REL);
 		this.writeLine("; _i++)");
@@ -12624,7 +12657,7 @@ export class GenC extends GenCCpp
 		if ((storage = elementType) instanceof FuStorageType && this.needsConstructor(storage.class)) {
 			this.writeName(storage.class);
 			this.write("_Construct(&futemp");
-			this.visitLiteralLong(BigInt(id));
+			this.visitLiteralLong(BigInt(id), FuPriority.PRIMARY);
 			this.writeLine(");");
 		}
 		this.write(function_);
@@ -12635,7 +12668,7 @@ export class GenC extends GenCCpp
 			args[0].accept(this, FuPriority.ARGUMENT);
 		}
 		this.write(", futemp");
-		this.visitLiteralLong(BigInt(id));
+		this.visitLiteralLong(BigInt(id), FuPriority.PRIMARY);
 		this.writeChar(41);
 		this.currentTemporaries[id] = elementType;
 	}
@@ -13077,7 +13110,7 @@ export class GenC extends GenCCpp
 				this.writeArrayPtrAdd(obj, args[1]);
 			this.write(", ");
 			if (args.length == 1)
-				this.writeArrayStorageLength(obj);
+				this.writeArrayStorageLength(obj, FuPriority.ARGUMENT);
 			else
 				args[2].accept(this, FuPriority.ARGUMENT);
 			this.#writeSizeofCompare(elementType);
@@ -13090,7 +13123,7 @@ export class GenC extends GenCCpp
 			this.#startArrayContains(obj);
 			obj.accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.writeArrayStorageLength(obj);
+			this.writeArrayStorageLength(obj, FuPriority.ARGUMENT);
 			this.write(", ");
 			this.#writeUnstorage(args[0]);
 			this.writeChar(41);
@@ -13145,7 +13178,7 @@ export class GenC extends GenCCpp
 			this.write("qsort(");
 			this.writeArrayPtr(obj, FuPriority.ARGUMENT);
 			this.write(", ");
-			this.writeArrayStorageLength(obj);
+			this.writeArrayStorageLength(obj, FuPriority.ARGUMENT);
 			this.#writeSizeofCompare(obj.type.asClassType().getElementType());
 			break;
 		case FuId.ARRAY_SORT_PART:
@@ -13167,6 +13200,17 @@ export class GenC extends GenCCpp
 			}
 			else
 				this.#writeListAddInsert(obj, false, "g_array_append_val", args);
+			break;
+		case FuId.LIST_ADD_RANGE:
+			if (obj.type.asClassType().getElementType() instanceof FuNumericType) {
+				this.write("g_array_append_vals(");
+				obj.accept(this, FuPriority.ARGUMENT);
+				this.write(", ");
+				this.writePostfix(args[0], "->data, ");
+				this.writePostfix(args[0], "->len)");
+			}
+			else
+				this.notSupported(obj, method.name);
 			break;
 		case FuId.LIST_CLEAR:
 		case FuId.STACK_CLEAR:
@@ -13842,7 +13886,7 @@ export class GenC extends GenCCpp
 					this.writeCamelCaseNotKeyword(element);
 					this.write(" < ");
 					let array = klass;
-					this.visitLiteralLong(BigInt(array.length));
+					this.visitLiteralLong(BigInt(array.length), FuPriority.REL);
 				}
 				this.write("; ");
 				this.writeCamelCaseNotKeyword(element);
@@ -13861,7 +13905,8 @@ export class GenC extends GenCCpp
 				this.writePostfix(statement.collection, "->data, ");
 				for (; elementType.isArray(); elementType = elementType.asClassType().getElementType())
 					this.writeChar(42);
-				if (elementType instanceof FuClassType && !(elementType instanceof FuStorageType))
+				let elementClass;
+				if ((elementClass = elementType) instanceof FuClassType && (elementClass.class.id == FuId.LIST_CLASS || !(elementType instanceof FuStorageType)))
 					this.write("* const ");
 				this.write("*fuend = ");
 				this.writeCamelCaseNotKeyword(element);
@@ -15011,7 +15056,7 @@ export class GenC extends GenCCpp
 			this.writeChar(32);
 			this.writeResource(name, -1);
 			this.writeChar(91);
-			this.visitLiteralLong(BigInt(content.length));
+			this.visitLiteralLong(BigInt(content.length), FuPriority.ARGUMENT);
 			this.writeLine("] = {");
 			this.writeChar(9);
 			this.writeBytes(content);
@@ -15724,7 +15769,7 @@ export class GenCpp extends GenCCpp
 		let arrayStorage;
 		if ((arrayStorage = klass) instanceof FuArrayStorageType) {
 			this.write(", ");
-			this.visitLiteralLong(BigInt(arrayStorage.length));
+			this.visitLiteralLong(BigInt(arrayStorage.length), FuPriority.ARGUMENT);
 		}
 		else if (klass.class.typeParameterCount == 2) {
 			this.write(", ");
@@ -17152,18 +17197,11 @@ export class GenCpp extends GenCCpp
 				this.writeChar(93);
 			}
 			else {
-				if (collectionType.getElementType() instanceof FuStorageType) {
-					const storage = collectionType.getElementType();
-					if (!(element.type instanceof FuReadWriteClassType))
+				let owning;
+				if ((owning = collectionType.getElementType()) instanceof FuOwningType) {
+					if (collectionType.getElementType() instanceof FuDynamicPtrType || !(element.type instanceof FuReadWriteClassType))
 						this.write("const ");
-					this.write(storage.class.name);
-					this.write(" &");
-					this.#writeCamelCaseNotKeyword(element.name);
-				}
-				else if (collectionType.getElementType() instanceof FuDynamicPtrType) {
-					const dynamic = collectionType.getElementType();
-					this.write("const ");
-					this.writeType(dynamic, true);
+					this.writeType(owning, true);
 					this.write(" &");
 					this.#writeCamelCaseNotKeyword(element.name);
 				}
@@ -17600,7 +17638,7 @@ export class GenCpp extends GenCCpp
 			this.include("array");
 			this.include("cstdint");
 			this.write("const std::array<uint8_t, ");
-			this.visitLiteralLong(BigInt(content.length));
+			this.visitLiteralLong(BigInt(content.length), FuPriority.ARGUMENT);
 			this.write("> ");
 			this.writeResourceName(name);
 			if (define) {
@@ -17882,7 +17920,7 @@ export class GenCs extends GenTyped
 			this.writeChar(95);
 			this.write(symbol.name);
 			if (konst.inMethodIndex > 0)
-				this.visitLiteralLong(BigInt(konst.inMethodIndex));
+				this.visitLiteralLong(BigInt(konst.inMethodIndex), FuPriority.PRIMARY);
 			return;
 		}
 		this.write(symbol.name);
@@ -18064,9 +18102,24 @@ export class GenCs extends GenTyped
 				this.write(klass.class.name);
 				break;
 			}
+			if (type.nullable)
+				this.writeChar(63);
 		}
 		else
 			this.write(type.name);
+	}
+
+	writeMemberOp(left, symbol)
+	{
+		if (left.type != null && left.type.nullable)
+			this.writeChar(33);
+		this.writeChar(46);
+	}
+
+	writeIndexingInfix(collection)
+	{
+		if (collection.type.nullable)
+			this.writeChar(33);
 	}
 
 	writeNewWithFields(type, init)
@@ -18081,8 +18134,25 @@ export class GenCs extends GenTyped
 		let range;
 		if (expr instanceof FuLiteralChar && (range = type) instanceof FuRangeType && range.max <= 255)
 			this.writeStaticCast(type, expr);
-		else
+		else {
 			super.writeCoercedLiteral(type, expr);
+			if (expr.type != null && expr.type.nullable && type != null && !type.nullable)
+				this.writeChar(33);
+		}
+	}
+
+	writeStaticCast(type, expr)
+	{
+		super.writeStaticCast(type, expr);
+		if (expr.type.nullable && !type.nullable)
+			this.writeChar(33);
+	}
+
+	writeCoercedInternal(type, expr, parent)
+	{
+		super.writeCoercedInternal(type, expr, parent);
+		if (expr.type.nullable && !type.nullable)
+			this.writeChar(33);
 	}
 
 	isPromoted(expr)
@@ -18106,13 +18176,13 @@ export class GenCs extends GenTyped
 				part.argument.accept(this, FuPriority.SELECT_COND);
 			if (part.widthExpr != null) {
 				this.writeChar(44);
-				this.visitLiteralLong(BigInt(part.width));
+				this.visitLiteralLong(BigInt(part.width), FuPriority.ARGUMENT);
 			}
 			if (part.format != 32 && part.format != 85 && part.format != 117) {
 				this.writeChar(58);
 				this.writeChar(part.format);
 				if (part.precision >= 0)
-					this.visitLiteralLong(BigInt(part.precision));
+					this.visitLiteralLong(BigInt(part.precision), FuPriority.ARGUMENT);
 			}
 			this.writeChar(125);
 		}
@@ -18278,7 +18348,7 @@ export class GenCs extends GenTyped
 		case FuId.JSON_ELEMENT_GET_BOOLEAN:
 			if (obj != null) {
 				obj.accept(this, FuPriority.PRIMARY);
-				this.writeChar(46);
+				this.writeMemberOp(obj, null);
 			}
 			this.writeName(method);
 			this.writeCoercedArgsInParentheses(method, args);
@@ -18312,7 +18382,7 @@ export class GenCs extends GenTyped
 		case FuId.STRING_INDEX_OF:
 		case FuId.STRING_LAST_INDEX_OF:
 			obj.accept(this, FuPriority.PRIMARY);
-			this.writeChar(46);
+			this.writeMemberOp(obj, null);
 			this.write(method.name);
 			this.writeChar(40);
 			let c = this.getOneAscii(args[0]);
@@ -18358,7 +18428,7 @@ export class GenCs extends GenTyped
 				obj.accept(this, FuPriority.ARGUMENT);
 				if (args.length == 1) {
 					this.write(", 0, ");
-					this.writeArrayStorageLength(obj);
+					this.writeArrayStorageLength(obj, FuPriority.ARGUMENT);
 				}
 			}
 			else {
@@ -18432,7 +18502,7 @@ export class GenCs extends GenTyped
 			if (method.id == FuId.CONSOLE_WRITE || method.id == FuId.CONSOLE_WRITE_LINE)
 				this.include("System");
 			obj.accept(this, FuPriority.PRIMARY);
-			this.writeChar(46);
+			this.writeMemberOp(obj, null);
 			this.write(method.name);
 			this.writeChar(40);
 			if (args.length != 0) {
@@ -18484,9 +18554,7 @@ export class GenCs extends GenTyped
 			break;
 		case FuId.ENVIRONMENT_GET_ENVIRONMENT_VARIABLE:
 			this.include("System");
-			obj.accept(this, FuPriority.PRIMARY);
-			this.writeChar(46);
-			this.write(method.name);
+			this.write("Environment.GetEnvironmentVariable");
 			this.writeInParentheses(args);
 			break;
 		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
@@ -18736,6 +18804,8 @@ export class GenCs extends GenTyped
 		if (field.type.isFinal() && !field.isAssignableStorage())
 			this.write("readonly ");
 		this.writeVar(field);
+		if (!field.type.nullable && field.type instanceof FuClassType && (field.type.isFinal() ? field.value instanceof FuLiteralNull && !(field.type instanceof FuArrayStorageType) : field.value == null))
+			this.write(" = null!");
 		this.writeCharLine(59);
 	}
 
@@ -18859,6 +18929,7 @@ export class GenCs extends GenTyped
 		if (namespace.length != 0)
 			this.closeBlock();
 		this.createFile(null, outputFile);
+		this.writeLine("#nullable enable");
 		this.writeIncludes("using ", ";");
 		this.closeStringWriter();
 		this.closeFile();
@@ -19293,7 +19364,7 @@ export class GenD extends GenCCppD
 				this.writeChar(91);
 				let arrayStorage;
 				if (klass.id != FuId.MAIN_ARGS_TYPE && (arrayStorage = klass) instanceof FuArrayStorageType)
-					this.visitLiteralLong(BigInt(arrayStorage.length));
+					this.visitLiteralLong(BigInt(arrayStorage.length), FuPriority.ARGUMENT);
 				this.writeChar(93);
 				break;
 			case FuId.LIST_CLASS:
@@ -20609,9 +20680,9 @@ export class GenJava extends GenTyped
 		return "Java";
 	}
 
-	visitLiteralLong(value)
+	visitLiteralLong(value, parent)
 	{
-		super.visitLiteralLong(value);
+		super.visitLiteralLong(value, parent);
 		if (value < -2147483648 || value > 2147483647)
 			this.writeChar(76);
 	}
@@ -20656,7 +20727,7 @@ export class GenJava extends GenTyped
 	{
 		if (part.precision >= 0 && part.argument.type instanceof FuIntegerType) {
 			this.writeChar(48);
-			this.visitLiteralLong(BigInt(part.precision));
+			this.visitLiteralLong(BigInt(part.precision), FuPriority.PRIMARY);
 		}
 		else
 			super.writePrintfWidth(part);
@@ -20965,7 +21036,7 @@ export class GenJava extends GenTyped
 		this.write("FuResource.getByteArray(");
 		this.visitLiteralString(name);
 		this.write(", ");
-		this.visitLiteralLong(BigInt(length));
+		this.visitLiteralLong(BigInt(length), FuPriority.ARGUMENT);
 		this.writeChar(41);
 	}
 
@@ -21088,7 +21159,7 @@ export class GenJava extends GenTyped
 			let indexing = expr.left;
 			this.#writeIndexingInternal(indexing);
 			this.write(" & ");
-			this.visitLiteralLong(255n & rightLiteral.value);
+			this.visitLiteralLong(255n & rightLiteral.value, FuPriority.AND);
 			if (parent > FuPriority.COND_AND && parent != FuPriority.AND)
 				this.writeChar(41);
 		}
@@ -21435,7 +21506,7 @@ export class GenJava extends GenTyped
 			this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_WRITE:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+			if (GenJava.isConsoleStream(obj)) {
 				obj.accept(this, FuPriority.PRIMARY);
 				this.#writeWrite(method, args, false);
 			}
@@ -21453,7 +21524,7 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT))
+			if (GenJava.isConsoleStream(obj))
 				this.writeCharMethodCall(obj, "print", args[0]);
 			else if (obj.type.asClassType().class.id == FuId.STRING_WRITER_CLASS)
 				this.writeCharMethodCall(obj, "append", args[0]);
@@ -21465,7 +21536,7 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_CODE_POINT:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+			if (GenJava.isConsoleStream(obj)) {
 				this.writeMethodCall(obj, "print(Character.toChars", args[0]);
 				this.writeChar(41);
 			}
@@ -21481,7 +21552,7 @@ export class GenJava extends GenTyped
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
-			if (GenJava.isReferenceTo(obj, FuId.CONSOLE_ERROR) || GenJava.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
+			if (GenJava.isConsoleStream(obj)) {
 				obj.accept(this, FuPriority.PRIMARY);
 				this.#writeWrite(method, args, true);
 			}
@@ -21928,7 +21999,7 @@ export class GenJava extends GenTyped
 		if (!statement.isTypeMatching() && statement.hasWhen()) {
 			if (statement.cases.some(kase => FuSwitch.hasEarlyBreakAndContinue(kase.body)) || FuSwitch.hasEarlyBreakAndContinue(statement.defaultBody)) {
 				this.write("fuswitch");
-				this.visitLiteralLong(BigInt(this.switchesWithGoto.length));
+				this.visitLiteralLong(BigInt(this.switchesWithGoto.length), FuPriority.PRIMARY);
 				this.write(": ");
 				this.switchesWithGoto.push(statement);
 				this.writeSwitchAsIfs(statement, false);
@@ -21958,7 +22029,7 @@ export class GenJava extends GenTyped
 		this.write(" = ");
 		let imp;
 		if ((imp = konst.value) instanceof FuImplicitEnumValue)
-			this.visitLiteralLong(BigInt(imp.value));
+			this.visitLiteralLong(BigInt(imp.value), FuPriority.PRIMARY);
 		else
 			konst.value.accept(this, FuPriority.ARGUMENT);
 		this.writeCharLine(59);
@@ -22451,20 +22522,20 @@ export class GenJsNoModule extends GenBase
 						case 69:
 							this.write(".toExponential(");
 							if (part.precision >= 0)
-								this.visitLiteralLong(BigInt(part.precision));
+								this.visitLiteralLong(BigInt(part.precision), FuPriority.ARGUMENT);
 							this.write(").toUpperCase()");
 							break;
 						case 101:
 							this.write(".toExponential(");
 							if (part.precision >= 0)
-								this.visitLiteralLong(BigInt(part.precision));
+								this.visitLiteralLong(BigInt(part.precision), FuPriority.ARGUMENT);
 							this.writeChar(41);
 							break;
 						case 70:
 						case 102:
 							this.write(".toFixed(");
 							if (part.precision >= 0)
-								this.visitLiteralLong(BigInt(part.precision));
+								this.visitLiteralLong(BigInt(part.precision), FuPriority.ARGUMENT);
 							this.writeChar(41);
 							break;
 						case 88:
@@ -22484,7 +22555,7 @@ export class GenJsNoModule extends GenBase
 							case 88:
 							case 120:
 								this.write(".padStart(");
-								this.visitLiteralLong(BigInt(part.precision));
+								this.visitLiteralLong(BigInt(part.precision), FuPriority.ARGUMENT);
 								this.write(", \"0\")");
 								break;
 							default:
@@ -22495,12 +22566,12 @@ export class GenJsNoModule extends GenBase
 				}
 				if (part.width > 0) {
 					this.write(".padStart(");
-					this.visitLiteralLong(BigInt(part.width));
+					this.visitLiteralLong(BigInt(part.width), FuPriority.ARGUMENT);
 					this.writeChar(41);
 				}
 				else if (part.width < 0) {
 					this.write(".padEnd(");
-					this.visitLiteralLong(BigInt(-part.width));
+					this.visitLiteralLong(BigInt(-part.width), FuPriority.ARGUMENT);
 					this.writeChar(41);
 				}
 			}
@@ -22523,7 +22594,10 @@ export class GenJsNoModule extends GenBase
 			else {
 				let konst;
 				if ((konst = symbol) instanceof FuConst) {
-					konst.value.accept(this, parent);
+					if (konst.value instanceof FuImplicitEnumValue)
+						this.writeUppercaseWithUnderscores(konst.name);
+					else
+						konst.value.accept(this, parent);
 					return;
 				}
 				else
@@ -23100,7 +23174,7 @@ export class GenJsNoModule extends GenBase
 			this.#writeNewRegex(args, 0);
 			break;
 		case FuId.REGEX_ESCAPE:
-			this.writePostfix(args[0], ".replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&')");
+			this.writeCall("RegExp.escape", args[0]);
 			break;
 		case FuId.REGEX_IS_MATCH_STR:
 			this.#writeNewRegex(args, 1);
@@ -23499,7 +23573,7 @@ export class GenJsNoModule extends GenBase
 		if (statement.isTypeMatching() || statement.hasWhen()) {
 			if (statement.cases.some(kase => FuSwitch.hasEarlyBreak(kase.body)) || FuSwitch.hasEarlyBreak(statement.defaultBody)) {
 				this.write("fuswitch");
-				this.visitLiteralLong(BigInt(this.switchesWithGoto.length));
+				this.visitLiteralLong(BigInt(this.switchesWithGoto.length), FuPriority.PRIMARY);
 				this.switchesWithGoto.push(statement);
 				this.write(": ");
 				this.openBlock();
@@ -23531,7 +23605,7 @@ export class GenJsNoModule extends GenBase
 		this.writeDoc(konst.documentation);
 		this.writeUppercaseWithUnderscores(konst.name);
 		this.write(" : ");
-		this.visitLiteralLong(BigInt(konst.value.intValue()));
+		this.visitLiteralLong(BigInt(konst.value.intValue()), FuPriority.ARGUMENT);
 	}
 
 	writeEnum(enu)
@@ -23750,7 +23824,7 @@ export class GenTs extends GenJs
 
 	visitEnumValue(konst, previous)
 	{
-		this.writeEnumValue(konst);
+		this.writeEnumValue(konst, this.#genFullCode);
 		this.writeCharLine(44);
 	}
 
@@ -23949,11 +24023,18 @@ export class GenTs extends GenJs
 	{
 		this.writeDoc(field.documentation);
 		this.#writeVisibility(field.visibility);
-		if (field.type.isFinal() && !field.isAssignableStorage())
-			this.write("readonly ");
-		this.writeTypeAndName(field);
-		if (this.#genFullCode)
-			this.writeVarInit(field);
+		if (field.value == null && !field.type.isFinal()) {
+			this.writeName(field);
+			this.write("!: ");
+			this.#writeType(field.type);
+		}
+		else {
+			if (field.type.isFinal() && !field.isAssignableStorage())
+				this.write("readonly ");
+			this.writeTypeAndName(field);
+			if (this.#genFullCode)
+				this.writeVarInit(field);
+		}
 		this.writeCharLine(59);
 	}
 
@@ -24599,7 +24680,7 @@ export class GenSwift extends GenPySwift
 			this.writeCamelCase(konst.inMethod.name);
 			this.writePascalCase(symbol.name);
 			if (konst.inMethodIndex > 0)
-				this.visitLiteralLong(BigInt(konst.inMethodIndex));
+				this.visitLiteralLong(BigInt(konst.inMethodIndex), FuPriority.PRIMARY);
 		}
 		else if (symbol instanceof FuVar || symbol instanceof FuMember)
 			this.#writeCamelCaseNotKeyword(symbol.name);
@@ -24807,12 +24888,12 @@ export class GenSwift extends GenPySwift
 		}
 	}
 
-	visitInterpolatedString(expr, parent)
+	#writeInterpolatedString(expr, newLine)
 	{
 		if (expr.parts.some(part => part.widthExpr != null || part.format != 32 || part.precision >= 0)) {
 			this.include("Foundation");
 			this.write("String(format: ");
-			this.writePrintf(expr, false);
+			this.writePrintf(expr, newLine);
 		}
 		else {
 			this.writeChar(34);
@@ -24823,8 +24904,15 @@ export class GenSwift extends GenPySwift
 				this.writeChar(41);
 			}
 			this.write(expr.suffix);
+			if (newLine)
+				this.write("\\n");
 			this.writeChar(34);
 		}
+	}
+
+	visitInterpolatedString(expr, parent)
+	{
+		this.#writeInterpolatedString(expr, false);
 	}
 
 	static #isIntIndexing(expr)
@@ -24881,6 +24969,14 @@ export class GenSwift extends GenPySwift
 	visitSymbolReference(expr, parent)
 	{
 		switch (expr.symbol.id) {
+		case FuId.CONSOLE_ERROR:
+			this.include("Foundation");
+			this.write("stderr");
+			break;
+		case FuId.CONSOLE_OUT:
+			this.include("Foundation");
+			this.write("stdout");
+			break;
 		case FuId.MATH_NA_N:
 			this.write("Float.nan");
 			break;
@@ -24920,25 +25016,12 @@ export class GenSwift extends GenPySwift
 
 	writeElementCoerced(type, value)
 	{
-		if (type.id == FuId.INT_TYPE && !GenSwift.#isIntIndexing(value))
-			this.writeCall("Int32", value);
-		else
+		if (type.id != FuId.INT_TYPE)
 			this.writeCoerced(type, value, FuPriority.ARGUMENT);
-	}
-
-	#isConsoleStreamWrite(obj)
-	{
-		if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_ERROR)) {
-			this.include("Foundation");
-			this.write("FileHandle.standardError.write(Data(");
-			return true;
-		}
-		if (GenSwift.isReferenceTo(obj, FuId.CONSOLE_OUT)) {
-			this.include("Foundation");
-			this.write("FileHandle.standardOutput.write(Data(");
-			return true;
-		}
-		return false;
+		else if (GenSwift.#isIntIndexing(value))
+			value.accept(this, FuPriority.ARGUMENT);
+		else
+			this.writeCall("Int32", value);
 	}
 
 	#writeToTextWriter(obj)
@@ -25094,7 +25177,7 @@ export class GenSwift extends GenPySwift
 				this.write("](repeating: ");
 				this.writeCoerced(array.getElementType(), args[0], FuPriority.ARGUMENT);
 				this.write(", count: ");
-				this.visitLiteralLong(BigInt(array.length));
+				this.visitLiteralLong(BigInt(array.length), FuPriority.ARGUMENT);
 				this.writeChar(41);
 			}
 			else {
@@ -25129,7 +25212,7 @@ export class GenSwift extends GenPySwift
 		case FuId.ARRAY_SORT_ALL:
 			this.writePostfix(obj, "[0..<");
 			let array3 = obj.type;
-			this.visitLiteralLong(BigInt(array3.length));
+			this.visitLiteralLong(BigInt(array3.length), FuPriority.PRIMARY);
 			this.write("].sort()");
 			break;
 		case FuId.ARRAY_SORT_PART:
@@ -25232,13 +25315,19 @@ export class GenSwift extends GenPySwift
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.writeChar(41);
 			break;
+		case FuId.TEXT_WRITER_FLUSH:
+			this.writeCall("fflush", obj);
+			break;
 		case FuId.TEXT_WRITER_WRITE:
-			if (this.#isConsoleStreamWrite(obj)) {
+			if (GenSwift.isConsoleStream(obj)) {
+				this.write("fputs(");
 				if (args[0].type instanceof FuStringType)
 					this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
 				else
 					this.writeCall("String", args[0]);
-				this.write(".utf8))");
+				this.write(", ");
+				obj.accept(this, FuPriority.ARGUMENT);
+				this.writeChar(41);
 			}
 			else {
 				if (args[0].type instanceof FuStringType) {
@@ -25256,9 +25345,12 @@ export class GenSwift extends GenPySwift
 			break;
 		case FuId.TEXT_WRITER_WRITE_CHAR:
 		case FuId.TEXT_WRITER_WRITE_CODE_POINT:
-			if (this.#isConsoleStreamWrite(obj)) {
+			if (GenSwift.isConsoleStream(obj)) {
+				this.write("fputs(String(");
 				this.#writeUnicodeScalar(args[0]);
-				this.write(".utf8))");
+				this.write("), ");
+				obj.accept(this, FuPriority.ARGUMENT);
+				this.writeChar(41);
 			}
 			else {
 				this.#writeUnicodeScalar(args[0]);
@@ -25267,15 +25359,31 @@ export class GenSwift extends GenPySwift
 			}
 			break;
 		case FuId.TEXT_WRITER_WRITE_LINE:
-			if (this.#isConsoleStreamWrite(obj)) {
+			if (GenSwift.isConsoleStream(obj)) {
 				if (args.length == 0)
-					this.write("[ 10 ]");
+					this.write("putc(10");
 				else {
-					this.write("\"\\(");
-					this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
-					this.write(")\\n\".utf8");
+					this.write("fputs(");
+					let literal;
+					if ((literal = args[0]) instanceof FuLiteralString) {
+						this.writeChar(34);
+						this.write(literal.value);
+						this.write("\\n\"");
+					}
+					else {
+						let interpolated;
+						if ((interpolated = args[0]) instanceof FuInterpolatedString)
+							this.#writeInterpolatedString(interpolated, true);
+						else {
+							this.write("\"\\(");
+							this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
+							this.write(")\\n\"");
+						}
+					}
 				}
-				this.write("))");
+				this.write(", ");
+				obj.accept(this, FuPriority.ARGUMENT);
+				this.writeChar(41);
 			}
 			else {
 				if (args.length == 0)
@@ -25474,7 +25582,7 @@ export class GenSwift extends GenPySwift
 			this.write("](repeating: ");
 			this.#writeDefaultValue(array.getElementType());
 			this.write(", count: ");
-			this.visitLiteralLong(BigInt(array.length));
+			this.visitLiteralLong(BigInt(array.length), FuPriority.ARGUMENT);
 			this.writeChar(41);
 		}
 	}
@@ -26017,7 +26125,7 @@ export class GenSwift extends GenPySwift
 				throw new Error();
 			}
 			this.write(", by: ");
-			this.visitLiteralLong(rangeStep);
+			this.visitLiteralLong(rangeStep, FuPriority.ARGUMENT);
 			this.writeChar(41);
 		}
 	}
@@ -26183,7 +26291,7 @@ export class GenSwift extends GenPySwift
 			this.write("[]");
 		else {
 			this.write("rawValue: ");
-			this.visitLiteralLong(BigInt(i));
+			this.visitLiteralLong(BigInt(i), FuPriority.ARGUMENT);
 		}
 		this.writeCharLine(41);
 	}
@@ -26225,7 +26333,7 @@ export class GenSwift extends GenPySwift
 						this.writeName(konst);
 						if (!(konst.value instanceof FuImplicitEnumValue)) {
 							this.write(" = ");
-							this.visitLiteralLong(BigInt(i));
+							this.visitLiteralLong(BigInt(i), FuPriority.ARGUMENT);
 						}
 						valueToConst[i] = konst;
 					}
@@ -26282,15 +26390,18 @@ export class GenSwift extends GenPySwift
 		if ((klass = field.type) instanceof FuClassType && klass.class.id != FuId.STRING_CLASS && !(klass instanceof FuOwningType))
 			this.write("unowned ");
 		this.writeVar(field);
-		if (field.value == null && (field.type instanceof FuNumericType || field.type instanceof FuEnum || field.type.id == FuId.STRING_STORAGE_TYPE)) {
-			this.write(" = ");
-			this.#writeDefaultValue(field.type);
+		if (field.value == null && !field.type.nullable) {
+			if (field.type instanceof FuNumericType || field.type instanceof FuEnum || field.type instanceof FuStringType) {
+				this.write(" = ");
+				this.#writeDefaultValue(field.type);
+			}
+			else if (field.type instanceof FuClassType) {
+				if (!field.type.isFinal())
+					this.writeChar(33);
+			}
 		}
-		else if (field.isAssignableStorage()) {
-			this.write(" = ");
-			this.writeName(field.type.asClassType().class);
-			this.write("()");
-		}
+		else if (field.isAssignableStorage())
+			this.writeChar(33);
 		this.writeNewLine();
 	}
 
@@ -27953,7 +28064,7 @@ export class GenPy extends GenPySwift
 	{
 		let literal;
 		if ((literal = limit) instanceof FuLiteralLong)
-			this.visitLiteralLong(literal.value + BigInt(increment));
+			this.visitLiteralLong(literal.value + BigInt(increment), FuPriority.ARGUMENT);
 		else {
 			limit.accept(this, FuPriority.ADD);
 			this.write(incrementString);
@@ -27983,7 +28094,7 @@ export class GenPy extends GenPySwift
 		}
 		if (rangeStep != 1) {
 			this.write(", ");
-			this.visitLiteralLong(rangeStep);
+			this.visitLiteralLong(rangeStep, FuPriority.ARGUMENT);
 		}
 		this.writeChar(41);
 	}
@@ -28121,7 +28232,7 @@ export class GenPy extends GenPySwift
 	{
 		this.writeUppercaseWithUnderscores(konst.name);
 		this.write(" = ");
-		this.visitLiteralLong(BigInt(konst.value.intValue()));
+		this.visitLiteralLong(BigInt(konst.value.intValue()), FuPriority.ARGUMENT);
 		this.writeNewLine();
 		this.writeDoc(konst.documentation);
 	}
