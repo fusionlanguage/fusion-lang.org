@@ -5538,6 +5538,23 @@ export class GenHost extends FuSemaHost
 
 export class FuConsoleHost extends GenHost
 {
+
+	static VERSION = "3.3.5";
+
+	static usage(app)
+	{
+		console.log(`Usage: ${app} [OPTIONS] -o FILE INPUT.fu`);
+		console.log("Options:");
+		console.log("-o FILE    Write to the specified file, extension determines language");
+		console.log("-n NAME    Specify C++/C# namespace, Java package or C name prefix");
+		console.log("-D NAME    Define conditional compilation symbol");
+		console.log("-r FILE.fu Read the specified source file but don't emit code for it");
+		console.log("-I DIR     Add directory to resource search path");
+		console.log("-l LANG    Set target language explicitly:");
+		console.log("           c, cpp, cs, d, java, js, py, swift, ts, d.ts, cl");
+		console.log("--help     Display this information");
+		console.log("--version  Display version information");
+	}
 	#errors = false;
 
 	hasErrors()
@@ -5554,6 +5571,56 @@ export class FuConsoleHost extends GenHost
 	{
 		this.#errors = true;
 		console.error(`${filename}(${line + 1}): ERROR: ${message}`);
+	}
+
+	emit(program, lang, namespace_, outputFile)
+	{
+		let gen;
+		switch (lang) {
+		case "c":
+			gen = new GenC();
+			break;
+		case "cpp":
+			gen = new GenCpp();
+			break;
+		case "cs":
+			gen = new GenCs();
+			break;
+		case "d":
+			gen = new GenD();
+			break;
+		case "java":
+			gen = new GenJava();
+			outputFile = this.toDirectory(outputFile);
+			break;
+		case "js":
+		case "mjs":
+			gen = new GenJs();
+			break;
+		case "py":
+			gen = new GenPy();
+			break;
+		case "swift":
+			gen = new GenSwift();
+			break;
+		case "ts":
+			let genTs = new GenTs();
+			genTs.withGenFullCode();
+			gen = genTs;
+			break;
+		case "d.ts":
+			gen = new GenTs();
+			break;
+		case "cl":
+			gen = new GenCl();
+			break;
+		default:
+			console.error(`fut: ERROR: Unknown language: ${lang}`);
+			this.setErrors(true);
+			return;
+		}
+		gen.setHost(this);
+		gen.writeProgram(program, outputFile, namespace_);
 	}
 }
 
@@ -5650,12 +5717,18 @@ export class FuSema
 
 	#coercePermanent(expr, type)
 	{
-		let ok = this.#coerce(expr, type);
-		if (ok && type.id == FuId.STRING_PTR_TYPE && expr.isNewString(true)) {
+		if (!this.#coerce(expr, type))
+			return false;
+		if (type.id == FuId.STRING_PTR_TYPE && expr.isNewString(true)) {
 			this.#reportError(expr, "New string must be assigned to 'string()'");
 			return false;
 		}
-		return ok;
+		let call;
+		if ((call = expr) instanceof FuCallExpr && call.method.symbol.id != FuId.LIST_LAST && expr.type instanceof FuStorageType && !(type instanceof FuStorageType)) {
+			this.#reportError(expr, `Returned object must be assigned to '${expr.type}'`);
+			return false;
+		}
+		return true;
 	}
 
 	#visitInterpolatedString(expr)
@@ -8610,13 +8683,18 @@ export class GenBase extends FuVisitor
 			throw new Error();
 	}
 
+	writePrintfPartFormat(part)
+	{
+		this.writePrintfWidth(part);
+		this.writeChar(GenBase.#getPrintfFormat(part.argument.type, part.format));
+	}
+
 	writePrintfFormat(expr)
 	{
 		for (const part of expr.parts) {
 			this.writeDoubling(part.prefix, 37);
 			this.writeChar(37);
-			this.writePrintfWidth(part);
-			this.writeChar(GenBase.#getPrintfFormat(part.argument.type, part.format));
+			this.writePrintfPartFormat(part);
 		}
 		this.writeDoubling(expr.suffix, 37);
 	}
@@ -9437,6 +9515,17 @@ export class GenBase extends FuVisitor
 		this.writeIndexing(obj, args[0]);
 		this.write(" = ");
 		this.writeNewStorage(obj.type.asClassType().getValueType());
+	}
+
+	writeContains(haystack, needle, parent)
+	{
+		if (parent > FuPriority.AND)
+			this.writeChar(40);
+		needle.accept(this, FuPriority.REL);
+		this.write(" in ");
+		haystack.accept(this, FuPriority.PRIMARY);
+		if (parent > FuPriority.AND)
+			this.writeChar(41);
 	}
 
 	writeClampAsMinMax(args)
@@ -12082,19 +12171,32 @@ export class GenC extends GenCCpp
 		}
 	}
 
-	#writeGPointerCast(type, expr)
+	#writeNumberToGPointerCast(type, expr)
 	{
-		if (type.id == FuId.N_INT_TYPE)
+		switch (type.id) {
+		case FuId.N_INT_TYPE:
+		case FuId.LONG_TYPE:
 			this.writeCall("GSIZE_TO_POINTER", expr);
-		else if ((type instanceof FuIntegerType && type.id != FuId.LONG_TYPE) || type instanceof FuEnum)
-			this.writeCall("GINT_TO_POINTER", expr);
-		else if (type instanceof FuFloatingType) {
+			break;
+		case FuId.FLOAT_TYPE:
+		case FuId.DOUBLE_TYPE:
 			this.write("(union { ");
 			this.write(type.name);
 			this.write(" f; gpointer p; }) { ");
 			expr.accept(this, FuPriority.ARGUMENT);
 			this.write(" }.p");
+			break;
+		default:
+			console.assert(type instanceof FuIntegerType || type instanceof FuEnum);
+			this.writeCall("GINT_TO_POINTER", expr);
+			break;
 		}
+	}
+
+	#writeGPointerCast(type, expr)
+	{
+		if (type instanceof FuNumericType || type instanceof FuEnum)
+			this.#writeNumberToGPointerCast(type, expr);
 		else if (type.id == FuId.STRING_PTR_TYPE && expr.type.id == FuId.STRING_PTR_TYPE) {
 			this.write("(gpointer) ");
 			expr.accept(this, FuPriority.PRIMARY);
@@ -12107,18 +12209,6 @@ export class GenC extends GenCCpp
 	{
 		this.writeChar(38);
 		expr.accept(this, FuPriority.PRIMARY);
-	}
-
-	#writeGConstPointerCast(expr)
-	{
-		if (expr.type instanceof FuStorageType)
-			this.#writeAddressOf(expr);
-		else if (expr.type instanceof FuClassType)
-			expr.accept(this, FuPriority.ARGUMENT);
-		else {
-			this.write("(gconstpointer) ");
-			expr.accept(this, FuPriority.PRIMARY);
-		}
 	}
 
 	#writeGPointerToInt(type)
@@ -12156,6 +12246,21 @@ export class GenC extends GenCCpp
 		this.writeChar(41);
 		if (parenthesis)
 			this.writeChar(41);
+	}
+
+	#startDictionaryLookup(function_, obj, key)
+	{
+		this.write(function_);
+		this.writeChar(40);
+		obj.accept(this, FuPriority.ARGUMENT);
+		this.write(", ");
+		let type = obj.type.asClassType().getKeyType();
+		if (type instanceof FuNumericType || type instanceof FuEnum)
+			this.#writeNumberToGPointerCast(type, key);
+		else if (key.type instanceof FuStorageType)
+			this.#writeAddressOf(key);
+		else
+			key.accept(this, FuPriority.ARGUMENT);
 	}
 
 	#startDictionaryInsert(dict, key)
@@ -12671,16 +12776,6 @@ export class GenC extends GenCCpp
 		this.visitLiteralLong(BigInt(id), FuPriority.PRIMARY);
 		this.writeChar(41);
 		this.currentTemporaries[id] = elementType;
-	}
-
-	#writeDictionaryLookup(obj, function_, key)
-	{
-		this.write(function_);
-		this.writeChar(40);
-		obj.accept(this, FuPriority.ARGUMENT);
-		this.write(", ");
-		this.#writeGConstPointerCast(key);
-		this.writeChar(41);
 	}
 
 	#writeArgsAndRightParenthesis(method, args)
@@ -13297,11 +13392,13 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.HASH_SET_CONTAINS:
 		case FuId.DICTIONARY_CONTAINS_KEY:
-			this.#writeDictionaryLookup(obj, "g_hash_table_contains", args[0]);
+			this.#startDictionaryLookup("g_hash_table_contains", obj, args[0]);
+			this.writeChar(41);
 			break;
 		case FuId.HASH_SET_REMOVE:
 		case FuId.DICTIONARY_REMOVE:
-			this.#writeDictionaryLookup(obj, "g_hash_table_remove", args[0]);
+			this.#startDictionaryLookup("g_hash_table_remove", obj, args[0]);
+			this.writeChar(41);
 			break;
 		case FuId.SORTED_SET_ADD:
 			this.write("g_tree_insert(");
@@ -13343,15 +13440,13 @@ export class GenC extends GenCCpp
 			break;
 		case FuId.SORTED_SET_CONTAINS:
 		case FuId.SORTED_DICTIONARY_CONTAINS_KEY:
-			this.write("g_tree_lookup_extended(");
-			obj.accept(this, FuPriority.ARGUMENT);
-			this.write(", ");
-			this.#writeGConstPointerCast(args[0]);
+			this.#startDictionaryLookup("g_tree_lookup_extended", obj, args[0]);
 			this.write(", NULL, NULL)");
 			break;
 		case FuId.SORTED_SET_REMOVE:
 		case FuId.SORTED_DICTIONARY_REMOVE:
-			this.#writeDictionaryLookup(obj, "g_tree_remove", args[0]);
+			this.#startDictionaryLookup("g_tree_remove", obj, args[0]);
+			this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_FLUSH:
 			this.include("stdio.h");
@@ -13608,15 +13703,15 @@ export class GenC extends GenCCpp
 		let valueType = expr.left.type.asClassType().getValueType();
 		if (valueType instanceof FuIntegerType && valueType.id != FuId.LONG_TYPE) {
 			this.#writeGPointerToInt(valueType);
-			this.#writeDictionaryLookup(expr.left, function_, expr.right);
-			this.writeChar(41);
+			this.#startDictionaryLookup(function_, expr.left, expr.right);
+			this.write("))");
 		}
 		else if (valueType instanceof FuFloatingType) {
 			this.write("(union { gpointer p; ");
 			this.write(valueType.name);
 			this.write(" f; }) { ");
-			this.#writeDictionaryLookup(expr.left, function_, expr.right);
-			this.write(" }.f");
+			this.#startDictionaryLookup(function_, expr.left, expr.right);
+			this.write(") }.f");
 		}
 		else {
 			if (parent > FuPriority.MUL)
@@ -13631,7 +13726,8 @@ export class GenC extends GenCCpp
 					this.write("GPOINTER_TO_INT(");
 				}
 			}
-			this.#writeDictionaryLookup(expr.left, function_, expr.right);
+			this.#startDictionaryLookup(function_, expr.left, expr.right);
+			this.writeChar(41);
 			if (parent > FuPriority.MUL || valueType instanceof FuEnum)
 				this.writeChar(41);
 		}
@@ -16011,7 +16107,7 @@ export class GenCpp extends GenCCpp
 				break;
 			}
 		}
-		if (GenCpp.#isClassPtr(expr.left.type)) {
+		if (GenCpp.#isCppPtr(expr.left)) {
 			this.write("(*");
 			expr.left.accept(this, FuPriority.PRIMARY);
 			this.writeChar(41);
@@ -16580,13 +16676,13 @@ export class GenCpp extends GenCCpp
 			break;
 		case FuId.DICTIONARY_CONTAINS_KEY:
 		case FuId.SORTED_DICTIONARY_CONTAINS_KEY:
-			if (parent > FuPriority.EQUALITY)
+			if (parent > FuPriority.AND)
 				this.writeChar(40);
 			this.#startMethodCall(obj);
 			this.write("count(");
 			this.writeStronglyCoerced(obj.type.asClassType().getKeyType(), args[0]);
 			this.write(") != 0");
-			if (parent > FuPriority.EQUALITY)
+			if (parent > FuPriority.AND)
 				this.writeChar(41);
 			break;
 		case FuId.TEXT_WRITER_WRITE:
@@ -18143,9 +18239,15 @@ export class GenCs extends GenTyped
 
 	writeStaticCast(type, expr)
 	{
-		super.writeStaticCast(type, expr);
-		if (expr.type.nullable && !type.nullable)
-			this.writeChar(33);
+		let unary;
+		let literal;
+		if ((unary = expr) instanceof FuPrefixExpr && unary.op == FuToken.TILDE && (literal = unary.inner) instanceof FuLiteralLong && (type.id == FuId.BYTE_RANGE || type.id == FuId.U_SHORT_RANGE))
+			this.visitLiteralLong(literal.value ^ (type.id == FuId.BYTE_RANGE ? 255n : 65535n), FuPriority.PRIMARY);
+		else {
+			super.writeStaticCast(type, expr);
+			if (expr.type.nullable && !type.nullable)
+				this.writeChar(33);
+		}
 	}
 
 	writeCoercedInternal(type, expr, parent)
@@ -19977,11 +20079,7 @@ export class GenD extends GenCCppD
 		case FuId.HASH_SET_CONTAINS:
 		case FuId.SORTED_SET_CONTAINS:
 		case FuId.DICTIONARY_CONTAINS_KEY:
-			this.writeChar(40);
-			args[0].accept(this, FuPriority.REL);
-			this.write(" in ");
-			obj.accept(this, FuPriority.PRIMARY);
-			this.writeChar(41);
+			this.writeContains(obj, args[0], parent);
 			break;
 		case FuId.SORTED_SET_ADD:
 			this.writePostfix(obj, ".insert(");
@@ -20002,12 +20100,16 @@ export class GenD extends GenCCppD
 			this.#writeInsertedArg(obj.type.asClassType().getValueType(), args, 1);
 			break;
 		case FuId.SORTED_DICTIONARY_CONTAINS_KEY:
+			if (parent > FuPriority.AND)
+				this.writeChar(40);
 			this.write("tuple(");
 			args[0].accept(this, FuPriority.ARGUMENT);
 			this.write(", ");
 			this.#writeStaticInitializer(obj.type.asClassType().getValueType());
 			this.write(") in ");
 			this.#writeClassReference(obj);
+			if (parent > FuPriority.AND)
+				this.writeChar(41);
 			break;
 		case FuId.SORTED_DICTIONARY_REMOVE:
 			this.#writeClassReference(obj);
@@ -21100,6 +21202,12 @@ export class GenJava extends GenTyped
 		literal.accept(this, FuPriority.PRIMARY);
 	}
 
+	static #isCollectionIndexing(expr)
+	{
+		let binary;
+		return (binary = expr) instanceof FuBinaryExpr && binary.op == FuToken.LEFT_BRACKET && !binary.left.type.isArray() && !(binary.left.type instanceof FuStringType);
+	}
+
 	writeEqual(left, right, parent, not)
 	{
 		if ((left.type instanceof FuStringType && right.type.id != FuId.NULL_TYPE) || (right.type instanceof FuStringType && left.type.id != FuId.NULL_TYPE)) {
@@ -21119,8 +21227,11 @@ export class GenJava extends GenTyped
 				if (parent > FuPriority.EQUALITY)
 					this.writeChar(41);
 			}
-			else
+			else {
+				if (left.type instanceof FuNumericType && GenJava.#isCollectionIndexing(left) && GenJava.#isCollectionIndexing(right))
+					this.writeStaticCastType(left.type);
 				super.writeEqual(left, right, parent, not);
+			}
 		}
 	}
 
@@ -22131,7 +22242,7 @@ export class GenJava extends GenTyped
 			this.write(", ");
 			param = param.nextVar();
 		}
-		param.value.accept(this, FuPriority.ARGUMENT);
+		this.writeCoerced(param.type, param.value, FuPriority.ARGUMENT);
 		this.writeLine(");");
 		this.closeBlock();
 	}
@@ -24542,6 +24653,7 @@ export class GenSwift extends GenPySwift
 	#arrayRef;
 	#stringCharAt;
 	#stringIndexOf;
+	#stringPad;
 	#stringSubstring;
 	#varsAtIndent = [];
 	#varBytesAtIndent = [];
@@ -24888,9 +25000,37 @@ export class GenSwift extends GenPySwift
 		}
 	}
 
+	writePrintfPartFormat(part)
+	{
+		if (part.argument.type instanceof FuClassType)
+			this.writeChar(64);
+		else
+			super.writePrintfPartFormat(part);
+	}
+
+	#writeSwiftInterpolatedStringArg(part, substringOk)
+	{
+		if (part.widthExpr != null && part.argument.type instanceof FuClassType) {
+			this.include("Foundation");
+			this.#stringPad = true;
+			this.write("fuStringPad(");
+			this.#writeUnwrapped(part.argument, FuPriority.ARGUMENT, substringOk);
+			this.write(", ");
+			part.widthExpr.accept(this, FuPriority.ARGUMENT);
+			this.writeChar(41);
+		}
+		else
+			this.#writeUnwrapped(part.argument, FuPriority.ARGUMENT, substringOk);
+	}
+
+	writeInterpolatedStringArg(part)
+	{
+		this.#writeSwiftInterpolatedStringArg(part, false);
+	}
+
 	#writeInterpolatedString(expr, newLine)
 	{
-		if (expr.parts.some(part => part.widthExpr != null || part.format != 32 || part.precision >= 0)) {
+		if (expr.parts.some(part => part.argument.type instanceof FuNumericType && (part.widthExpr != null || part.format != 32 || part.precision >= 0))) {
 			this.include("Foundation");
 			this.write("String(format: ");
 			this.writePrintf(expr, newLine);
@@ -24900,7 +25040,7 @@ export class GenSwift extends GenPySwift
 			for (const part of expr.parts) {
 				this.write(part.prefix);
 				this.write("\\(");
-				this.#writeUnwrapped(part.argument, FuPriority.ARGUMENT, true);
+				this.#writeSwiftInterpolatedStringArg(part, true);
 				this.writeChar(41);
 			}
 			this.write(expr.suffix);
@@ -25062,13 +25202,7 @@ export class GenSwift extends GenPySwift
 	{
 		switch (method.id) {
 		case FuId.NONE:
-		case FuId.ARRAY_CONTAINS:
-		case FuId.LIST_CONTAINS:
 		case FuId.LIST_SORT_ALL:
-		case FuId.HASH_SET_CONTAINS:
-		case FuId.HASH_SET_REMOVE:
-		case FuId.SORTED_SET_CONTAINS:
-		case FuId.SORTED_SET_REMOVE:
 			if (obj == null) {
 				if (method.isStatic()) {
 					this.writeName(this.currentMethod.parent);
@@ -25159,6 +25293,14 @@ export class GenSwift extends GenPySwift
 		case FuId.STRING_TO_UPPER:
 			this.writePostfix(obj, ".uppercased()");
 			break;
+		case FuId.ARRAY_CONTAINS:
+		case FuId.LIST_CONTAINS:
+		case FuId.HASH_SET_CONTAINS:
+		case FuId.SORTED_SET_CONTAINS:
+			this.writePostfix(obj, ".contains(");
+			this.writeElementCoerced(obj.type.asClassType().getElementType(), args[0]);
+			this.writeChar(41);
+			break;
 		case FuId.ARRAY_COPY_TO:
 		case FuId.LIST_COPY_TO:
 			this.#openIndexing(args[1]);
@@ -25175,7 +25317,7 @@ export class GenSwift extends GenPySwift
 				this.write(" = [");
 				this.#writeType(array.getElementType());
 				this.write("](repeating: ");
-				this.writeCoerced(array.getElementType(), args[0], FuPriority.ARGUMENT);
+				this.writeElementCoerced(array.getElementType(), args[0]);
 				this.write(", count: ");
 				this.visitLiteralLong(BigInt(array.length), FuPriority.ARGUMENT);
 				this.writeChar(41);
@@ -25192,7 +25334,7 @@ export class GenSwift extends GenPySwift
 				this.#openIndexing(obj);
 				this.#writeRange(args[1], args[2]);
 				this.write("] = ArraySlice(repeating: ");
-				this.writeCoerced(array2.getElementType(), args[0], FuPriority.ARGUMENT);
+				this.writeElementCoerced(array2.getElementType(), args[0]);
 				this.write(", count: ");
 				this.writeCoerced(this.#system.intType, args[2], FuPriority.ARGUMENT);
 				this.writeChar(41);
@@ -25252,7 +25394,7 @@ export class GenSwift extends GenPySwift
 			if (parent > FuPriority.REL)
 				this.writeChar(40);
 			this.writePostfix(obj, ".firstIndex(of: ");
-			args[0].accept(this, FuPriority.ARGUMENT);
+			this.writeElementCoerced(obj.type.asClassType().getElementType(), args[0]);
 			this.write(") ?? -1");
 			if (parent > FuPriority.REL)
 				this.writeChar(41);
@@ -25263,7 +25405,7 @@ export class GenSwift extends GenPySwift
 			if (args.length == 1)
 				this.writeNewStorage(elementType);
 			else
-				this.writeCoerced(elementType, args[1], FuPriority.ARGUMENT);
+				this.writeElementCoerced(elementType, args[1]);
 			this.write(", at: ");
 			this.writeCoerced(this.#system.intType, args[0], FuPriority.ARGUMENT);
 			this.writeChar(41);
@@ -25294,7 +25436,13 @@ export class GenSwift extends GenPySwift
 		case FuId.HASH_SET_ADD:
 		case FuId.SORTED_SET_ADD:
 			this.writePostfix(obj, ".insert(");
-			this.writeCoerced(obj.type.asClassType().getElementType(), args[0], FuPriority.ARGUMENT);
+			this.writeElementCoerced(obj.type.asClassType().getElementType(), args[0]);
+			this.writeChar(41);
+			break;
+		case FuId.HASH_SET_REMOVE:
+		case FuId.SORTED_SET_REMOVE:
+			this.writePostfix(obj, ".remove(");
+			this.writeElementCoerced(obj.type.asClassType().getElementType(), args[0]);
 			this.writeChar(41);
 			break;
 		case FuId.DICTIONARY_ADD:
@@ -25302,11 +25450,11 @@ export class GenSwift extends GenPySwift
 			break;
 		case FuId.DICTIONARY_CONTAINS_KEY:
 		case FuId.SORTED_DICTIONARY_CONTAINS_KEY:
-			if (parent > FuPriority.EQUALITY)
+			if (parent > FuPriority.AND)
 				this.writeChar(40);
 			this.writeIndexing(obj, args[0]);
 			this.write(" != nil");
-			if (parent > FuPriority.EQUALITY)
+			if (parent > FuPriority.AND)
 				this.writeChar(41);
 			break;
 		case FuId.DICTIONARY_REMOVE:
@@ -25730,11 +25878,8 @@ export class GenSwift extends GenPySwift
 		if (GenSwift.#isIntIndexing(expr.left)) {
 			if (GenSwift.#isIntIndexing(right))
 				right.accept(this, FuPriority.ARGUMENT);
-			else {
-				this.write("Int32(");
-				right.accept(this, FuPriority.ARGUMENT);
-				this.writeChar(41);
-			}
+			else
+				this.writeCall("Int32", right);
 		}
 		else {
 			let leftBinary;
@@ -26601,6 +26746,15 @@ export class GenSwift extends GenPySwift
 			this.writeLine("return haystack.distance(from: haystack.startIndex, to: index.lowerBound)");
 			this.closeBlock();
 		}
+		if (this.#stringPad) {
+			this.writeNewLine();
+			this.writeLine("fileprivate func fuStringPad(_ s: String, _ width: Int) -> String");
+			this.openBlock();
+			this.writeLine("return s.count >= abs(width) ? s");
+			this.writeLine("\t: width < 0 ? s.padding(toLength: -width, withPad: \" \", startingAt: 0)");
+			this.writeLine("\t: String(repeating: \" \", count: width - s.count) + s");
+			this.closeBlock();
+		}
 		if (this.#stringSubstring) {
 			this.writeNewLine();
 			this.writeLine("fileprivate func fuStringSubstring(_ s: String, _ offset: Int) -> Substring");
@@ -26650,6 +26804,7 @@ export class GenSwift extends GenPySwift
 		this.#arrayRef = false;
 		this.#stringCharAt = false;
 		this.#stringIndexOf = false;
+		this.#stringPad = false;
 		this.#stringSubstring = false;
 		this.openStringWriter();
 		this.writeTypes(program);
@@ -27413,13 +27568,6 @@ export class GenPy extends GenPySwift
 		}
 	}
 
-	#writeContains(haystack, needle)
-	{
-		needle.accept(this, FuPriority.REL);
-		this.write(" in ");
-		haystack.accept(this, FuPriority.REL);
-	}
-
 	#writeSlice(startIndex, length)
 	{
 		this.writeChar(91);
@@ -27552,7 +27700,7 @@ export class GenPy extends GenPySwift
 		case FuId.DICTIONARY_CONTAINS_KEY:
 		case FuId.SORTED_DICTIONARY_CONTAINS_KEY:
 		case FuId.ORDERED_DICTIONARY_CONTAINS_KEY:
-			this.#writeContains(obj, args[0]);
+			this.writeContains(obj, args[0], parent);
 			break;
 		case FuId.STRING_ENDS_WITH:
 			this.writeMethodCall(obj, "endswith", args[0]);
@@ -27663,7 +27811,7 @@ export class GenPy extends GenPySwift
 				this.writeChar(40);
 			this.writeMethodCall(obj, "index", args[0]);
 			this.write(" if ");
-			this.#writeContains(obj, args[0]);
+			this.writeContains(obj, args[0], FuPriority.ARGUMENT);
 			this.write(" else -1");
 			if (parent > FuPriority.SELECT)
 				this.writeChar(41);
