@@ -466,7 +466,7 @@ export class FuLexer
 					this.readChar();
 					this.stringValue = new TextDecoder().decode(this.input.subarray(offset, offset + endOffset - offset));
 					if (interpolated)
-						this.stringValue = this.stringValue.replaceAll("{{", "{");
+						this.stringValue = this.stringValue.replaceAll("{{", "{").replaceAll("}}", "}");
 				}
 				return FuToken.LITERAL_STRING;
 			case 123:
@@ -476,7 +476,7 @@ export class FuLexer
 					if (this.#eatChar(123))
 						break;
 					if (!this.#skippingUnmet) {
-						this.stringValue = new TextDecoder().decode(this.input.subarray(offset, offset + endOffset - offset)).replaceAll("{{", "{");
+						this.stringValue = new TextDecoder().decode(this.input.subarray(offset, offset + endOffset - offset)).replaceAll("{{", "{").replaceAll("}}", "}");
 						return FuToken.INTERPOLATED_STRING;
 					}
 					for (;;) {
@@ -491,6 +491,11 @@ export class FuLexer
 				}
 				else
 					this.readChar();
+				break;
+			case 125:
+				this.readChar();
+				if (interpolated && !this.#eatChar(125))
+					this.reportError("'}' must be escaped by doubling");
 				break;
 			default:
 				this.#readCharLiteral();
@@ -1704,11 +1709,6 @@ export class FuLiteral extends FuExpr
 	{
 		return true;
 	}
-
-	getLiteralString()
-	{
-		throw new Error();
-	}
 }
 
 class FuLiteralNull extends FuLiteral
@@ -1812,11 +1812,6 @@ class FuLiteralLong extends FuLiteral
 		visitor.visitLiteralLong(this.value, parent);
 	}
 
-	getLiteralString()
-	{
-		return `${this.value}`;
-	}
-
 	toString()
 	{
 		return `${this.value}`;
@@ -1840,6 +1835,25 @@ class FuLiteralChar extends FuLiteralLong
 	{
 		visitor.visitLiteralChar(Number(this.value));
 	}
+
+	toString()
+	{
+		let c = Number(this.value);
+		switch (c) {
+		case 10:
+			return "'\\n'";
+		case 13:
+			return "'\\r'";
+		case 9:
+			return "'\\t'";
+		case 92:
+			return "'\\\\'";
+		case 39:
+			return "'\\''";
+		default:
+			return `'${String.fromCodePoint(c)}'`;
+		}
+	}
 }
 
 class FuLiteralDouble extends FuLiteral
@@ -1854,11 +1868,6 @@ class FuLiteralDouble extends FuLiteral
 	accept(visitor, parent)
 	{
 		visitor.visitLiteralDouble(this.value);
-	}
-
-	getLiteralString()
-	{
-		return `${this.value}`;
 	}
 
 	toString()
@@ -1884,11 +1893,6 @@ class FuLiteralString extends FuLiteral
 	accept(visitor, parent)
 	{
 		visitor.visitLiteralString(this.value);
-	}
-
-	getLiteralString()
-	{
-		return this.value;
 	}
 
 	toString()
@@ -1989,6 +1993,31 @@ export class FuInterpolatedString extends FuExpr
 	isToString(format)
 	{
 		return this.suffix.length == 0 && this.parts.length == 1 && this.parts[0].prefix.length == 0 && this.parts[0].widthExpr == null && (this.parts[0].format | 32) == format;
+	}
+
+	toString()
+	{
+		const result = new StringWriter();
+		result.write("$\"");
+		for (const part of this.parts) {
+			result.write(part.prefix.replaceAll("{", "{{").replaceAll("}", "}}"));
+			result.write(String.fromCharCode(123));
+			result.write(String(part.argument));
+			if (part.widthExpr != null) {
+				result.write(String.fromCharCode(44));
+				result.write(String(part.widthExpr));
+			}
+			if (part.format != 32) {
+				result.write(String.fromCharCode(58));
+				result.write(String.fromCharCode(part.format));
+				if (part.precision >= 0)
+					result.write(String(part.precision));
+			}
+			result.write(String.fromCharCode(125));
+		}
+		result.write(this.suffix.replaceAll("{", "{{").replaceAll("}", "}}"));
+		result.write(String.fromCharCode(34));
+		return result.toString();
 	}
 }
 
@@ -5562,7 +5591,7 @@ export class GenHost extends FuSemaHost
 export class FuConsoleHost extends GenHost
 {
 
-	static VERSION = "3.3.6";
+	static VERSION = "3.3.7";
 
 	static usage(app)
 	{
@@ -5885,17 +5914,13 @@ export class FuSema
 					this.#reportError(expr, `Cannot use instance member '${expr.name}' from static context`);
 			}
 			let symbol;
-			if ((symbol = resolved) instanceof FuSymbolReference) {
-				let v;
-				if ((v = symbol.symbol) instanceof FuVar) {
-					let loop;
-					if ((loop = v.parent) instanceof FuFor)
-						loop.isIndVarUsed = true;
-					else if (this.#currentPureArguments.hasOwnProperty(v))
-						return this.#currentPureArguments[v];
-				}
-				else if (symbol.symbol.id == FuId.REGEX_OPTIONS_ENUM)
-					this.#host.program.regexOptionsEnum = true;
+			let v;
+			if ((symbol = resolved) instanceof FuSymbolReference && (v = symbol.symbol) instanceof FuVar) {
+				let loop;
+				if ((loop = v.parent) instanceof FuFor)
+					loop.isIndVarUsed = true;
+				else if (this.#currentPureArguments.hasOwnProperty(v))
+					return this.#currentPureArguments[v];
 			}
 			return resolved;
 		}
@@ -6293,8 +6318,8 @@ export class FuSema
 			return interpolated;
 		let result = Object.assign(new FuInterpolatedString(), { loc: expr.loc, type: this.#host.program.system.stringStorageType });
 		let literal;
-		if ((literal = expr) instanceof FuLiteral)
-			result.suffix = literal.getLiteralString();
+		if ((literal = expr) instanceof FuLiteralString)
+			result.suffix = literal.value;
 		else {
 			result.addPart("", expr);
 			result.suffix = "";
@@ -6648,8 +6673,8 @@ export class FuSema
 				this.#coerce(right, this.#host.program.system.stringPtrType);
 				let leftLiteral;
 				let rightLiteral;
-				if ((leftLiteral = left) instanceof FuLiteral && (rightLiteral = right) instanceof FuLiteral)
-					return this.#host.program.system.newLiteralString(leftLiteral.getLiteralString() + rightLiteral.getLiteralString(), expr.loc);
+				if ((leftLiteral = left) instanceof FuLiteralString && (rightLiteral = right) instanceof FuLiteralString)
+					return this.#host.program.system.newLiteralString(leftLiteral.value + rightLiteral.value, expr.loc);
 				if (left instanceof FuInterpolatedString || right instanceof FuInterpolatedString)
 					return this.#concatenate(this.#toInterpolatedString(left), this.#toInterpolatedString(right));
 				type = this.#host.program.system.stringStorageType;
@@ -7352,6 +7377,8 @@ export class FuSema
 					type = this.#host.program.system.stringNullablePtrType;
 					nullable = false;
 				}
+				else if (type.id == FuId.REGEX_OPTIONS_ENUM)
+					this.#host.program.regexOptionsEnum = true;
 				return this.#expectNoPtrModifier(expr, ptrModifier, nullable) ? type : this.#poison;
 			}
 			return this.#poisonError(expr, `Type '${symbol.name}' not found`);
@@ -8660,6 +8687,15 @@ export class GenBase extends FuVisitor
 		}
 	}
 
+	writeDoublingBraces(s)
+	{
+		for (const c of s) {
+			if (c.codePointAt(0) == 123 || c.codePointAt(0) == 125)
+				this.writeChar(c.codePointAt(0));
+			this.writeChar(c.codePointAt(0));
+		}
+	}
+
 	writePrintfWidth(part)
 	{
 		if (part.widthExpr != null)
@@ -9556,6 +9592,38 @@ export class GenBase extends FuVisitor
 		this.write("), ");
 		args[2].accept(this, FuPriority.ARGUMENT);
 		this.writeChar(41);
+	}
+
+	writeRegexLiteral(s)
+	{
+		this.writeChar(47);
+		let escaped = false;
+		for (const c of s) {
+			switch (c.codePointAt(0)) {
+			case 92:
+				if (!escaped) {
+					escaped = true;
+					continue;
+				}
+				escaped = false;
+				break;
+			case 34:
+			case 39:
+				escaped = false;
+				break;
+			case 47:
+				escaped = true;
+				break;
+			default:
+				break;
+			}
+			if (escaped) {
+				this.writeChar(92);
+				escaped = false;
+			}
+			this.writeChar(c.codePointAt(0));
+		}
+		this.writeChar(47);
 	}
 
 	getRegexOptions(args)
@@ -15684,16 +15752,20 @@ export class GenCpp extends GenCCpp
 		this.writeMemberOp(obj, null);
 	}
 
-	writeInterpolatedStringArg(part)
+	#writeToString(expr, parent)
 	{
-		let expr = part.argument;
 		let klass;
 		if ((klass = expr.type) instanceof FuClassType && klass.class.id != FuId.STRING_CLASS) {
 			this.#startMethodCall(expr);
 			this.write("toString()");
 		}
 		else
-			super.writeInterpolatedStringArg(part);
+			expr.accept(this, parent);
+	}
+
+	writeInterpolatedStringArg(part)
+	{
+		this.#writeToString(part.argument, FuPriority.ARGUMENT);
 	}
 
 	visitInterpolatedString(expr, parent)
@@ -15701,11 +15773,11 @@ export class GenCpp extends GenCCpp
 		this.include("format");
 		this.write("std::format(\"");
 		for (const part of expr.parts) {
-			this.writeDoubling(part.prefix, 123);
+			this.writeDoublingBraces(part.prefix);
 			this.writeChar(123);
 			this.writePyFormat(part);
 		}
-		this.writeDoubling(expr.suffix, 123);
+		this.writeDoublingBraces(expr.suffix);
 		this.writeChar(34);
 		this.writeInterpolatedStringArgs(expr);
 		this.writeChar(41);
@@ -16271,22 +16343,13 @@ export class GenCpp extends GenCCpp
 		this.writeChar(41);
 	}
 
-	#writeRegex(args, argIndex)
-	{
-		this.include("regex");
-		this.write("std::regex(");
-		args[argIndex].accept(this, FuPriority.ARGUMENT);
-		this.writeRegexOptions(args, ", std::regex::ECMAScript | ", " | ", "", "std::regex::icase", "std::regex::multiline", "std::regex::NOT_SUPPORTED_singleline");
-		this.writeChar(41);
-	}
-
 	#writeWriteArgument(expr)
 	{
 		this.write(" << ");
 		if ((expr.isIndexing() && (expr.type.id == FuId.BYTE_RANGE || expr.type.id == FuId.S_BYTE_RANGE)) || expr instanceof FuLiteralChar)
 			this.writeCall("static_cast<int>", expr);
 		else
-			expr.accept(this, FuPriority.MUL);
+			this.#writeToString(expr, FuPriority.MUL);
 	}
 
 	#writeWrite(args, newLine)
@@ -16298,7 +16361,13 @@ export class GenCpp extends GenCCpp
 				let uppercase = false;
 				let hex = false;
 				let flt = 71;
+				let left = false;
+				let precision = 6;
 				for (const part of interpolated.parts) {
+					if (part.prefix.length > 0) {
+						this.write(" << ");
+						this.visitLiteralString(part.prefix);
+					}
 					switch (part.format) {
 					case 69:
 					case 71:
@@ -16352,9 +16421,31 @@ export class GenCpp extends GenCCpp
 						}
 						break;
 					}
-					if (part.prefix.length > 0) {
-						this.write(" << ");
-						this.visitLiteralString(part.prefix);
+					if (part.widthExpr != null) {
+						let w = part.width;
+						if (w < 0) {
+							w = -w;
+							if (!left) {
+								left = true;
+								this.write(" << std::left");
+							}
+						}
+						else if (left) {
+							left = false;
+							this.write(" << std::right");
+						}
+						this.include("iomanip");
+						this.write(" << std::setw(");
+						this.visitLiteralLong(BigInt(w), FuPriority.ARGUMENT);
+						this.writeChar(41);
+					}
+					let newPrecision = part.precision >= 0 ? part.precision : 6;
+					if (newPrecision != precision) {
+						precision = newPrecision;
+						this.include("iomanip");
+						this.write(" << std::setprecision(");
+						this.visitLiteralLong(BigInt(precision), FuPriority.ARGUMENT);
+						this.writeChar(41);
 					}
 					this.#writeWriteArgument(part.argument);
 				}
@@ -16364,6 +16455,10 @@ export class GenCpp extends GenCCpp
 					this.write(" << std::dec");
 				if (flt != 71)
 					this.write(" << std::defaultfloat");
+				if (left)
+					this.write(" << std::right");
+				if (precision != 6)
+					this.write(" << std::setprecision(6)");
 				if (interpolated.suffix.length > 0) {
 					this.write(" << ");
 					if (newLine) {
@@ -16386,6 +16481,26 @@ export class GenCpp extends GenCCpp
 		}
 		if (newLine)
 			this.write(" << '\\n'");
+	}
+
+	static #isStringPtrNotLiteral(expr)
+	{
+		return expr.type.id == FuId.STRING_PTR_TYPE && !(expr instanceof FuLiteralString);
+	}
+
+	#writeRegex(args, argIndex)
+	{
+		this.include("regex");
+		this.write("std::regex(");
+		let pattern = args[argIndex];
+		if (GenCpp.#isStringPtrNotLiteral(pattern)) {
+			this.writePostfix(pattern, ".data(), ");
+			this.writePostfix(pattern, ".size()");
+		}
+		else
+			pattern.accept(this, FuPriority.ARGUMENT);
+		this.writeRegexOptions(args, ", std::regex::ECMAScript | ", " | ", "", "std::regex::icase", "std::regex::multiline", "std::regex::NOT_SUPPORTED_singleline");
+		this.writeChar(41);
 	}
 
 	#writeRegexArgument(expr)
@@ -16805,7 +16920,7 @@ export class GenCpp extends GenCCpp
 			break;
 		case FuId.STRING_WRITER_TO_STRING:
 			this.#startMethodCall(obj);
-			this.write("str()");
+			this.write("view()");
 			break;
 		case FuId.BIT_CONVERTER_INT32_BITS_TO_SINGLE:
 		case FuId.BIT_CONVERTER_INT64_BITS_TO_DOUBLE:
@@ -16890,7 +17005,7 @@ export class GenCpp extends GenCCpp
 			this.write("std::regex_search(");
 			if (args[0].type.id == FuId.STRING_STORAGE_TYPE)
 				this.writePostfix(args[0], ".c_str()");
-			else if (args[0].type.id == FuId.STRING_PTR_TYPE && !(args[0] instanceof FuLiteral))
+			else if (GenCpp.#isStringPtrNotLiteral(args[0]))
 				this.#writeBeginEnd(args[0]);
 			else
 				args[0].accept(this, FuPriority.ARGUMENT);
@@ -17371,9 +17486,8 @@ export class GenCpp extends GenCCpp
 
 	writeStronglyCoerced(type, expr)
 	{
-		if (type.id == FuId.STRING_STORAGE_TYPE && expr.type.id == FuId.STRING_PTR_TYPE && !(expr instanceof FuLiteral)) {
+		if (type.id == FuId.STRING_STORAGE_TYPE && GenCpp.#isStringPtrNotLiteral(expr))
 			this.writeCall("std::string", expr);
-		}
 		else {
 			let call = GenCpp.isStringSubstring(expr);
 			if (call != null && type.id == FuId.STRING_STORAGE_TYPE && (GenCpp.isUTF8GetString(call) ? call.arguments_[0] : call.method.left).type.id != FuId.STRING_STORAGE_TYPE) {
@@ -17488,7 +17602,7 @@ export class GenCpp extends GenCCpp
 	{
 		if (expr == null)
 			this.write("\"\"");
-		else if (expr.type.id == FuId.STRING_PTR_TYPE && !(expr instanceof FuLiteralString))
+		else if (GenCpp.#isStringPtrNotLiteral(expr))
 			this.writeCall("std::string", expr);
 		else
 			expr.accept(this, FuPriority.ARGUMENT);
@@ -18301,7 +18415,7 @@ export class GenCs extends GenTyped
 		}
 		this.write("$\"");
 		for (const part of expr.parts) {
-			this.writeDoubling(part.prefix, 123);
+			this.writeDoublingBraces(part.prefix);
 			this.writeChar(123);
 			if (part.format == 85 || part.format == 117)
 				this.writeCall("char.ConvertFromUtf32", part.argument);
@@ -18319,7 +18433,7 @@ export class GenCs extends GenTyped
 			}
 			this.writeChar(125);
 		}
-		this.writeDoubling(expr.suffix, 123);
+		this.writeDoublingBraces(expr.suffix);
 		this.writeChar(34);
 	}
 
@@ -22939,34 +23053,7 @@ export class GenJsNoModule extends GenBase
 		let pattern = args[argIndex];
 		let literal;
 		if ((literal = pattern) instanceof FuLiteralString) {
-			this.writeChar(47);
-			let escaped = false;
-			for (const c of literal.value) {
-				switch (c.codePointAt(0)) {
-				case 92:
-					if (!escaped) {
-						escaped = true;
-						continue;
-					}
-					escaped = false;
-					break;
-				case 34:
-				case 39:
-					escaped = false;
-					break;
-				case 47:
-					escaped = true;
-					break;
-				default:
-					break;
-				}
-				if (escaped) {
-					this.writeChar(92);
-					escaped = false;
-				}
-				this.writeChar(c.codePointAt(0));
-			}
-			this.writeChar(47);
+			this.writeRegexLiteral(literal.value);
 			this.writeRegexOptions(args, "", "", "", "i", "m", "s");
 		}
 		else {
@@ -25223,6 +25310,23 @@ export class GenSwift extends GenPySwift
 		return true;
 	}
 
+	#writeNewRegex(args, argIndex)
+	{
+		let pattern = args[argIndex];
+		let literal;
+		if ((literal = pattern) instanceof FuLiteralString) {
+			this.writeChar(35);
+			this.writeRegexLiteral(literal.value);
+			this.writeChar(35);
+		}
+		else {
+			this.write("try Regex(");
+			this.#writeUnwrapped(pattern, FuPriority.ARGUMENT, false);
+			this.writeChar(41);
+		}
+		this.writeRegexOptions(args, "", "", "", ".ignoresCase()", ".anchorsMatchLineEndings()", ".dotMatchesNewlines()");
+	}
+
 	#writeJsonElementIs(obj, name, parent)
 	{
 		if (parent > FuPriority.EQUALITY)
@@ -25666,6 +25770,19 @@ export class GenSwift extends GenPySwift
 		case FuId.DATE_TIME_OFFSET_UTC_NOW_TO_UNIX_TIME_MILLISECONDS:
 			this.include("Foundation");
 			this.write("Int64(Date.now.timeIntervalSince1970 * 1000)");
+			break;
+		case FuId.REGEX_COMPILE:
+			this.#writeNewRegex(args, 0);
+			break;
+		case FuId.REGEX_IS_MATCH_STR:
+			this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
+			this.write(".contains(");
+			this.#writeNewRegex(args, 1);
+			this.writeChar(41);
+			break;
+		case FuId.REGEX_IS_MATCH_REGEX:
+			this.#writeUnwrapped(args[0], FuPriority.PRIMARY, true);
+			this.writeCall(".contains", obj);
 			break;
 		case FuId.JSON_ELEMENT_PARSE:
 			this.include("Foundation");
@@ -27281,12 +27398,12 @@ export class GenPy extends GenPySwift
 	{
 		this.write("f\"");
 		for (const part of expr.parts) {
-			this.writeDoubling(part.prefix, 123);
+			this.writeDoublingBraces(part.prefix);
 			this.writeChar(123);
 			part.argument.accept(this, FuPriority.ARGUMENT);
 			this.writePyFormat(part);
 		}
-		this.writeDoubling(expr.suffix, 123);
+		this.writeDoublingBraces(expr.suffix);
 		this.writeChar(34);
 	}
 
