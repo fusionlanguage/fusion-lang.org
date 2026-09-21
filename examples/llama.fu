@@ -291,8 +291,7 @@ class Tokenizer
 			if (VocabToToken.ContainsKey(s))
 				AddPromptToken(s);
 			else {
-				byte[6] bytes;
-				Encoding.UTF8.GetBytes(s, bytes, 0);
+				byte[] bytes = Encoding.UTF8.GetBytes(s);
 				int nBytes = Encoding.UTF8.GetByteCount(s);
 				for (int j = 0; j < nBytes; j++)
 					Prompt.Add(3 + bytes[j]);
